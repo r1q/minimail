@@ -2,7 +2,7 @@
 
 A simple webapp to manage your email campaigns and subscribers. Using AWS SES for mail delivery.
 
-# Setup dev env
+## Setup dev env
 
 1. `virtualenv --python=python3.5 . && source bin/activate`
 2. `pip install -r requirements.txt`
@@ -20,7 +20,12 @@ A simple webapp to manage your email campaigns and subscribers. Using AWS SES fo
 ## Code syntax
 
 ### Python
+
 Check for code syntax with `pylint -r no -f colorized minimail`. Add this command in `.git/hooks/pre-commit` to auto-check as you commit.
+
+## Frontend framework
+
+We use [Twitter Bootstrap](http://getbootstrap.com/customize/?id=8c2854b0c5b8e7607cea7f997c40c761), customized with system fonts.
 
 # License
 
