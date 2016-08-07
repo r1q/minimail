@@ -2,6 +2,14 @@
 
 A simple webapp to manage your email campaigns and subscribers. Using AWS SES for mail delivery.
 
+## Tech stack
+
+* Python 3.5
+* Django 1.10
+* Twitter Bootstrap 3.3.7
+
+For Python libraries in use, see `requirements.txt`.
+
 ## Setup dev env
 
 1. `virtualenv --python=python3.5 . && source bin/activate`
@@ -15,7 +23,9 @@ A simple webapp to manage your email campaigns and subscribers. Using AWS SES fo
 2. `virtualenv --python=python3.5 . && source bin/activate`
 3. `pip install -r requirements.txt`
 4. `./manage.py makemigrations && ./manage.py migrate`
-5. `./manage.py runserver`
+5. Start the app with gunicorn: `./server_conf/start_stop_django_app.sh`
+6. Link the app nginx configuration file to nginx default conf folder: `sudo ln -s /path/to/repo/server_conf/minimail.nginx.conf /path/to/nginx/main/conf/minimail.nginx.conf`
+7. Test and reload nginx: `sudo nginx -t && nginx -s reload`
 
 ## Code syntax
 
