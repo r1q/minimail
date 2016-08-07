@@ -9,7 +9,7 @@ A simple webapp to manage your email campaigns and subscribers. Using AWS SES fo
 3. `./manage.py makemigrations && ./manage.py migrate`
 4. `./manage.py runserver`
 
-# Setup prod env
+## Setup prod env
 
 1. `export MINIMAIL_ENV=prod`
 2. `virtualenv --python=python3.5 . && source bin/activate`
