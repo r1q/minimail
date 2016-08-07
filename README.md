@@ -6,10 +6,13 @@ A simple webapp to manage your email campaigns and subscribers. Using AWS SES fo
 
 1. `virtualenv --python=python3.5 . && source bin/activate`
 2. `pip install -r requirements.txt`
-3. `cd minimail && ./manage.py makemigrations && ./manage.py migrate`
+3. `./manage.py makemigrations && ./manage.py migrate`
 4. `./manage.py runserver`
 
-Check for code syntax with `pylint -r no -f colorized module.py`.
+## Code syntax
+
+### Python
+Check for code syntax with `pylint -r no -f colorized minimail`. Add this command in `.git/hooks/pre-commit` to auto-check as you commit.
 
 # License
 
