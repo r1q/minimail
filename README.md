@@ -9,6 +9,8 @@ A simple webapp to manage your email campaigns and subscribers. Using AWS SES fo
 3. `cd minimail && ./manage.py makemigrations && ./manage.py migrate`
 4. `./manage.py runserver`
 
+Check for code syntax with `pylint -r no -f colorized module.py`.
+
 # License
 
 MIT License - Copyright (c) 2016 Julien Buty
