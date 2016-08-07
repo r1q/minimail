@@ -27,7 +27,7 @@ Check for code syntax with `pylint -r no -f colorized minimail`. Add this comman
 
 We use [Twitter Bootstrap](http://getbootstrap.com/customize/?id=8c2854b0c5b8e7607cea7f997c40c761), customized with system fonts.
 
-# License
+## License
 
 MIT License - Copyright (c) 2016 Julien Buty
 

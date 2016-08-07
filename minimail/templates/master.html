@@ -1,0 +1,36 @@
+{% load staticfiles %}
+{% load i18n %}
+{% get_current_language as LANGUAGE_CODE %}
+
+<!DOCTYPE html>
+<html lang="{% LANGUAGE_CODE %}">
+
+  <head>
+    <meta charset="utf8">
+    <title>{% block title %}Minimail{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="{% static "css/bootstrap.min.css" %}">
+    <link rel="canonical" href="http://minimail.fullweb.io">
+  </head>
+
+  <body>
+    
+    <header>
+      {% include "parts/main-navigation.html" %}
+    </header>
+
+    <main class='container'>
+      {% block content %}
+        <pre>Empty page</pre>
+      {% endblock %}
+    </main>
+
+    <footer class='container'>
+      {% include "parts/footer.html" %}
+    </footer>
+
+    <script src='{% static "js/bootstrap.min.js" %}'></script>
+
+  </body>
+
+</html>
