@@ -4,9 +4,9 @@ A simple webapp to manage your email campaigns and subscribers. Using AWS SES fo
 
 # Setup dev env
 
-1. `virtualenv --python=python3.5 .`
+1. `virtualenv --python=python3.5 . && source bin/activate`
 2. `pip install -r requirements.txt`
-3. `cd minimail && ./manage.py makemigrations && ./manage migrate`
+3. `cd minimail && ./manage.py makemigrations && ./manage.py migrate`
 4. `./manage.py runserver`
 
 # License
