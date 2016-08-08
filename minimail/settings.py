@@ -44,6 +44,8 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.github',
+    'allauth.socialaccount.providers.twitter',
+    'allauth.socialaccount.providers.facebook',
 ]
 
 MIDDLEWARE = [
@@ -149,3 +151,17 @@ STATICFILES_DIRS = [
 ]
 
 SITE_ID = 1
+
+ACCOUNT_USERNAME_REQUIRED = False
+
+ACCOUNT_UNIQUE_EMAIL = True
+
+ACCOUNT_EMAIL_REQUIRED = True
+
+ACCOUNT_LOGOUT_REDIRECT_URL = "/"
+
+ACCOUNT_AUTHENTICATED_LOGIN_REDIRECTS = True
+
+ACCOUNT_LOGOUT_ON_GET = True
+
+LOGIN_REDIRECT_URL = "/"
