@@ -46,6 +46,9 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.github',
     'allauth.socialaccount.providers.twitter',
     'allauth.socialaccount.providers.facebook',
+
+    # minimail's apps
+    'user_management',
 ]
 
 MIDDLEWARE = [
@@ -152,16 +155,13 @@ STATICFILES_DIRS = [
 
 SITE_ID = 1
 
-ACCOUNT_USERNAME_REQUIRED = False
-
-ACCOUNT_UNIQUE_EMAIL = True
-
-ACCOUNT_EMAIL_REQUIRED = True
-
-ACCOUNT_LOGOUT_REDIRECT_URL = "/"
-
+ACCOUNT_EMAIL_VERIFICATION = "none"
 ACCOUNT_AUTHENTICATED_LOGIN_REDIRECTS = True
-
 ACCOUNT_LOGOUT_ON_GET = True
-
+ACCOUNT_LOGOUT_REDIRECT_URL = "/"
 LOGIN_REDIRECT_URL = "/"
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_UNIQUE_EMAIL = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
