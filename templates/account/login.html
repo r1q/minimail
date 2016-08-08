@@ -1,0 +1,24 @@
+{% extends "master.html" %}
+{% load socialaccount %}
+
+{% block content %}
+    {% get_providers as socialaccount_providers %}
+    {{socialaccount_providers}}
+    {% for provider in socialaccount_providers %}
+        {% if provider.id == "github" %}
+            <p>
+                <a href="{% provider_login_url "github" %}">Github</a>
+            </p>
+        {% endif %}
+        {% if provider.id == "twitter" %}
+            <p>
+                <a href="{% provider_login_url "twitter" %}">Twitter</a>
+            </p>
+        {% endif %}
+        {% if provider.id == "facebook" %}
+            <p>
+                <a href="{% provider_login_url "facebook" %}">Facebook</a>
+            </p>
+        {% endif %}
+    {% endfor %}
+{% endblock %}
