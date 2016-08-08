@@ -3,7 +3,7 @@
 
 {% block content %}
     {% get_providers as socialaccount_providers %}
-    {{socialaccount_providers}}
+
     {% for provider in socialaccount_providers %}
         {% if provider.id == "github" %}
             <p>
