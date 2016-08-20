@@ -22,4 +22,5 @@ urlpatterns = [
     url(r'^user/account$', views.UserUpdateView.as_view(), name='user_account'),
     url(r'^admin/', admin.site.urls),
     url(r'^accounts/', include('allauth.urls')),
+    url(r'^templates/', include('template_management.urls')),
 ]
