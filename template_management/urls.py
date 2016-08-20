@@ -5,11 +5,11 @@ from template_management import views
 
 urlpatterns = [
     # Template actions
-    url(r'^new', views.create_template),
-    url(r'^(?P<template_id>\d+)/edit', views.edit_template),
-    url(r'^(?P<template_id>\d+)/preview', views.show_template_preview),
-    url(r'^(?P<template_id>\d+)/delete', views.delete_template),
-    url(r'^(?P<pk>\d+)', views.TemplateDetail.as_view()),
+    url(r'^new', views.TemplateCreate.as_view(), name='template-new'),
+    url(r'^(?P<pk>\d+)/edit', views.TemplateUpdate.as_view(), name='template-update'),
+    url(r'^(?P<pk>\d+)/delete', views.TemplateDelete.as_view(), name='template-delete'),
+    url(r'^(?P<pk>\d+)/preview', views.show_template_preview, name='template-preview'),
+    url(r'^(?P<pk>\d+)', views.TemplateDetail.as_view(), name='template-detail'),
     # Template listing actions
-    url(r'^', views.TemplateList.as_view()),
+    url(r'^', views.TemplateList.as_view(), name='template-list'),
 ]

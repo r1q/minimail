@@ -41,7 +41,10 @@
                 <a class='text-primary' href='/templates/{{template.id}}/edit'>{% trans 'Edit' %}</a>
               </li>
               <li>
-                <a class='text-danger' href='/templates/{{template.id}}/delete'>{% trans 'Delete' %}</a>
+                <form method='post' action='/templates/{{template.id}}/delete'>
+                  {% csrf_token %}
+                  <button class='btn btn-link' href='/templates/{{template.id}}/delete'>{% trans 'Delete' %}</button>
+                </form>
               </li>
             </ul>
             <p>
