@@ -1,0 +1,57 @@
+{% extends 'master.html' %}
+{% load i18n %}
+
+{% block content %}
+
+  <div class='row'>
+    <div class='col-lg-6'>
+      <h1>{% trans "Templates" %}</h1>
+    </div>
+    <div class='col-lg-6 text-right'>
+      <br />
+      <a class='btn btn-default'>{% trans 'Create a new template' %}</a>
+    </div>
+  </div>
+
+  <div class='row'>
+
+    {% for template in object_list %}
+
+      <div class='col-lg-4'>
+        <div class='panel panel-default'>
+          <div class='preview' style='position: relative; min-height: 300px; background: #f9f9f9; overflow: hidden;'>
+            <iframe style='border: 0; position: absolute; top: 0; bottom: 0; left: 0; right: 0; z-index: 10; transform: scale(0.50); transform-origin: 0 0; height: 200%; width: 200%;' width='100%' height='300px' src='/templates/{{template.id}}/preview'> </iframe>
+            <div class='cover' style='position: absolute; top: 0; bottom: 0; left: 0; right: 0; z-index: 100;'></div>
+          </div>
+          <div class='container-fluid'>
+            <h3>{{ template.name }}</h3>
+            <ul class='list-unstyled'>
+              <li>
+                <a class='text-primary' href='/templates/{{template.id}}/edit'>{% trans 'Create a campaign with this template' %}</a>
+              </li>
+              <li>
+                <a class='text-primary' href='/templates/{{template.id}}/preview' target='_blank'>{% trans 'Open template preview' %}</a>
+              </li>
+              <li>
+                <a class='text-primary' href='/templates/{{template.id}}/edit'>{% trans 'Edit' %}</a>
+              </li>
+              <li>
+                <a class='text-danger' href='/templates/{{template.id}}/delete'>{% trans 'Delete' %}</a>
+              </li>
+            </ul>
+            <p>
+              <small class='text-muted'>{% trans "created:" %} {{ template.created }}</small>
+            </p>
+          </div>
+        </div>
+      </div>
+
+    {% empty %}
+
+      <p class='alert alert-warning lead'>{% trans 'No template available for now.' %}</p>
+
+    {% endfor %}
+
+  </div> 
+
+{% endblock %}

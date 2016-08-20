@@ -21,4 +21,5 @@ urlpatterns = [
     url(r'^$', views.home),
     url(r'^admin/', admin.site.urls),
     url(r'^accounts/', include('allauth.urls')),
+    url(r'^templates/', include('template_management.urls')),
 ]
