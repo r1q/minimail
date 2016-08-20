@@ -11,6 +11,7 @@ pip==8.1.2
 psycopg2==2.6.2
 pylint==1.6.4
 python3-openid==3.0.10
+pytz==2016.6.1
 requests==2.10.0
 requests-oauthlib==0.6.2
 simplejson==3.8.2
