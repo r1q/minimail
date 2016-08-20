@@ -4,20 +4,25 @@
 {% block content %}
 
   <div class='row'>
-    <div class='col-lg-6'>
-      <h1>{% trans "Templates" %}</h1>
+    <div class='col-lg-6 col-sm-6'>
+      <h2>
+        {% trans "Templates" %}
+        <small>{% trans "Total of" %} {{ object_list|length }} {% trans "template"%}{% trans "template"|pluralize %}</small>
+      </h2>
     </div>
-    <div class='col-lg-6 text-right'>
+    <div class='col-lg-6 col-sm-6 text-right'>
       <br />
-      <a class='btn btn-default'>{% trans 'Create a new template' %}</a>
+      <a class='btn btn-default' href='/templates/new'>{% trans 'Create a new template' %}</a>
     </div>
   </div>
+
+  <br />
 
   <div class='row'>
 
     {% for template in object_list %}
 
-      <div class='col-lg-4'>
+      <div class='col-lg-4 col-sm-6'>
         <div class='panel panel-default'>
           <div class='preview' style='position: relative; min-height: 300px; background: #f9f9f9; overflow: hidden;'>
             <iframe style='border: 0; position: absolute; top: 0; bottom: 0; left: 0; right: 0; z-index: 10; transform: scale(0.50); transform-origin: 0 0; height: 200%; width: 200%;' width='100%' height='300px' src='/templates/{{template.id}}/preview'> </iframe>
