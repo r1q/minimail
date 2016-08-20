@@ -1,3 +1,4 @@
+{% load i18n %} 
 <nav class="navbar navbar-default">
 
   <div class="container-fluid">
@@ -9,9 +10,9 @@
 
     <!-- Collect the nav links, forms, and other content for toggling -->
     <ul class="nav navbar-nav">
-      <li class="active"><a href="/campaigns">Campaigns</a></li>
-      <li><a href="/subscribers">Subscribers</a></li>
-      <li><a href="/templates">Templates</a></li>
+      <li class="active"><a href="/campaigns">{% trans "Campaigns" %}</a></li>
+      <li><a href="/subscribers">{% trans "Subscribers" %}</a></li>
+      <li><a href="/templates">{% trans "Templates" %}</a></li>
     </ul>
 
     {% if user.is_authenticated %}
@@ -23,16 +24,16 @@
             <span class="caret"></span>
           </a>
           <ul class="dropdown-menu">
-            <li><a href="#">Account</a></li>
-            <li><a href="#">Settings</a></li>
+            <li><a href="#">{% trans "Account" %}</a></li>
+            <li><a href="#">{% trans "Settings" %}</a></li>
             <li role="separator" class="divider"></li>
-            <li><a href="/accounts/logout">Log Out</a></li>
+            <li><a href="/accounts/logout">{% trans "Log Out" %}</a></li>
           </ul>
         </li>
       </ul>
     {% else %}
       <ul class="nav navbar-nav navbar-right">
-        <li><a href="/accounts/login">Log In</a></li>
+        <li><a href="/accounts/login">{% trans "Log In" %}</a></li>
       </ul>
     {% endif %}
 
