@@ -1,0 +1,28 @@
+{% extends "master.html" %}
+
+{% block title %}
+  Minimail &middot; Email Marketing for Developers | Account
+{% endblock %}
+
+
+{% block content %}
+<form method="post">
+  <legend>Account</legend>
+  {% csrf_token %}
+  {% for input in form_user %}
+  <div class="form-group">
+    <label for="email">{{input.label}}</label>
+    {{input}}
+
+  </div>
+  {% endfor %}
+  {% for input in form_user_extend %}
+  <div class="form-group">
+    <label for="email">{{input.label}}</label>
+    {{input}}
+  </div>
+  {% endfor %}
+  <button type="submit" class="btn btn-default">Submit</button>
+</form>
+
+{% endblock %}

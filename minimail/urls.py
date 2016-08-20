@@ -19,6 +19,7 @@ from user_management import views
 
 urlpatterns = [
     url(r'^$', views.home),
+    url(r'^user/account$', views.UserUpdateView.as_view(), name='user_account'),
     url(r'^admin/', admin.site.urls),
     url(r'^accounts/', include('allauth.urls')),
 ]
