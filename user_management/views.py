@@ -1,4 +1,6 @@
 from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 from django.views import View
 from django.contrib.auth.models import User
 from user_management.forms import UserForm, UserExtendForm
@@ -15,6 +17,7 @@ class UserUpdateView(View):
     Update View for user info data.
     """
 
+    @method_decorator(login_required)
     def get(self, request):
         user = User.objects.get(pk=request.user.id)
         user_extend = None
@@ -27,6 +30,7 @@ class UserUpdateView(View):
         form_user_extend = UserExtendForm(instance=user_extend)
         return render(request, "user_management/user_update.html", locals())
 
+    @method_decorator(login_required)
     def post(self, request):
         user = User.objects.get(pk=request.user.id)
         user_extend = None
