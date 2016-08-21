@@ -1,10 +1,11 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.views import View
 from subscriber_management.models import List, Subscriber
 from subscriber_management.forms import ListForm, SubscriberForm
 import django.db.utils
 from django.utils.translation import ugettext as _
+from django.contrib import messages
 
 class SubscriberListView(ListView):
 
@@ -23,14 +24,29 @@ class SubscriberCreateView(CreateView):
     model = List
     template_name = 'subscriber_management/template_create.html'
     form_class = ListForm
-    success_url="/subscribers/"
+    success_url = "/subscribers/"
+    success_message = " was successfully created"
 
     def form_valid(self, form):
+        messages.success(self.request, form.instance.name + self.success_message)
         form.instance.user = self.request.user
         return super(SubscriberCreateView, self).form_valid(form)
 
     def form_invalid(self, form):
         return super(SubscriberCreateView, self).form_valid(form)
+
+
+class SubscriberListDeleteView(View):
+
+    success_message = " was successfully deleted"
+
+    def get(self, request, uuid):
+        list_item = List.objects.get(uuid=uuid)
+        messages.success(request, list_item.name + self.success_message)
+        Subscriber.objects.filter(list__id=list_item.id).delete()
+        list_item.delete()
+        return redirect('subscriber_management_list')
+
 
 class SubscriberListSubscribersView(ListView):
 

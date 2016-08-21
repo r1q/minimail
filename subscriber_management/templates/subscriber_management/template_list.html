@@ -12,9 +12,49 @@
       {{ item.created }}
     </p>
   </a>
+  <p style="margin-top:5px;" class="text-right">
+    <a class="btn btn-primary right" href="">{% trans 'Update' %}</a>
+    <button data-delete-url="{% url 'subscriber_management_list_delete' item.uuid %}" data-title="{{item.title}}" class="btn btn-danger right" data-toggle="modal" data-target="#list-delete-confirmation" class='text-danger'>
+      {% trans 'Delete' %}
+    </button>
+  </p>
 </div>
 {% endfor %}
 <p>
   <a class="btn btn-primary" href="{% url 'subscriber_management_create' %}">{% trans 'Create new list' %}</a>
 </p>
+
+<!-- Modal for delete deletion confirmation -->
+<div id='list-delete-confirmation' class="modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <form method='post' action='/'>
+        {% csrf_token %}
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title">Please confirm subscriber list deletion</h4>
+        </div>
+        <div class="modal-body">
+          <p>
+            <strong>Are you sure you can to delete this subscriber list?</strong>
+          </p>
+          <ul>
+            <li>All the information about your subscriber will be deleted.</li>
+          </ul>
+        </div>
+        <div class="modal-footer">
+          <a href='javascript:void(0)' type="button" class="btn btn-default" data-dismiss="modal">No, keep it</a>
+          <a type="button" class="btn btn-danger" href="#" id="confirm_delete_list_button">Yes, delete it</a>
+        </div>
+      </form>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+{% endblock %}
+
+{% block script %}
+<script>
+$('[data-delete-url]').click(function() {
+  $('#confirm_delete_list_button').attr('href', $(this).data('delete-url'))
+})
+</script>
 {% endblock %}

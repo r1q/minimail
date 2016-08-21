@@ -5,6 +5,7 @@ urlpatterns = [
     url(r'^$',views.SubscriberListView.as_view(), name='subscriber_management_list'),
     url(r'^list$',views.SubscriberListView.as_view(), name='subscriber_management_list'),
     url(r'^list/(?P<uuid>[^/]+)/$',views.SubscriberListSubscribersView.as_view(), name='subscriber_management_list_subscribers'),
+    url(r'^list/(?P<uuid>[^/]+)/delete$',views.SubscriberListDeleteView.as_view(), name='subscriber_management_list_delete'),
     url(r'^list/(?P<uuid>[^/]+)/join$',views.SubscribeJoin.as_view(), name='subscriber_management_join'),
     url(r'^create$',views.SubscriberCreateView.as_view(), name='subscriber_management_create'),
 ]
