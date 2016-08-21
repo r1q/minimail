@@ -15,9 +15,11 @@
 
   <body>
 
+    {% block header %}
     <header>
       {% include "parts/main-navigation.html" %}
     </header>
+    {% endblock %}
 
     <main class='container'>
       {% block content %}

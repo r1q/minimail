@@ -30,6 +30,9 @@ class List(models.Model):
 class Subscriber(models.Model):
 
     # Meta
+    class Meta:
+        unique_together = ('list', 'email',)
+        
     list = models.ForeignKey(List)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     created = models.DateTimeField(auto_now_add=True)

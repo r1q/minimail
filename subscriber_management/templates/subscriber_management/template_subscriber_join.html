@@ -1,0 +1,26 @@
+{% extends "master.html" %}
+{% load i18n %}
+
+{% block header %}
+{% endblock %}
+
+{% block content %}
+<form method="POST">
+  {% csrf_token %}
+  <legend>Subcribe to {{list_item.title}}</legend>
+  {% for input in  form %}
+    <div class="form-group">
+      <label for="email">{{input.label}}</label>
+      {{input}}
+      {% for error in input.errors %}
+        <br>
+        <div class="alert alert-danger" role="alert">{{error}}</div>
+      {% endfor %}
+    </div>
+  {% endfor %}
+  {% if duplicate_error %}
+    <div class="alert alert-danger" role="alert">{{duplicate_error}}</div>
+  {% endif %}
+  <button class="btn btn-primary">{% trans 'Subscribe' %}</button>
+</form>
+{% endblock %}

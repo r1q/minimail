@@ -6,8 +6,22 @@
 {% if not object_list %}
   <p>{% trans 'No subscribers' %}</p>
 {% else %}
-  {% for item in  object_list %}
+  <table class="table">
+    <thead>
+      <tr>
+        <th>{% trans 'Email' %}</th>
+        <th>{% trans 'Date join' %}</th>
+      <tr>
+    </thead>
+    <tbody>
+      {% for item in  object_list %}
+        <tr>
+          <td>{{ item.email }}</td>
+          <td>{{ item.created }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
 
-  {% endfor %}
+  <table>
 {% endif %}
 {% endblock %}

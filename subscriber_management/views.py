@@ -1,7 +1,10 @@
 from django.shortcuts import render
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.views import View
 from subscriber_management.models import List, Subscriber
-from subscriber_management.forms import ListForm
+from subscriber_management.forms import ListForm, SubscriberForm
+import django.db.utils
+from django.utils.translation import ugettext as _
 
 class SubscriberListView(ListView):
 
@@ -44,3 +47,24 @@ class SubscriberListSubscribersView(ListView):
         list_item = List.objects.get(uuid=list_uuid)
         context['list'] = list_item
         return context
+
+class SubscribeJoin(View):
+
+    def get(self, request, uuid):
+        list_item = List.objects.get(uuid=uuid)
+        form = SubscriberForm()
+        return render(request, "subscriber_management/template_subscriber_join.html", locals())
+
+    def post(self, request, uuid):
+        list_item = List.objects.get(uuid=uuid)
+        subscriber_item = Subscriber()
+        form = SubscriberForm(request.POST, instance=subscriber_item)
+        try:
+            if form.is_valid():
+                form.instance.list = list_item
+                form.save()
+        except (django.db.utils.IntegrityError):
+            duplicate_error = _('You are already registered to this list')
+            return render(request, "subscriber_management/template_subscriber_join.html", locals())
+        else:
+            return render(request, "subscriber_management/template_subscriber_join_success.html", locals())
