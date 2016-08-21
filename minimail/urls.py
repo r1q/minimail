@@ -22,5 +22,6 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^accounts/', include('allauth.urls')),
     url(r'^templates/', include('template_management.urls')),
+    url(r'^subscribers/', include('subscriber_management.urls')),
     url(r'^user/', include('user_management.urls')),
 ]

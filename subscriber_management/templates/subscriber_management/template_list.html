@@ -1,0 +1,20 @@
+{% extends "master.html" %}
+{% load i18n %}
+
+{% block content %}
+<legend>Subscriber lists</legend>
+{% for item in  object_list %}
+<div class="list-group">
+  <a href="{% url 'subscriber_management_list_subscribers' item.uuid %}" class="list-group-item">
+      {{ item.name }}
+      <br>
+      <span class="badge right">{%trans 'Subscribers' %}: {{ item.count_susbscribers }}</span>
+      {{ item.created }}
+    </p>
+  </a>
+</div>
+{% endfor %}
+<p>
+  <a class="btn btn-primary" href="{% url 'subscriber_management_create' %}">{% trans 'Create new list' %}</a>
+</p>
+{% endblock %}
