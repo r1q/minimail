@@ -36,16 +36,16 @@
           <div class='container-fluid'>
             <ul class='list-unstyled'>
               <li>
-                <a class='text-primary' href='/templates/{{template.id}}/edit'>{% trans 'Create a campaign with this template' %}</a>
+                <a class='text-primary' href='#'>{% trans 'Create a campaign with this template' %}</a>
               </li>
               <li>
-                <a class='text-primary' href='/templates/{{template.id}}/preview' target='_blank'>{% trans 'Open template preview' %}</a>
+                <a class='text-primary' href="{% url 'template-preview' template.id %}" target='_blank'>{% trans 'Open template preview' %}</a>
               </li>
               <li>
-                <a class='text-primary' href='/templates/{{template.id}}/edit'>{% trans 'Edit' %}</a>
+                <a class='text-primary' href="{% url 'template-update' template.id %}">{% trans 'Edit' %}</a>
               </li>
               <li>
-                <a href='/templates/{{template.id}}/delete' data-toggle="modal" data-target="#template-delete-confirmation" class='text-danger'>{% trans 'Delete' %}</a>
+                <a href="{% url 'template-delete' template.id %}" data-toggle="modal" data-target="#template-delete-confirmation" class='text-danger'>{% trans 'Delete' %}</a>
               </li>
             </ul>
             <hr />

@@ -1,0 +1,106 @@
+{% extends 'master.html' %}
+{% load staticfiles %}
+{% load i18n %}
+
+
+{% block title %}
+  New template
+{% endblock %}
+
+
+{% block content %}
+
+  <div class='row'>
+    <div class='col-lg-12'>
+      <h2>
+        <a href='{% url 'template-list' %}'>{% trans "Templates" %}</a>
+        /
+        <a href='{% url 'template-detail' template.id %}'>{{ template.name}}</a>
+        / Edit
+      </h2>
+    </div>
+  </div>
+
+  <hr />
+
+  <div class='row'>
+    <div class='col-lg-12'>
+
+      <form method='post'>
+
+        {% csrf_token %}
+
+        <p>
+          <label for="{{form.name.auto_id}}">Template name:</label>
+          <input id="{{form.name.auto_id}}" name="{{form.name.name}}" class='form-control input-lg' autofocus tabindex='0' value ='{{template.name}}'/>
+        </p>
+
+        <br />
+
+        <ul id="newTemplateTabs" class="nav nav-tabs" role="tablist">
+          <li role="presentation" class="active">
+            <a href="#html-email" tabindex='4'>HTML Email</a></li>
+          <li role="presentation">
+            <a href="#text-email" tabindex='3'>Text Email</a></li>
+        </ul>
+        <div class="tab-content">
+          <div id="html-email" class="tab-pane active" role='tabpanel'>
+            <textarea tabindex='1' id="{{form.html_template.auto_id}}" name="{{form.html_template.name}}" class='form-control' rows='15'>{{template.html_template}}</textarea>
+          </div>
+          <div id='text-email' class='tab-pane' role='tabpanel'>
+            <textarea id="{{form.text_template.auto_id}}" name="{{form.text_template.name}}" class='form-control' rows='15'>{{template.text_template}}</textarea>
+          </div>
+        </div>
+
+        <br />
+        <br />
+        <button class='btn btn-success center-block'>Save changes</button>
+
+      </form>
+
+    </div>
+  </div>
+
+{% endblock %}
+
+
+{% block styles %}
+  <link rel="stylesheet" href='{% static "css/codemirror.css" %}' />
+  <link rel="stylesheet" href='{% static "css/base16-light.css" %}' />
+  <style>
+    .CodeMirror {
+      border: 1px solid #EEE;
+      height: auto;
+    }
+    .CodeMirror-linenumbers {
+      background: #DEDEDE;
+    }
+    .CodeMirror-scroll {
+      max-height: 3200px;
+      max-height: 400vh;
+    }
+  </style>
+{% endblock %}
+
+
+{% block script %}
+  <script src='{% static "js/codemirror.js" %}'></script>
+  <script src='{% static "js/xml.js" %}'></script>
+  <script src='{% static "js/htmlmixed.js" %}'></script>
+  <script>
+    // Enable the tab navigation
+    $('#newTemplateTabs a').click(function (ev) {
+      ev.preventDefault()
+      $(this).tab('show')
+    })
+    // Init the HTML editor
+    var html_template_texarea = document.getElementById('id_html_template')
+    var html_editor = CodeMirror.fromTextArea(html_template_texarea, {
+      theme: 'base16-light',
+      lineNumbers: true,
+      mode: "text/html",
+      viewportMargin: Infinity,
+      tabindex: "1"
+    });
+  </script>
+{% endblock %}
