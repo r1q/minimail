@@ -9,13 +9,13 @@
     </div>
 
     <!-- Collect the nav links, forms, and other content for toggling -->
-    <ul class="nav navbar-nav">
-      <li><a href="/campaigns">{% trans "Campaigns" %}</a></li>
-      <li><a href="/subscribers">{% trans "Subscribers" %}</a></li>
-      <li><a href="/templates">{% trans "Templates" %}</a></li>
-    </ul>
-
     {% if user.is_authenticated %}
+      <ul class="nav navbar-nav">
+        <li><a href="/campaigns">{% trans "Campaigns" %}</a></li>
+        <li><a href="/subscribers">{% trans "Subscribers" %}</a></li>
+        <li><a href="/templates">{% trans "Templates" %}</a></li>
+      </ul>
+
       <ul class="nav navbar-nav navbar-right">
         <li><a href="/me"></a></li>
         <li class="dropdown">
