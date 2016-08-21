@@ -1,13 +1,12 @@
 astroid==1.4.8
 defusedxml==0.4.1
-pip==8.1.2
 Django==1.10
 django-allauth==0.26.1
 isort==4.2.5
 lazy-object-proxy==1.2.2
 mccabe==0.5.2
 oauthlib==1.1.2
-pip==8.1.2
+Pillow==3.3.1
 psycopg2==2.6.2
 pylint==1.6.4
 python3-openid==3.0.10
