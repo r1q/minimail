@@ -50,6 +50,9 @@ class SubscriberListSubscribersView(ListView):
 
 class SubscribeJoin(View):
 
+    def get_client_ip(self, req):
+        return req.META.get('HTTP_X_FORWARDED_FOR') if req.META.get('HTTP_X_FORWARDED_FOR') else req.META.get('REMOTE_ADDR')
+
     def get(self, request, uuid):
         list_item = List.objects.get(uuid=uuid)
         form = SubscriberForm()
@@ -62,9 +65,18 @@ class SubscribeJoin(View):
         try:
             if form.is_valid():
                 form.instance.list = list_item
+                form.instance.ip = self.get_client_ip(request)
+                form.instance.user_agent = request.META.get('HTTP_USER_AGENT', '')
+                form.instance.accept_language = request.META.get('HTTP_ACCEPT_LANGUAGE', '')
                 form.save()
+            else:
+                print(form)
+                raise Exception('invalid form')
         except (django.db.utils.IntegrityError):
             duplicate_error = _('You are already registered to this list')
+            return render(request, "subscriber_management/template_subscriber_join.html", locals())
+        except Exception as err:
+            print(err)
             return render(request, "subscriber_management/template_subscriber_join.html", locals())
         else:
             return render(request, "subscriber_management/template_subscriber_join_success.html", locals())

@@ -10,6 +10,7 @@
     <thead>
       <tr>
         <th>{% trans 'Email' %}</th>
+        <th>{% trans 'Timezone' %}</th>
         <th>{% trans 'Date join' %}</th>
       <tr>
     </thead>
@@ -17,6 +18,7 @@
       {% for item in  object_list %}
         <tr>
           <td>{{ item.email }}</td>
+          <td>{{ item.timezone }}</td>
           <td>{{ item.created }}</td>
         </tr>
       {% endfor %}

@@ -8,19 +8,27 @@
 <form method="POST">
   {% csrf_token %}
   <legend>Subcribe to {{list_item.title}}</legend>
-  {% for input in  form %}
-    <div class="form-group">
-      <label for="email">{{input.label}}</label>
-      {{input}}
-      {% for error in input.errors %}
-        <br>
-        <div class="alert alert-danger" role="alert">{{error}}</div>
-      {% endfor %}
-    </div>
+  {% for input in form %}
+    {% if input.name != 'timezone' %}
+      <div class="form-group">
+        <label for="{{input.name}}">{{input.label}}</label>
+        {{input}}
+        {% for error in input.errors %}
+          <br>
+          <div class="alert alert-danger" role="alert">{{error}}</div>
+        {% endfor %}
+      </div>
+    {% else %}
+    <input id="id_timezone" name="timezone" type="hidden">
+    {% endif %}
   {% endfor %}
   {% if duplicate_error %}
     <div class="alert alert-danger" role="alert">{{duplicate_error}}</div>
   {% endif %}
   <button class="btn btn-primary">{% trans 'Subscribe' %}</button>
 </form>
+<script>
+var tz = new Date().getTimezoneOffset()/60*-1;
+document.getElementById('id_timezone').value = tz
+</script>
 {% endblock %}

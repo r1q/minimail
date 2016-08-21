@@ -16,7 +16,8 @@ class ListForm(ModelForm):
 class SubscriberForm(ModelForm):
     class Meta:
         model = Subscriber
-        localized_fields = ('email',)
-        fields = ('email',)
+        localized_fields = ('email','timezone',)
+        fields = ('email', 'timezone',)
 
     email = forms.EmailField(widget=forms.TextInput(attrs={'class':'form-control'}), required=True)
+    timezone = forms.IntegerField(widget=forms.TextInput(attrs={'type':'hidden'}), required=True)

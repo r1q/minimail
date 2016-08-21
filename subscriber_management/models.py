@@ -15,6 +15,7 @@ class List(models.Model):
     title = models.CharField(max_length=125, blank=True)
     description = models.TextField(blank=True)
     url = models.URLField(max_length=4000, blank=True)
+    image = models.ImageField(upload_to='subscribe_list/images/', null=True, blank=True)
 
     # custom templates
     subscribe_template = models.TextField(blank=True)
@@ -32,7 +33,7 @@ class Subscriber(models.Model):
     # Meta
     class Meta:
         unique_together = ('list', 'email',)
-        
+
     list = models.ForeignKey(List)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     created = models.DateTimeField(auto_now_add=True)
@@ -41,6 +42,10 @@ class Subscriber(models.Model):
     email = models.EmailField(max_length=50, blank=True)
     first_name = models.CharField(max_length=50, blank=True)
     last_name = models.CharField(max_length=50, blank=True)
+    user_agent = models.TextField(blank=True)
+    accept_language = models.TextField(blank=True)
+    timezone = models.IntegerField(blank=True, null=True)
+    ip = models.GenericIPAddressField(blank=True, null=True)
 
     def __str__(self):
         return self.email
