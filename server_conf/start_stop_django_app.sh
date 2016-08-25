@@ -5,7 +5,7 @@ PROJDIR="/var/www/minimail.fullweb.io"
 PIDFILE="$PROJDIR/live_django.pid"
 
 cd $PROJDIR
-source ../bin/activate
+source bin/activate
 
 if [ -f $PIDFILE ]; then
     kill `cat -- $PIDFILE`
