@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Replace these three settings.
-PROJDIR="/var/www/minimail.fullweb.io/minimail"
+PROJDIR="/var/www/minimail.fullweb.io"
 PIDFILE="$PROJDIR/live_django.pid"
 
 cd $PROJDIR
@@ -12,4 +12,4 @@ if [ -f $PIDFILE ]; then
     rm -f -- $PIDFILE
 fi
 
-gunicorn -D -b 127.0.0.1:9999 -p $PIDFILE gep.wsgi:application
+gunicorn -D -b 127.0.0.1:9999 -p $PIDFILE minimail.wsgi:application

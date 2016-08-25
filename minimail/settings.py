@@ -25,7 +25,7 @@ SECRET_KEY = 'qbyez7uuftgjz(d(1#1at!-o(s98h##^8^1k$4q#ekqgt$^(*+'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["minimail.fullweb.io"]
 
 
 # Application definition
