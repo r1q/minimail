@@ -1,6 +1,7 @@
+import uuid
+
 from django.db import models
 from django.contrib.auth.models import User
-import uuid
 
 
 class List(models.Model):
@@ -11,7 +12,9 @@ class List(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     edited = models.DateTimeField(auto_now=True)
 
+    # Internal usage
     name = models.CharField(max_length=125, blank=True)
+    # Visible to subscribers
     title = models.CharField(max_length=125, blank=True)
     description = models.TextField(blank=True)
     url = models.URLField(max_length=4000, blank=True)
@@ -31,9 +34,6 @@ class List(models.Model):
 class Subscriber(models.Model):
 
     # Meta
-    class Meta:
-        unique_together = ('list', 'email',)
-
     list = models.ForeignKey(List)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     created = models.DateTimeField(auto_now_add=True)
@@ -46,6 +46,9 @@ class Subscriber(models.Model):
     accept_language = models.TextField(blank=True)
     timezone = models.IntegerField(blank=True, null=True)
     ip = models.GenericIPAddressField(blank=True, null=True)
+
+    class Meta:
+        unique_together = ('list', 'email',)
 
     def __str__(self):
         return self.email
