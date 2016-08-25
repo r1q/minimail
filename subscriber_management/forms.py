@@ -1,6 +1,8 @@
 from django.forms import ModelForm
 from django import forms
+
 from subscriber_management.models import List, Subscriber
+
 
 class ListForm(ModelForm):
     class Meta:
