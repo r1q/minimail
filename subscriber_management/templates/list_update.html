@@ -27,7 +27,7 @@
     </div>
     <div class="form-group {% if form.title.errors %}has-error{% endif %}">
       <label for="{{form.description.auto_id}}" class="control-label">{{form.description.label}}</label>
-      <textarea id="{{form.description.auto_id}}" name="{{form.description.name}}" class='form-control 's tabindex='2'>{{form.description.value}}</textarea>
+      <textarea id="{{form.description.auto_id}}" rows=10 name="{{form.description.name}}" class='form-control 's tabindex='2'>{{form.description.value}}</textarea>
       {% for error in form.description.errors %}
         <span class="error-block">{{error}}</span>
       {% endfor %}
@@ -36,6 +36,13 @@
       <label for="{{form.url.auto_id}}" class="control-label">{{form.url.label}}</label>
       <input id="{{form.url.auto_id}}" name="{{form.url.name}}" class='form-control input-lg' tabindex='3' value ='{{form.url.value}}'/>
       {% for error in form.url.errors %}
+        <span class="error-block">{{error}}</span>
+      {% endfor %}
+    </div>
+    <div class="form-group {% if form.success_template.errors %}has-error{% endif %}">
+      <label for="{{form.success_template.auto_id}}" class="control-label">{{form.success_template.label}}</label>
+      <textarea id="{{form.success_template.auto_id}}" rows=10 name="{{form.success_template.name}}" class='form-control 's tabindex='4'>{{form.success_template.value}}</textarea>
+      {% for error in form.success_template.errors %}
         <span class="error-block">{{error}}</span>
       {% endfor %}
     </div>

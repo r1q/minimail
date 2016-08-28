@@ -20,7 +20,7 @@
       </a>
       <p style="margin-top:5px;" class="text-right">
         <a class="btn btn-primary right" href="{% url 'subscriber-management-list-update' item.id %}">{% trans 'Update' %}</a>
-        <button data-delete-url="{% url 'subscriber-management-list-delete' item.pk %}" data-title="{{item.title}}" class="btn btn-danger right" data-toggle="modal" data-target="#list-delete-confirmation" class='text-danger'>
+        <button data-delete-url="{% url 'subscriber-management-list-delete' item.uuid %}" data-title="{{item.title}}" class="btn btn-danger right" data-toggle="modal" data-target="#list-delete-confirmation" class='text-danger'>
           {% trans 'Delete' %}
         </button>
       </p>

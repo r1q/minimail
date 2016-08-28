@@ -49,7 +49,7 @@ class SubscriberListUpdateView(UpdateView):
 
     model = List
     template_name = 'list_update.html'
-    fields = ['image', 'name', 'title', 'description', 'url']
+    fields = ['image', 'name', 'title', 'description', 'url', 'success_template']
     success_url = "/subscribers/"
     success_message = _(" was successfully updated")
 
