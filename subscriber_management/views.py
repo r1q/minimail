@@ -4,9 +4,15 @@ from django.views import View
 import django.db.utils
 from django.utils.translation import ugettext as _
 from django.contrib import messages
+import csv
+from tempfile import NamedTemporaryFile
+from datetime import datetime
+import pytz
 
 from subscriber_management.models import List, Subscriber
 from subscriber_management.forms import ListForm, SubscriberForm
+
+DATE_FORMAT = '%Y-%m-%d %H:%M:%S'
 
 
 class SubscriberListView(ListView):
@@ -28,7 +34,7 @@ class SubscriberCreateView(CreateView):
     template_name = 'list_create.html'
     form_class = ListForm
     success_url = "/subscribers/"
-    success_message = " was successfully created"
+    success_message = _(" was successfully created")
 
     def form_valid(self, form):
         messages.success(self.request, form.instance.name + self.success_message)
@@ -37,6 +43,23 @@ class SubscriberCreateView(CreateView):
 
     def form_invalid(self, form):
         return super(SubscriberCreateView, self).form_valid(form)
+
+
+class SubscriberListUpdateView(UpdateView):
+
+    model = List
+    template_name = 'list_update.html'
+    fields = ['image', 'name', 'title', 'description', 'url']
+    success_url = "/subscribers/"
+    success_message = _(" was successfully updated")
+
+    def form_valid(self, form):
+        messages.success(self.request, form.instance.name + self.success_message)
+        print(form.instance)
+        return super(SubscriberListUpdateView, self).form_valid(form)
+
+    def form_invalid(self, form):
+        return super(SubscriberListUpdateView, self).form_invalid(form)
 
 
 class SubscriberListDeleteView(View):
@@ -51,6 +74,79 @@ class SubscriberListDeleteView(View):
         return redirect('subscriber-management-list')
 
 
+class SubscriberListImportCSV(View):
+
+    success_message = _(" subscriber(s) imported")
+
+    def save_user(self, list_item, row):
+        try:
+            new_subscriber = Subscriber()
+            new_subscriber.list = list_item
+            new_subscriber.email = row['Email Address']
+            name_info = row['Name'].split(' ')
+            if len(name_info) == 2:
+                new_subscriber.first_name = name_info[0]
+                new_subscriber.last_name = name_info[1]
+            elif len(name_info) == 1:
+                new_subscriber.first_name = name_info[0]
+            else:
+                pass
+            if row['TIMEZONE'] != '':
+                new_subscriber.timezone_str = row['TIMEZONE']
+                d = datetime.now(pytz.timezone(row['TIMEZONE']))
+                new_subscriber.timezone = d.utcoffset().total_seconds()/60/60
+            else:
+                new_subscriber.timezone_str = 'UTC'
+                new_subscriber.timezone = 0
+
+            new_subscriber.member_rating = int(row['MEMBER_RATING']) / 5
+            if row['OPTIN_TIME'] != '':
+                new_subscriber.optin_time = datetime.strptime(row['OPTIN_TIME'], DATE_FORMAT)
+            new_subscriber.optin_ip = row['OPTIN_IP']
+            new_subscriber.ip = row['OPTIN_IP']
+            if row['CONFIRM_TIME'] != '':
+                new_subscriber.confim_time = datetime.strptime(row['CONFIRM_TIME'], DATE_FORMAT)
+            new_subscriber.confim_ip = row['CONFIRM_IP']
+            if row['LATITUDE'] != '':
+                new_subscriber.latitude = float(row['LATITUDE'])
+            if row['LONGITUDE'] != '':
+                new_subscriber.longitude = float(row['LONGITUDE'])
+            new_subscriber.cc = row['CC']
+            new_subscriber.region = row['REGION']
+            new_subscriber.notes = row['NOTES']
+            new_subscriber.save()
+        except Exception as e:
+            print(e)
+            return False
+        else:
+            return True
+
+    def get(self, request, uuid):
+        list_item = List.objects.get(uuid=uuid)
+        return render(request, "list_import.html", locals())
+
+    def post(self, request, uuid):
+        list_item = List.objects.get(uuid=uuid)
+        csv_file = request.FILES['csv_file']
+        tmp = NamedTemporaryFile('wb')
+        tmp.write(csv_file.read())
+
+        save_count = 0
+        with open(tmp.name, 'r') as f:
+            reader = csv.DictReader(f)
+            print('file names', reader.fieldnames)
+            for row in reader:
+                if row['Email Address'] == '':
+                    continue
+                if self.save_user(list_item, row) == True:
+                    save_count += 1
+        tmp.close()
+        messages.success(request, str(save_count) + self.success_message)
+        return redirect('subscriber-management-list-subscribers', uuid)
+
+
+
+
 class SubscriberListSubscribersView(ListView):
 
     model = Subscriber
@@ -58,7 +154,7 @@ class SubscriberListSubscribersView(ListView):
 
     def get_queryset(self):
         list_uuid = self.kwargs['uuid']
-        return Subscriber.objects.filter(list__uuid=list_uuid)
+        return Subscriber.objects.filter(list__uuid=list_uuid).order_by('email')
 
     def get_context_data(self, **kwargs):
         context = super(SubscriberListSubscribersView, self).get_context_data(**kwargs)
@@ -68,7 +164,7 @@ class SubscriberListSubscribersView(ListView):
         return context
 
 
-class SubscribeJoin(View):
+class SubscriberJoin(View):
 
     def _get_client_ip(self, req):
         return req.META.get('HTTP_X_FORWARDED_FOR') if req.META.get('HTTP_X_FORWARDED_FOR') else req.META.get('REMOTE_ADDR')
@@ -100,3 +196,13 @@ class SubscribeJoin(View):
             return render(request, "subscriber_join.html", locals())
         else:
             return render(request, "subscriber_join_success.html", locals())
+
+class SubscriberDelete(View):
+
+    success_message = _(" was successfully delete from this list")
+
+    def get(self, request, uuid, subscriber_uuid):
+        subscriber = Subscriber.objects.get(list__uuid=uuid, uuid=subscriber_uuid)
+        messages.success(request, subscriber.email + self.success_message)
+        subscriber.delete()
+        return redirect('subscriber-management-list-subscribers', uuid)
