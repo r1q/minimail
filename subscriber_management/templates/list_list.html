@@ -1,6 +1,12 @@
 {% extends "master.html" %}
 {% load i18n %}
 
+
+{% block title %}
+  Subscribers
+{% endblock %}
+
+
 {% block content %}
   <legend>Subscriber lists</legend>
   {% for item in  object_list %}
@@ -14,12 +20,13 @@
       </a>
       <p style="margin-top:5px;" class="text-right">
         <a class="btn btn-primary right" href="">{% trans 'Update' %}</a>
-        <button data-delete-url="{% url 'subscriber_management_list_delete' item.uuid %}" data-title="{{item.title}}" class="btn btn-danger right" data-toggle="modal" data-target="#list-delete-confirmation" class='text-danger'>
+        <button data-delete-url="{% url 'subscriber-management-list-delete' item.uuid %}" data-title="{{item.title}}" class="btn btn-danger right" data-toggle="modal" data-target="#list-delete-confirmation" class='text-danger'>
           {% trans 'Delete' %}
         </button>
       </p>
     </div>
   {% empty %}
+    <p>
   {% endfor %}
   <p>
     <a class="btn btn-primary" href="{% url 'subscriber-management-create' %}">{% trans 'Create new list' %}</a>
