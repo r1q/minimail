@@ -1,6 +1,12 @@
 {% extends "master.html" %}
 {% load i18n %}
 
+
+{% block title %}
+  Subscribers
+{% endblock %}
+
+
 {% block content %}
   <legend>Subscriber lists</legend>
   {% for item in  object_list %}
@@ -20,6 +26,7 @@
       </p>
     </div>
   {% empty %}
+    <p>
   {% endfor %}
   <p>
     <a class="btn btn-primary" href="{% url 'subscriber-management-create' %}">{% trans 'Create new list' %}</a>
