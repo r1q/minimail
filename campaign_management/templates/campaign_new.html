@@ -81,21 +81,21 @@
         <br />
 
         <h3>3. Template</h3>
-        {% if not form.email_template %}
+        {% if not templates %}
           <div class='alert alert-warning'>
             You don’t have any email template yet.
             <a href="{% url 'template-new' %}">Go create one &raquo;</a>
           </div>
         {% else %}
-        <div class='form-group'>
-          <label for="{{form.email_template.auto_id}}">Select a template:</label>
-          <select id="{{form.email_template.auto_id}}" name="{{form.email_template.name}}" class="form-control">
-          {% for template in templates %}
-          <option value='{{template.id}}'>{{template.name}}</option>
-          {% endfor %}
-          </select>
-          <div class='help-block'>Or <a href='{% url 'template-new' %}'> create a new template</a>.</div>
-        </div>
+          <div class='form-group'>
+            <label for="{{form.email_template.auto_id}}">Select a template:</label>
+            <select id="{{form.email_template.auto_id}}" name="{{form.email_template.name}}" class="form-control">
+            {% for template in templates %}
+            <option value='{{template.id}}'>{{template.name}}</option>
+            {% endfor %}
+            </select>
+            <div class='help-block'>Or <a href='{% url 'template-new' %}'> create a new template</a>.</div>
+          </div>
         {% endif %}
 
 

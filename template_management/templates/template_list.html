@@ -44,7 +44,12 @@
 
     {% empty %}
 
-      <p class='alert alert-warning lead'>{% trans 'No template available for now.' %}</p>
+      <div class='col-lg-12'>
+        <div class='alert alert-warning'>
+          {% trans 'No template available for now.' %}
+          <a href="{% url 'template-new' %}">Go create one &raquo;</a>
+        </div>
+      </div>
 
     {% endfor %}
 
