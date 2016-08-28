@@ -8,29 +8,46 @@
 
 
 {% block content %}
-  <legend>Subscriber lists</legend>
+
+  <div class='row'>
+    <div class='col-lg-6 col-sm-6'>
+      <h3>
+        {% trans "Subscriber Lists" %}
+      </h3>
+    </div>
+    <div class='col-lg-6 col-sm-6 text-right'>
+      <br />
+      <a class='btn btn-default' href='{% url "subscriber-management-create" %}'>{% trans 'Create a new list' %}</a>
+    </div>
+  </div>
+
+  <hr />
+
   {% for item in  object_list %}
     <div class="list-group">
       <a href="{% url 'subscriber-management-list-subscribers' item.uuid %}" class="list-group-item">
-          {{ item.name }}
-          <br>
+        <h4 class='list-group-item-heading'>{{ item.name }}</h4>
+        <p class="list-group-item-text">
           <span class="badge right">{%trans 'Subscribers' %}: {{ item.count_susbscribers }}</span>
-          {{ item.created }}
+          <br />
+          <small class='text-muted'>created: {{ item.created }}</small>
         </p>
       </a>
       <p style="margin-top:5px;" class="text-right">
-        <a class="btn btn-primary right" href="{% url 'subscriber-management-list-update' item.id %}">{% trans 'Update' %}</a>
-        <button data-delete-url="{% url 'subscriber-management-list-delete' item.uuid %}" data-title="{{item.title}}" class="btn btn-danger right" data-toggle="modal" data-target="#list-delete-confirmation" class='text-danger'>
+        <a class="btn btn-primary right btn-sm" href="{% url 'subscriber-management-list-update' item.id %}">
+          {% trans 'Update' %}
+        </a>
+        <button data-delete-url="{% url 'subscriber-management-list-delete' item.uuid %}" data-title="{{item.title}}" class="btn btn-danger btn-sm right" data-toggle="modal" data-target="#list-delete-confirmation">
           {% trans 'Delete' %}
         </button>
       </p>
     </div>
   {% empty %}
-    <p>
+    <div class='alert alert-warning'>
+      No list created yet.
+      <a href="{% url 'subscriber-management-new' %}">Go create one &raquo;</a>
+    </div>
   {% endfor %}
-  <p>
-    <a class="btn btn-primary" href="{% url 'subscriber-management-create' %}">{% trans 'Create new list' %}</a>
-  </p>
 
   <!-- Modal for delete deletion confirmation -->
   <div id='list-delete-confirmation' class="modal" tabindex="-1" role="dialog">
