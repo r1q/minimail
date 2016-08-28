@@ -1,0 +1,44 @@
+{% extends "master.html" %}
+{% load i18n %}
+
+
+{% block content %}
+  <form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <legend>Update {{form.instance.name}}:</legend>
+    <div class="form-group">
+      <label for="{{form.image.auto_id}}">{{form.image.label}}</label>
+      {{form.image}}
+      <!-- <input id="{{form.name.auto_id}}" name="{{form.name.name}}" class='form-control input-lg' autofocus tabindex='0' value ='{{form.name.value}}'/> -->
+    </div>
+    <div class="form-group {% if form.name.errors %}has-error{% endif %}">
+      <label for="{{form.name.auto_id}}" class="control-label">{{form.name.label}}</label>
+      <input id="{{form.name.auto_id}}" name="{{form.name.name}}" class='form-control input-lg' autofocus tabindex='0' value ='{{form.name.value}}'/>
+      {% for error in form.name.errors %}
+        <span class="error-block">{{error}}</span>
+      {% endfor %}
+    </div>
+    <div class="form-group {% if form.title.errors %}has-error{% endif %}">
+      <label for="{{form.title.auto_id}}" class="control-label">{{form.title.label}}</label>
+      <input id="{{form.title.auto_id}}" name="{{form.title.name}}" class='form-control input-lg' tabindex='1' value ='{{form.title.value}}'/>
+      {% for error in form.title.errors %}
+        <span class="error-block">{{error}}</span>
+      {% endfor %}
+    </div>
+    <div class="form-group {% if form.title.errors %}has-error{% endif %}">
+      <label for="{{form.description.auto_id}}" class="control-label">{{form.description.label}}</label>
+      <textarea id="{{form.description.auto_id}}" name="{{form.description.name}}" class='form-control 's tabindex='2'>{{form.description.value}}</textarea>
+      {% for error in form.description.errors %}
+        <span class="error-block">{{error}}</span>
+      {% endfor %}
+    </div>
+    <div class="form-group {% if form.url.errors %}has-error{% endif %}">
+      <label for="{{form.url.auto_id}}" class="control-label">{{form.url.label}}</label>
+      <input id="{{form.url.auto_id}}" name="{{form.url.name}}" class='form-control input-lg' tabindex='3' value ='{{form.url.value}}'/>
+      {% for error in form.url.errors %}
+        <span class="error-block">{{error}}</span>
+      {% endfor %}
+    </div>
+    <button class="btn btn-primary">{% trans 'Update' %}</button>
+  </form>
+{% endblock %}
