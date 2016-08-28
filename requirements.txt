@@ -14,6 +14,7 @@ pytz==2016.6.1
 requests==2.10.0
 requests-oauthlib==0.6.2
 simplejson==3.8.2
+StringGenerator==0.1.9
 six==1.10.0
 wrapt==1.10.8
 yolk3k==0.9

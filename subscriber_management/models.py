@@ -1,8 +1,10 @@
 import uuid
-
 from django.db import models
 from django.contrib.auth.models import User
+from strgen import StringGenerator
 
+def gen_token():
+    return StringGenerator(r'[a-z0-9]{16}').render()
 
 class List(models.Model):
 
@@ -38,6 +40,9 @@ class Subscriber(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     created = models.DateTimeField(auto_now_add=True)
     edited = models.DateTimeField(auto_now=True)
+    token_subscribe = models.CharField(default=gen_token ,max_length=17, blank=True)
+    token_unsubscribe = models.CharField(default=gen_token ,max_length=17, blank=True)
+    validated = models.BooleanField(default=False, blank=True)
 
     email = models.EmailField(max_length=50, blank=True)
     first_name = models.CharField(max_length=50, blank=True)

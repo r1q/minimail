@@ -114,6 +114,7 @@ class SubscriberListImportCSV(View):
             new_subscriber.cc = row['CC']
             new_subscriber.region = row['REGION']
             new_subscriber.notes = row['NOTES']
+            new_subscriber.validated = True
             new_subscriber.save()
         except Exception as e:
             print(e)
