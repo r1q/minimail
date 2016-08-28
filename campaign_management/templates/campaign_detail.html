@@ -1,0 +1,104 @@
+{% extends 'master.html' %}
+{% load i18n %}
+
+
+{% block title %}
+  Campaign "{{ campaign.name }}"
+{% endblock %}
+
+
+{% block content %}
+
+  <div class='row'>
+    <div class='col-lg-6 col-sm-6'>
+      <h2>
+        <a href='{% url 'campaign-list' %}'>{% trans "Campaigns" %}</a>
+        / {{ campaign.name }}
+      </h2>
+    </div>
+  </div>
+
+  <hr />
+
+  <div class='row'>
+
+      <div class='col-lg-8 col-sm-6'>
+        <div class='panel panel-default'>
+          <div class='preview' style='position: relative; min-height: 600px; height:auto; background: #f9f9f9; overflow: hidden;'>
+            <iframe style='border: 0; position: absolute; top: 0; bottom: 0; left: 0; right: 0; z-index: 10; transform: scale(0.90); transform-origin: 0 0; height: 112%; width: 112%;'
+              src='{% url "template-preview" campaign.email_template.id %}'> </iframe>
+            <div class='cover' style='position: absolute; top: 0; bottom: 0; left: 0; right: 0; z-index: 100;'></div>
+          </div>
+        </div>
+      </div>
+
+      <div class='col-lg-4 col-sm-6'>
+
+          <div class='container-fluid'>
+            <ul class='list-unstyled'>
+              <li>
+                <a class='text-primary' href="{% url 'template-preview' campaign.email_template.id %}" target='_blank'>
+                  {% if campaign.is_sent %}
+                    {% trans 'View email sent' %}
+                  {% else %}
+                    {% trans 'View email to be sent' %}
+                  {% endif %}
+                </a>
+              </li>
+              {% if not campaign.is_sent %}
+              <li>
+                <a class='text-primary' href="{% url 'campaign-update' campaign.id %}">
+                  {% trans 'Edit' %}
+                </a>
+              </li>
+              {% endif %}
+              <li>
+                <a href="{% url 'campaign-delete' campaign.id %}" data-toggle="modal" data-target="#campaign-delete-confirmation" class='text-danger'>
+                  {% trans 'Delete' %}
+                </a>
+              </li>
+            </ul>
+            <hr />
+            <ul class='list-unstyled'>
+              <li>
+                <small class='text-muted'>{% trans "created:" %} {{ campaign.created }}</small>
+              </li>
+              <li>
+                <small class='text-muted'>{% trans "last edited:" %} {{ campaign.edited}}</small>
+              </li>
+            </p>
+          </div>
+        </div>
+      </div>
+
+  </div>
+
+  <!-- Modal for delete deletion confirmation -->
+  <div id='campaign-delete-confirmation' class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <form method='post' action='{% url 'campaign-delete' campaign.id %}'>
+          {% csrf_token %}
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Please confirm campaign deletion</h4>
+          </div>
+          <div class="modal-body">
+            <p>
+              <strong>Are you sure you can to delete this campaign?</strong>
+            </p>
+            <ul>
+              <li>All this campaign info will be permanently deleted.</li>
+              <li>The template used to send this campaign will NOT be deleted.</li>
+            </ul>
+          </div>
+          <div class="modal-footer">
+            <a href='javascript:void(0)' type="button" class="btn btn-default" data-dismiss="modal">No, keep it</a>
+            <button type="submit" class="btn btn-danger">Yes, delete it</button>
+          </div>
+        </form>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
+{% endblock %}

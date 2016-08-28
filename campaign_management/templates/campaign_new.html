@@ -1,0 +1,117 @@
+{% extends 'master.html' %}
+{% load staticfiles %}
+{% load i18n %}
+
+
+{% block title %}
+  New campaign
+{% endblock %}
+
+{% block content %}
+
+  <div class='row'>
+    <div class='col-lg-12'>
+      <h2>
+        <a href='{% url 'campaign-list' %}'>{% trans "Campaigns" %}</a>
+        / New campaign
+      </h2>
+    </div>
+  </div>
+
+  <hr />
+
+  <div class='row'>
+    <form method='post'>
+      <div class='col-lg-6'>
+
+        {% csrf_token %}
+
+        <h3>1. Email Setup</h3>
+        <div class="form-group">
+          <label for="{{form.name.auto_id}}">Campaign name:</label>
+          <input id="{{form.name.auto_id}}" name="{{form.name.name}}" class='form-control' tabindex='1' maxlength='{{form.email_from_email.field.max_length}}' />
+          <div class='help-block'>Visible only to you.</div>
+        </div>
+        <div class="form-group">
+          <label for="{{form.email_subject.auto_id}}" class='control-label'>Email subject:</label>
+          <input id="{{form.email_subject.auto_id}}" name="{{form.email_subject.name}}" class='form-control' tabindex='2' maxlength='{{form.email_from_email.field.max_length}}' />
+          <div class='help-block'>Max 150 characters. You can you emojis too.</div>
+        </div>
+        <div class="form-group">
+          <label for="{{form.email_from_name.auto_id}}" class='control-label'>From name:</label>
+          <input id="{{form.email_from_name.auto_id}}" name="{{form.email_from_name.name}}" class='form-control' tabindex='3' maxlength='{{form.email_from_email.field.max_length}}' />
+          <div class='help-block'>The name your recipients will see in the <code>From:</code> field.</div>
+        </div>
+        <div class="form-group">
+          <label for="{{form.email_from_email.auto_id}}" class='control-label'>From email:</label>
+          <input type='email'
+                 id="{{form.email_from_email.auto_id}}"
+                 name="{{form.email_from_email.name}}"
+                 class='form-control'
+                 tabindex='3'
+                 maxlength='{{form.email_from_email.field.max_length}}'/>
+          <div class='help-block'>The email address your recipients will see in the <code>From:</code> field.</div>
+        </div>
+
+        <br />
+
+      </div>
+      <div class='col-lg-6'>
+
+        <h3>2. Recipients</h3>
+        {% if not lists %}
+          <div class='alert alert-warning'>
+            You don’t have an email list yet.
+            <a href="{% url 'subscriber-management-create' %}">Go create one &raquo;</a>
+          </div>
+        {% else %}
+          <div class="form-group">
+            <label for="{{form.email_list.auto_id}}">Select a list:</label>
+            <select id="{{form.email_list.auto_id}}" name="{{form.email_list.name}}" class="form-control">
+            {% for list in lists %}
+            <option value='{{list.id}}'>
+              {{list.name}} &ndash; {{list.count_susbscribers}} subscriber{{list.count_susbscribers|pluralize}}
+            </option>
+            {% endfor %}
+            </select>
+          <div class='help-block'>Or <a href="{% url 'subscriber-management-create' %}"> create a new list</a>.</div>
+          </div>
+        {% endif %}
+
+        <br />
+
+        <h3>3. Template</h3>
+        {% if not form.email_template %}
+          <div class='alert alert-warning'>
+            You don’t have any email template yet.
+            <a href="{% url 'template-new' %}">Go create one &raquo;</a>
+          </div>
+        {% else %}
+        <div class='form-group'>
+          <label for="{{form.email_template.auto_id}}">Select a template:</label>
+          <select id="{{form.email_template.auto_id}}" name="{{form.email_template.name}}" class="form-control">
+          {% for template in templates %}
+          <option value='{{template.id}}'>{{template.name}}</option>
+          {% endfor %}
+          </select>
+          <div class='help-block'>Or <a href='{% url 'template-new' %}'> create a new template</a>.</div>
+        </div>
+        {% endif %}
+
+
+      </div>
+
+      <div class='row'>
+        <div class='col-lg-12'>
+          <br />
+          <br />
+          <br />
+          <button class='btn btn-lg btn-success center-block'>Review campaign</button>
+        </div>
+      </div>
+
+    </form>
+
+  </div>
+
+{% endblock %}

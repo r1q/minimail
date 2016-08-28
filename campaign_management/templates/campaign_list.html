@@ -1,0 +1,53 @@
+{% extends 'master.html' %}
+{% load staticfiles %}
+{% load i18n %}
+
+
+{% block title %}
+  {% trans 'Campaigns' %}
+{% endblock %}
+
+{% block content %}
+
+  <div class='row'>
+    <div class='col-lg-6 col-sm-6'>
+      <h2>
+        {% trans "Campaigns" %}
+      </h2>
+    </div>
+    <div class='col-lg-6 col-sm-6 text-right'>
+      <br />
+      <a class='btn btn-default' href='{% url "campaign-new" %}'>{% trans 'Create a new campaign' %}</a>
+    </div>
+  </div>
+
+  <hr />
+
+  <div class='row'>
+    <div class='col-lg-12'>
+      <div class="list-group">
+      {% for campaign in object_list %}
+        <a href="{% url 'campaign-detail' campaign.id %}" class="list-group-item">
+          <h4 class="list-group-item-heading">
+            {{ campaign.name }}
+          </h4>
+          <p class="list-group-item-text">
+          <strong>Subject:</strong> {{ campaign.email_subject }}
+          <br />
+          <strong>Sent to:</strong> {{ campaign.email_list.count_susbscribers }} subscribers
+          <br />
+          <small class='text-muted'>created: {{ campaign.created }}</small>
+          </p>
+        </a>
+      </div>
+      {% empty %}
+        <div class='alert alert-warning'>
+          No campaign created yet.
+          <a href="{% url 'campaign-new' %}">Go create one &raquo;</a>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+
+
+{% endblock %}
