@@ -45,7 +45,18 @@ class Subscriber(models.Model):
     user_agent = models.TextField(blank=True)
     accept_language = models.TextField(blank=True)
     timezone = models.IntegerField(blank=True, null=True)
+    timezone_str = models.CharField(max_length=50, blank=True)
+    member_rating = models.FloatField(blank=True, null=True)
+    optin_time = models.DateTimeField(blank=True, null=True)
+    optin_ip = models.GenericIPAddressField(blank=True, null=True)
+    confim_time = models.DateTimeField(blank=True, null=True)
+    confim_ip = models.GenericIPAddressField(blank=True, null=True)
+    latitude = models.FloatField(blank=True, null=True)
+    longitude = models.FloatField(blank=True, null=True)
+    cc = models.CharField(max_length=50, blank=True)
+    region = models.CharField(max_length=50, blank=True)
     ip = models.GenericIPAddressField(blank=True, null=True)
+    notes = models.TextField(blank=True)
 
     class Meta:
         unique_together = ('list', 'email',)
