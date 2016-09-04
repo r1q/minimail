@@ -40,7 +40,16 @@
             {% else %}
             <span class='label label-warning'>NOT SENT</span>
             {% endif %}
+            <br />
+            <br />
             <ul class='list-unstyled'>
+              {% if not campaign.is_sent %}
+                <li>
+                  <a class='text-primary' href="{% url 'campaign-review' campaign.id %}">
+                    {% trans 'Review and send' %}
+                  </a>
+                </li>
+              {% endif %}
               <li>
                 <a class='text-primary' href="{% url 'template-preview' campaign.email_template.id %}" target='_blank'>
                   {% if campaign.is_sent %}

@@ -20,7 +20,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'qbyez7uuftgjz(d(1#1at!-o(s98h##^8^1k$4q#ekqgt$^(*+'
+# SECRET_KEY = ''
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -160,6 +160,12 @@ STATICFILES_DIRS = [
 
 SITE_ID = 1
 
+EMAIL_HOST = "localhost" # Overide in local_settings.py
+EMAIL_PORT = 25
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = "" # Goes in local_settings.py
+EMAIL_HOST_PASSPORT = "" # Goes in local_settings.py
+
 ACCOUNT_EMAIL_VERIFICATION = "none"
 ACCOUNT_AUTHENTICATED_LOGIN_REDIRECTS = True
 ACCOUNT_LOGOUT_ON_GET = True
@@ -178,3 +184,10 @@ SOCIALACCOUNT_PROVIDERS = {
         'SCOPE': ['user:email']
     }
 }
+
+
+try:
+  from .local_settings import *
+except ImportError:
+  print("""You need to create local_settings.py in the same directory
+           as settings.py and put SECRET_KEY and other private info""")

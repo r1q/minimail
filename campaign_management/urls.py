@@ -8,6 +8,10 @@ urlpatterns = [
         views.CampaignCreate.as_view(),
         name='campaign-new'),
 
+    url(r'^(?P<pk>\d+)/review',
+        views.CampaignReview.as_view(),
+        name='campaign-review'),
+
     url(r'^(?P<pk>\d+)/edit',
         views.CampaignUpdate.as_view(),
         name='campaign-update'),
@@ -15,6 +19,10 @@ urlpatterns = [
     url(r'^(?P<pk>\d+)/delete',
         views.CampaignDelete.as_view(),
         name='campaign-delete'),
+
+    url(r'^(?P<pk>\d+)/send-test-email',
+        views.send_test_email,
+        name='campaign-send-test-email'),
 
     url(r'^(?P<pk>\d+)',
         views.CampaignDetail.as_view(),
