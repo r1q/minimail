@@ -20,9 +20,9 @@ urlpatterns = [
         views.CampaignDelete.as_view(),
         name='campaign-delete'),
 
-    url(r'^(?P<pk>\d+)/send',
+    url(r'^(?P<pk>\d+)/send-campaign',
         views.send_one_campaign_to_one_list,
-        name='campaign-send'),
+        name='campaign-send-campaign'),
 
     url(r'^(?P<pk>\d+)/send-test-email',
         views.send_test_email,

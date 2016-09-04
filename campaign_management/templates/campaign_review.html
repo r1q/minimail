@@ -68,7 +68,7 @@
 
     <div class='col-lg-5 col-lg-offset-1 col-sm-12'>
 
-      <form action='{% url "campaign-send-test-email" campaign.id %}' method='post'>
+      <form action='{% url "campaign-send-test-email" campaign.pk %}' method='post'>
         {% csrf_token %}
         <div class="form-group">
           <div class="input-group">
@@ -95,7 +95,7 @@
         {% trans 'Schedule'%}
       </a>
 
-      <a href='{% url "campaign-send" campaign.pk %}' class='btn btn-danger'>
+      <a href='{% url "campaign-send-campaign" campaign.pk %}' class='btn btn-danger'>
         {% trans 'Send now to'%}
         {{ campaign.email_list.count_subscribers|intcomma }} {% trans 'subscriber' %}{{campaign.email_list.count_subscribers|pluralize}}
       </a>
