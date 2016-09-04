@@ -169,7 +169,8 @@ def _gen_campaign_emails(campaign):
                                        "",  # body text version
                                        campaign.email_from_email,  # from email
                                        [subscriber.email])  # recipient
-        email.attach_alternative(campaign.html_template, "text/html")
+        email.attach_alternative(campaign.email_template.html_template,
+                                 "text/html")
         # Avoid use list of Object in RAM
         yield email
 
@@ -184,12 +185,11 @@ def send_one_campaign_to_one_list(request, pk):
 
     try:
         campaign = Campaign.objects.select_related('email_template').get(pk=pk)
-        newsletter_emails = _gen_campaign_emails(campaign)
         # Start the SMTP connection
         smtp_connection = get_connection()
         smtp_connection.open()
         # Send all emails
-        for email in newsletter_emails:
+        for email in _gen_campaign_emails(campaign):
             email.send()
         # Close connection
         smtp_connection.close()
@@ -204,6 +204,7 @@ def send_one_campaign_to_one_list(request, pk):
         # Update campaign status
         campaign.is_sent = True
         campaign.is_draft = False
+        campaign.recipient_count = campaign.email_list.count_subscribers()
         campaign.save()
     finally:
         return redirect('campaign-review', pk=pk)

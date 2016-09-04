@@ -21,6 +21,7 @@ class Campaign(models.Model):
     schedule_send = models.DateTimeField(blank=True, null=True)
     # Status
     is_sent = models.BooleanField(default=False)
+    recipient_count = models.PositiveIntegerField(blank=True, null=True)
     is_draft = models.BooleanField(default=True)
     # Metadata
     created = models.DateTimeField(auto_now_add=True)
