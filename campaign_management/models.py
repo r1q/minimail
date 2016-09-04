@@ -18,7 +18,7 @@ class Campaign(models.Model):
     email_subject = models.CharField(max_length=150)
     email_from_name = models.CharField(max_length=100)
     email_from_email = models.CharField(max_length=100)
-    # schedule_send = models.DateTimeField(blank=True)
+    schedule_send = models.DateTimeField(blank=True, null=True)
     # Status
     is_sent = models.BooleanField(default=False)
     is_draft = models.BooleanField(default=True)

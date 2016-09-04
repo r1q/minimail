@@ -42,7 +42,7 @@
           <p class="list-group-item-text">
           <strong>Subject:</strong> {{ campaign.email_subject }}
           <br />
-          <strong>Sent to:</strong> {{ campaign.email_list.count_susbscribers|intcomma }} subscriber{{ campaign.email_list.count_susbscribers|pluralize }}
+          <strong>Sent to:</strong> {{ campaign.email_list.count_subscribers|intcomma }} subscriber{{ campaign.email_list.count_subscribers|pluralize }}
           <br />
           <small class='text-muted'>created: {{ campaign.created }}</small>
           </p>

@@ -30,8 +30,8 @@
           <li class="list-group-item">
             <strong>To recipient list:</strong>
             {{ campaign.email_list }} &mdash;
-            {{campaign.email_list.count_susbscribers|intcomma}}
-            {% trans 'subscriber' %}{{campaign.email_list.count_susbscribers|pluralize}}
+            {{campaign.email_list.count_subscribers|intcomma}}
+            {% trans 'subscriber' %}{{campaign.email_list.count_subscribers|pluralize}}
             <a href='{% url "campaign-update" campaign.id %}'><small>edit</small></a>
           </li>
           <li class="list-group-item">
@@ -97,7 +97,7 @@
 
       <a href='#' class='btn btn-danger'>
         {% trans 'Send now to'%}
-        {{ campaign.email_list.count_susbscribers|intcomma }} {% trans 'subscriber' %}{{campaign.email_list.count_susbscribers|pluralize}}
+        {{ campaign.email_list.count_subscribers|intcomma }} {% trans 'subscriber' %}{{campaign.email_list.count_subscribers|pluralize}}
       </a>
 
     </div>

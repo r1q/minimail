@@ -84,7 +84,7 @@
             <select id="{{form.email_list.auto_id}}" name="{{form.email_list.name}}" class="form-control">
             {% for list in lists %}
             <option value='{{list.id}}' {% if list.id == campaign.email_list.id %}selected{%endif %}>
-              {{list.name}} &mdash; {{list.count_susbscribers}} {% trans 'subscriber' %}{{list.count_susbscribers|pluralize}}
+              {{list.name}} &mdash; {{list.count_subscribers}} {% trans 'subscriber' %}{{list.count_subscribers|pluralize}}
             </option>
             {% endfor %}
             </select>

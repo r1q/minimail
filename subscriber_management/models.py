@@ -3,10 +3,14 @@ from django.db import models
 from django.contrib.auth.models import User
 from strgen import StringGenerator
 
-def gen_token():
+
+def _gen_token():
+    """_gen_token"""
     return StringGenerator(r'[a-z0-9]{16}').render()
 
+
 class List(models.Model):
+    """List"""
 
     # Meta
     user = models.ForeignKey(User)
@@ -20,7 +24,8 @@ class List(models.Model):
     title = models.CharField(max_length=125, blank=True)
     description = models.TextField(blank=True)
     url = models.URLField(max_length=4000, blank=True)
-    image = models.ImageField(upload_to='subscribe_list/images/', null=True, blank=True)
+    image = models.ImageField(upload_to='subscribe_list/images/', null=True,
+                              blank=True)
 
     # custom templates
     subscribe_template = models.TextField(blank=True)
@@ -29,19 +34,23 @@ class List(models.Model):
     def __str__(self):
         return self.name
 
-    def count_susbscribers(self):
+    def count_subscribers(self):
+        """count_subscribers"""
         return Subscriber.objects.filter(list__id=self.id).count()
 
 
 class Subscriber(models.Model):
+    """Subscriber"""
 
     # Meta
     list = models.ForeignKey(List)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     created = models.DateTimeField(auto_now_add=True)
     edited = models.DateTimeField(auto_now=True)
-    token_subscribe = models.CharField(default=gen_token ,max_length=17, blank=True)
-    token_unsubscribe = models.CharField(default=gen_token ,max_length=17, blank=True)
+    token_subscribe = models.CharField(default=_gen_token, max_length=17,
+                                       blank=True)
+    token_unsubscribe = models.CharField(default=_gen_token, max_length=17,
+                                         blank=True)
     validated = models.BooleanField(default=False, blank=True)
 
     email = models.EmailField(max_length=50, blank=True)
