@@ -209,4 +209,4 @@ def send_one_campaign_to_one_list(request, pk):
         campaign.recipient_count = campaign.email_list.count_subscribers()
         campaign.save()
     finally:
-        return redirect('campaign-review', pk=pk)
+        return redirect('campaign-detail', pk=pk)
