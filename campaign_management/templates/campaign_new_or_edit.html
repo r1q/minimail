@@ -4,7 +4,11 @@
 
 
 {% block title %}
-  New campaign
+  {% if campaign %}
+  {% trans "Editing campaign" %} "{{campaign.name}}"
+  {% else %}
+    {% trans "New campaign" %}
+  {% endif %}
 {% endblock %}
 
 {% block content %}
