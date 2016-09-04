@@ -7,7 +7,7 @@
 {% if not object_list %}
   <p>{% trans 'No subscribers' %}</p>
 {% else %}
-  <form method="POST">
+  <form method="POST" action="{% url 'subscriber-management-list-subscribers-bulk' list.uuid %}">
     <table class="table">
       <thead>
         <tr>
@@ -23,7 +23,7 @@
       <tbody>
         {% for item in  object_list %}
           <tr>
-            <td><input type="checkbox" class="item-checkbox" name="item_bulk" value="{{item.uuid}}"/></td>
+            <td><input type="checkbox" class="item-checkbox" name="bulk_item" value="{{item.uuid}}"/></td>
             <td>{{ item.email }}</td>
             <td>{{ item.first_name }}</td>
             <td>{{ item.last_name }}</td>
@@ -48,7 +48,7 @@
         {% endfor %}
       </tbody>
     <table>
-    <button class="btn btn-danger" value="delete">{% trans 'Bulk delete' %}</button>
+    <button class="btn btn-danger" name="bulk_action" value="delete">{% trans 'Bulk delete' %}</button>
   <form>
   <br>
   <br>
