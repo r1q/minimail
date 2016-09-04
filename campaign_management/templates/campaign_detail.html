@@ -49,6 +49,11 @@
                     {% trans 'Review and send' %}
                   </a>
                 </li>
+              {% else %}
+                <li>
+                  {% trans "Sent to" %} {{campaign.recipient_count|default:'0'|intcomma}}
+                  {% trans "subscriber"%}{{campaign.recipient_count|pluralize}}
+                </li>
               {% endif %}
               <li>
                 <a class='text-primary' href="{% url 'template-preview' campaign.email_template.id %}" target='_blank'>
