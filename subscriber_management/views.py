@@ -1,17 +1,22 @@
+"""
+view.py contains all the logic for subscriber lists and associated
+subscribers.
+"""
+
+import csv
+from datetime import datetime
+from tempfile import NamedTemporaryFile
+import pytz
+
+import django.db.utils
 from django.shortcuts import render, redirect
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.views.generic import ListView, CreateView, UpdateView
 from django.views import View
 from django.http import Http404
-import django.db.utils
 from django.utils.translation import ugettext as _
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.decorators.csrf import csrf_exempt
-from django.utils.decorators import method_decorator
-import csv
-from tempfile import NamedTemporaryFile
-from datetime import datetime
-import pytz
 
 from subscriber_management.models import List, Subscriber
 from subscriber_management.forms import ListForm, SubscriberForm
@@ -20,6 +25,10 @@ DATE_FORMAT = '%Y-%m-%d %H:%M:%S'
 
 
 class SubscriberListView(LoginRequiredMixin, ListView):
+
+    """
+    SubscriberListView display subscribers lists that belongs to a user.
+    """
 
     model = List
     template_name = 'list_list.html'
@@ -33,6 +42,10 @@ class SubscriberListView(LoginRequiredMixin, ListView):
 
 
 class SubscriberCreateView(LoginRequiredMixin, CreateView):
+
+    """
+    SubscriberCreateView create a new empty list of subscribers.
+    """
 
     model = List
     template_name = 'list_create.html'
@@ -51,6 +64,10 @@ class SubscriberCreateView(LoginRequiredMixin, CreateView):
 
 class SubscriberListUpdateView(LoginRequiredMixin, UpdateView):
 
+    """
+    SubscriberListUpdateView updates an existing list for subscribers.
+    """
+
     model = List
     template_name = 'list_update.html'
     fields = ['image', 'name', 'title', 'description', 'url', 'success_template']
@@ -68,6 +85,11 @@ class SubscriberListUpdateView(LoginRequiredMixin, UpdateView):
 
 class SubscriberListDeleteView(LoginRequiredMixin, View):
 
+    """
+    SubscriberListDeleteView deletes a subscriber list and all it
+    associated subscribers.
+    """
+
     success_message = " was successfully deleted"
 
     def get(self, request, uuid):
@@ -79,6 +101,11 @@ class SubscriberListDeleteView(LoginRequiredMixin, View):
 
 
 class SubscriberListImportCSV(LoginRequiredMixin, View):
+
+    """
+    SubscriberListImportCSV import and parse a csv file from mailchimp.
+    Subscribers are automatically considered as 'validated'.
+    """
 
     success_message = _(" subscriber(s) imported")
 
@@ -150,9 +177,11 @@ class SubscriberListImportCSV(LoginRequiredMixin, View):
         return redirect('subscriber-management-list-subscribers', uuid)
 
 
-
-
 class SubscriberListSubscribersView(LoginRequiredMixin, ListView):
+
+    """
+    SubscriberListSubscribersView list all the subscribers associated to a list.
+    """
 
     model = Subscriber
     template_name = 'subscriber_list.html'
@@ -171,12 +200,21 @@ class SubscriberListSubscribersView(LoginRequiredMixin, ListView):
 
 class SubscriberJoin(View):
 
+    """
+    SubscriberJoin display a form where a new subscriber can join a list.
+    The new subscriber will have to validate his email by clicking a
+    validation link,
+    """
+
     @csrf_exempt
     def dispatch(self, *args, **kwargs):
         return super(SubscriberJoin, self).dispatch(*args, **kwargs)
 
     def _get_client_ip(self, req):
-        return req.META.get('HTTP_X_FORWARDED_FOR') if req.META.get('HTTP_X_FORWARDED_FOR') else req.META.get('REMOTE_ADDR')
+        if req.META.get('HTTP_X_FORWARDED_FOR'):
+            return req.META.get('HTTP_X_FORWARDED_FOR')
+        else:
+            return req.META.get('REMOTE_ADDR')
 
     def get(self, request, uuid):
         list_item = List.objects.get(uuid=uuid)
@@ -197,7 +235,7 @@ class SubscriberJoin(View):
             else:
                 print(form)
                 raise Exception('invalid form')
-        except (django.db.utils.IntegrityError):
+        except django.db.utils.IntegrityError:
             duplicate_error = _('You are already registered to this list')
             return render(request, "subscriber_join.html", locals())
         except Exception as err:
@@ -208,6 +246,11 @@ class SubscriberJoin(View):
 
 class SubscriberDeleteView(LoginRequiredMixin, View):
 
+    """
+    SubscriberDeleteView manually deletes a subscriber from a list with all it
+    associated informations.
+    """
+
     success_message = _(" was successfully delete from this list")
 
     def get(self, request, uuid, subscriber_uuid):
@@ -217,6 +260,11 @@ class SubscriberDeleteView(LoginRequiredMixin, View):
         return redirect('subscriber-management-list-subscribers', uuid)
 
 class SubscriberUnsubscribeView(View):
+
+    """
+    SubscriberUnsubscribeView allows a subscriber to unsubscribe from a list.
+    All it informations will be deleted.
+    """
 
     @csrf_exempt
     def dispatch(self, *args, **kwargs):
