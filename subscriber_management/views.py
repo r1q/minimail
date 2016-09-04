@@ -9,6 +9,7 @@ from tempfile import NamedTemporaryFile
 import pytz
 
 import django.db.utils
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render, redirect
 from django.views.generic import ListView, CreateView, UpdateView
 from django.views import View
@@ -195,6 +196,22 @@ class SubscriberListSubscribersView(LoginRequiredMixin, ListView):
         list_uuid = self.kwargs['uuid']
         list_item = List.objects.get(uuid=list_uuid)
         context['list'] = list_item
+        context['total_count'] = context['object_list'].count()
+        paginator = Paginator(context['object_list'], 100)
+
+        page = self.request.GET.get('page')
+        try:
+            context['object_list'] = paginator.page(page)
+        except PageNotAnInteger:
+            # If page is not an integer, deliver first page.
+            context['object_list'] = paginator.page(1)
+        except EmptyPage:
+            # If page is out of range (e.g. 9999), deliver last page of results.
+            context['object_list'] = paginator.page(paginator.num_pages)
+        page = int(page)
+        context['paginator'] = paginator
+        context['page_nums'] = range(1, paginator.num_pages+1)
+
         return context
 
 
@@ -244,6 +261,7 @@ class SubscriberJoin(View):
         else:
             return render(request, "subscriber_join_success.html", locals())
 
+
 class SubscriberDeleteView(LoginRequiredMixin, View):
 
     """
@@ -258,6 +276,7 @@ class SubscriberDeleteView(LoginRequiredMixin, View):
         messages.success(request, subscriber.email + self.success_message)
         subscriber.delete()
         return redirect('subscriber-management-list-subscribers', uuid)
+
 
 class SubscriberUnsubscribeView(View):
 
