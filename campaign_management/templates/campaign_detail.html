@@ -1,5 +1,6 @@
 {% extends 'master.html' %}
 {% load i18n %}
+{% load humanize %}
 
 
 {% block title %}
@@ -48,6 +49,11 @@
                   <a class='text-primary' href="{% url 'campaign-review' campaign.id %}">
                     {% trans 'Review and send' %}
                   </a>
+                </li>
+              {% else %}
+                <li>
+                  {% trans "Sent to" %} {{campaign.recipient_count|default:'0'|intcomma}}
+                  {% trans "subscriber"%}{{campaign.recipient_count|pluralize}}
                 </li>
               {% endif %}
               <li>

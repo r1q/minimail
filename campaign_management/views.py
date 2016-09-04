@@ -165,9 +165,11 @@ def _gen_campaign_emails(campaign):
     # If we got a campaign
     subscribers = Subscriber.objects.filter(list=campaign.email_list)
     for subscriber in subscribers:
+        _from = "{} <{}>".format(campaign.email_from_name,
+                                 campaign.email_from_email)
         email = EmailMultiAlternatives(campaign.email_subject,  # email subject
                                        "",  # body text version
-                                       campaign.email_from_email,  # from email
+                                       _from,  # from sender
                                        [subscriber.email])  # recipient
         email.attach_alternative(campaign.email_template.html_template,
                                  "text/html")
@@ -207,4 +209,4 @@ def send_one_campaign_to_one_list(request, pk):
         campaign.recipient_count = campaign.email_list.count_subscribers()
         campaign.save()
     finally:
-        return redirect('campaign-review', pk=pk)
+        return redirect('campaign-detail', pk=pk)
