@@ -1,9 +1,13 @@
 from django.shortcuts import render, redirect
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.views import View
+from django.http import Http404
 import django.db.utils
 from django.utils.translation import ugettext as _
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 import csv
 from tempfile import NamedTemporaryFile
 from datetime import datetime
@@ -166,6 +170,10 @@ class SubscriberListSubscribersView(ListView):
 
 
 class SubscriberJoin(View):
+
+    @csrf_exempt
+    def dispatch(self, *args, **kwargs):
+        return super(SubscriberJoin, self).dispatch(*args, **kwargs)
 
     def _get_client_ip(self, req):
         return req.META.get('HTTP_X_FORWARDED_FOR') if req.META.get('HTTP_X_FORWARDED_FOR') else req.META.get('REMOTE_ADDR')

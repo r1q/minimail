@@ -27,6 +27,10 @@
           <td>{{ item.timezone_str }}</td>
           <td>{{ item.created }}</td>
           <td>
+            <a href="{% url 'subscriber-management-subscriber-unsubscribe' item.uuid item.token_unsubscribe %}"
+              class="btn btn primary">
+              {% trans 'Unsubscribe' %}
+            </a>
             <button
               data-delete-url="{% url 'subscriber-management-subscriber-delete' list.uuid item.uuid %}"
               data-email="{{item.email}}"

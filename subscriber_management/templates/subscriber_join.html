@@ -6,7 +6,6 @@
 
 {% block content %}
 <form method="POST">
-  {% csrf_token %}
   <legend>Subcribe to {{list_item.title}}</legend>
   {% for input in form %}
     {% if input.name != 'timezone' %}
