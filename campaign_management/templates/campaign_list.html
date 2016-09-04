@@ -41,7 +41,7 @@
           </h4>
           <p class="list-group-item-text">
           {% if campaign.is_sent %}
-          Sent to {{campaign.recipient_count|intcomma}} subscriber{{campaign.recipient_count|pluralize}}
+          Sent to {{campaign.recipient_count|default:'0'|intcomma}} subscriber{{campaign.recipient_count|pluralize}}
           <br />
           {% endif %}
           <strong>Subject:</strong> {{ campaign.email_subject }}
