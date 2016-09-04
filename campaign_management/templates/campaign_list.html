@@ -31,6 +31,13 @@
         <a href="{% url 'campaign-detail' campaign.id %}" class="list-group-item">
           <h4 class="list-group-item-heading">
             {{ campaign.name }}
+            <small>
+              {% if campaign.is_sent %}
+              <span class='label label-success'>SENT</span>
+              {% else %}
+              <span class='label label-warning'>NOT SENT</span>
+              {% endif %}
+            </small>
           </h4>
           <p class="list-group-item-text">
           <strong>Subject:</strong> {{ campaign.email_subject }}

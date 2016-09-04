@@ -11,10 +11,10 @@
 
   <div class='row'>
     <div class='col-lg-6 col-sm-6'>
-      <h2>
+      <h3>
         <a href='{% url 'campaign-list' %}'>{% trans "Campaigns" %}</a>
         / {{ campaign.name }}
-      </h2>
+      </h3>
     </div>
   </div>
 
@@ -35,6 +35,11 @@
       <div class='col-lg-4 col-sm-6'>
 
           <div class='container-fluid'>
+            {% if campaign.is_sent %}
+            <span class='label label-success'>SENT</span>
+            {% else %}
+            <span class='label label-warning'>NOT SENT</span>
+            {% endif %}
             <ul class='list-unstyled'>
               <li>
                 <a class='text-primary' href="{% url 'template-preview' campaign.email_template.id %}" target='_blank'>
