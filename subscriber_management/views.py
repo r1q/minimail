@@ -19,7 +19,7 @@ from subscriber_management.forms import ListForm, SubscriberForm
 DATE_FORMAT = '%Y-%m-%d %H:%M:%S'
 
 
-class SubscriberListView(ListView):
+class SubscriberListView(LoginRequiredMixin, ListView):
 
     model = List
     template_name = 'list_list.html'
@@ -32,7 +32,7 @@ class SubscriberListView(ListView):
         return context
 
 
-class SubscriberCreateView(CreateView):
+class SubscriberCreateView(LoginRequiredMixin, CreateView):
 
     model = List
     template_name = 'list_create.html'
@@ -49,7 +49,7 @@ class SubscriberCreateView(CreateView):
         return super(SubscriberCreateView, self).form_valid(form)
 
 
-class SubscriberListUpdateView(UpdateView):
+class SubscriberListUpdateView(LoginRequiredMixin, UpdateView):
 
     model = List
     template_name = 'list_update.html'
@@ -66,7 +66,7 @@ class SubscriberListUpdateView(UpdateView):
         return super(SubscriberListUpdateView, self).form_invalid(form)
 
 
-class SubscriberListDeleteView(View):
+class SubscriberListDeleteView(LoginRequiredMixin, View):
 
     success_message = " was successfully deleted"
 
@@ -78,7 +78,7 @@ class SubscriberListDeleteView(View):
         return redirect('subscriber-management-list')
 
 
-class SubscriberListImportCSV(View):
+class SubscriberListImportCSV(LoginRequiredMixin, View):
 
     success_message = _(" subscriber(s) imported")
 
@@ -152,7 +152,7 @@ class SubscriberListImportCSV(View):
 
 
 
-class SubscriberListSubscribersView(ListView):
+class SubscriberListSubscribersView(LoginRequiredMixin, ListView):
 
     model = Subscriber
     template_name = 'subscriber_list.html'
@@ -206,7 +206,7 @@ class SubscriberJoin(View):
         else:
             return render(request, "subscriber_join_success.html", locals())
 
-class SubscriberDelete(View):
+class SubscriberDeleteView(LoginRequiredMixin, View):
 
     success_message = _(" was successfully delete from this list")
 
@@ -215,3 +215,30 @@ class SubscriberDelete(View):
         messages.success(request, subscriber.email + self.success_message)
         subscriber.delete()
         return redirect('subscriber-management-list-subscribers', uuid)
+
+class SubscriberUnsubscribeView(View):
+
+    @csrf_exempt
+    def dispatch(self, *args, **kwargs):
+        return super(SubscriberUnsubscribeView, self).dispatch(*args, **kwargs)
+
+    def get(self, request, uuid, token):
+        try:
+            subscriber = Subscriber.objects.get(uuid=uuid, token_unsubscribe=token)
+        except Exception as e:
+            raise Http404()
+        else:
+            list = subscriber.list
+            return render(request, "subscriber_unsubscribe.html", locals())
+        raise Http404()
+
+    def post(self, request, uuid, token):
+        try:
+            subscriber = Subscriber.objects.get(uuid=uuid, token_unsubscribe=token)
+            list = subscriber.list
+            subscriber.delete()
+        except Exception as e:
+            raise Http404()
+        else:
+            return render(request, "subscriber_unsubscribe_success.html", locals())
+        raise Http404()
