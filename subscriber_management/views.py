@@ -208,7 +208,6 @@ class SubscriberListSubscribersView(LoginRequiredMixin, ListView):
         except EmptyPage:
             # If page is out of range (e.g. 9999), deliver last page of results.
             context['object_list'] = paginator.page(paginator.num_pages)
-        page = int(page)
         context['paginator'] = paginator
         context['page_nums'] = range(1, paginator.num_pages+1)
 

@@ -7,43 +7,51 @@
 {% if not object_list %}
   <p>{% trans 'No subscribers' %}</p>
 {% else %}
-  <table class="table">
-    <thead>
-      <tr>
-        <th>{% trans 'Email' %}</th>
-        <th>{% trans 'First name' %}</th>
-        <th>{% trans 'Last name' %}</th>
-        <th>{% trans 'Timezone' %}</th>
-        <th>{% trans 'Date join' %}</th>
-        <th>{% trans 'Action' %}</th>
-      <tr>
-    </thead>
-    <tbody>
-      {% for item in  object_list %}
+  <form method="POST">
+    <table class="table">
+      <thead>
         <tr>
-          <td>{{ item.email }}</td>
-          <td>{{ item.first_name }}</td>
-          <td>{{ item.last_name }}</td>
-          <td>{{ item.timezone_str }}</td>
-          <td>{{ item.created }}</td>
-          <td>
-            <a href="{% url 'subscriber-management-subscriber-unsubscribe' item.uuid item.token_unsubscribe %}"
-              class="btn btn primary">
-              {% trans 'Unsubscribe' %}
-            </a>
-            <button
-              data-delete-url="{% url 'subscriber-management-subscriber-delete' list.uuid item.uuid %}"
-              data-email="{{item.email}}"
-              class="btn btn-danger right"
-              data-toggle="modal"
-              data-target="#subscriber-delete-confirmation" class='text-danger'>
-              {% trans 'Delete' %}
-            </button>
-          </td>
-        </tr>
-      {% endfor %}
-    </tbody>
-  <table>
+          <th><input type="checkbox" id="select_all"/></th>
+          <th>{% trans 'Email' %}</th>
+          <th>{% trans 'First name' %}</th>
+          <th>{% trans 'Last name' %}</th>
+          <th>{% trans 'Timezone' %}</th>
+          <th>{% trans 'Date join' %}</th>
+          <th>{% trans 'Action' %}</th>
+        <tr>
+      </thead>
+      <tbody>
+        {% for item in  object_list %}
+          <tr>
+            <td><input type="checkbox" class="item-checkbox" name="item_bulk" value="{{item.uuid}}"/></td>
+            <td>{{ item.email }}</td>
+            <td>{{ item.first_name }}</td>
+            <td>{{ item.last_name }}</td>
+            <td>{{ item.timezone_str }}</td>
+            <td>{{ item.created }}</td>
+            <td>
+              <a href="{% url 'subscriber-management-subscriber-unsubscribe' item.uuid item.token_unsubscribe %}"
+                class="btn btn primary">
+                {% trans 'Unsubscribe' %}
+              </a>
+              <a
+                href="#"
+                data-delete-url="{% url 'subscriber-management-subscriber-delete' list.uuid item.uuid %}"
+                data-email="{{item.email}}"
+                class="btn btn-danger right"
+                data-toggle="modal"
+                data-target="#subscriber-delete-confirmation" class='text-danger'>
+                {% trans 'Delete' %}
+              </a>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    <table>
+    <button class="btn btn-danger" value="delete">{% trans 'Bulk delete' %}</button>
+  <form>
+  <br>
+  <br>
 
   {% if object_list.has_other_pages %}
     <nav aria-label="Page navigation">
@@ -104,6 +112,10 @@
 
 {% block script %}
     <script>
+    $('#select_all').click(function() {
+      var val = $(this).prop('checked')
+      $('.item-checkbox').prop('checked', val)
+    })
     $('[data-delete-url]').click(function() {
       $('#user_email').text($(this).data('email'))
       $('#confirm_delete_subscriber_button').attr('href', $(this).data('delete-url'))
