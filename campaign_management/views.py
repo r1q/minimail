@@ -5,10 +5,10 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
-from django.core.mail import send_mail
+from django.core.mail import send_mail, get_connection, EmailMultiAlternatives
 
 from campaign_management.models import Campaign
-from subscriber_management.models import List
+from subscriber_management.models import List, Subscriber
 from template_management.models import Template
 
 
@@ -128,14 +128,21 @@ def send_test_email(request, pk):
     """
 
     try:
-        email_recipient = request.POST.get('email')
-        campaign = Campaign.objects.select_related('email_template').get(pk=pk)
-        send_mail("[TEST] {}".format(campaign.email_subject),
-                  "",
-                  campaign.email_from_email,
-                  [email_recipient],
-                  fail_silently=False,
-                  html_message=campaign.email_template.html_template)
+        email_recipients = request.POST.get('email').split(',')
+        email_recipients = [email.replace(' ', '')
+                            for email in email_recipients]
+        for count, recipient in enumerate(email_recipients):
+            # Forbid sending to more than 3 recipients
+            if count >= 3:
+                break
+            campaign = Campaign.objects.select_related('email_template')\
+                                       .get(pk=pk)
+            send_mail("[TEST] {}".format(campaign.email_subject),
+                      "",
+                      campaign.email_from_email,
+                      [recipient],
+                      fail_silently=False,
+                      html_message=campaign.email_template.html_template)
     except Exception as ex:
         messages.error(request,
                        "Test email not sent: {}".format(ex),
@@ -143,6 +150,60 @@ def send_test_email(request, pk):
     else:
         messages.success(request,
                          "Test email successfully sent to {}"
-                         .format(email_recipient))
+                         .format(", ".join(email_recipients)))
+    finally:
+        return redirect('campaign-review', pk=pk)
+
+
+def _gen_campaign_emails(campaign):
+    """_make_newsletter_emails
+
+    :param campaign:
+    """
+    if not campaign:
+        return tuple()
+    # If we got a campaign
+    subscribers = Subscriber.objects.filter(list=campaign.email_list)
+    for subscriber in subscribers:
+        email = EmailMultiAlternatives(campaign.email_subject,  # email subject
+                                       "",  # body text version
+                                       campaign.email_from_email,  # from email
+                                       [subscriber.email])  # recipient
+        email.attach_alternative(campaign.html_template, "text/html")
+        # Avoid use list of Object in RAM
+        yield email
+
+
+@login_required
+def send_one_campaign_to_one_list(request, pk):
+    """send_one_newsletter_to_one_list
+
+    :param request:
+    :param pk:
+    """
+
+    try:
+        campaign = Campaign.objects.select_related('email_template').get(pk=pk)
+        newsletter_emails = _gen_campaign_emails(campaign)
+        # Start the SMTP connection
+        smtp_connection = get_connection()
+        smtp_connection.open()
+        # Send all emails
+        for email in newsletter_emails:
+            email.send()
+        # Close connection
+        smtp_connection.close()
+    except Exception as ex:
+        messages.error(request,
+                       "Emails not sent: {}".format(ex),
+                       extra_tags='danger')
+    else:
+        messages.success(request,
+                         "Emails successfully sent to the list {}"
+                         .format(campaign.email_list.name))
+        # Update campaign status
+        campaign.is_sent = True
+        campaign.is_draft = False
+        campaign.save()
     finally:
         return redirect('campaign-review', pk=pk)
