@@ -1,0 +1,13 @@
+{% extends "master.html" %}
+{% load i18n %}
+
+{% block header %}
+{% endblock %}
+
+{% block content %}
+<h1>{% trans 'Are you sure that you want to unsubscribe from' %}{{list.name}}?</h1>
+<form method="POST">
+  <button class="btn btn-primary">{% trans 'Unsubscribe' %}</button>
+</form>
+
+{% endblock %}
