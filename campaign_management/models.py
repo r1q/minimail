@@ -3,7 +3,6 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 
 from subscriber_management.models import List
-from template_management.models import Template
 
 
 class Campaign(models.Model):

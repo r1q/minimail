@@ -6,11 +6,6 @@ from django.contrib.auth.models import User
 from user_management.forms import UserForm, UserExtendForm
 from user_management.models import UserExtend
 
-def home(request):
-    """
-    Default user home page when successfully logged in.
-    """
-    return render(request, "user_management/home.html", locals())
 
 class UserUpdateView(View):
     """
