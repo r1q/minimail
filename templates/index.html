@@ -8,9 +8,26 @@
 
 {% block content %}
 
-  <p class='lead'>
-    Welcome to Minimail.
-  </p>
+  <div class="container">
+    <div class="col-lg-12">
+      <p class='lead'>
+        Welcome to Minimail!
+      </p>
+      <ol>
+        <li>
+          Start by <a href='{% url "subscriber-management-create" %}'>creating a
+          list</a>. A list is where you keep your newsletter&rsquo;s subscribers.
+        </li>
+        <li>
+          Then paste your HTML or text email in a <a href='{% url "template-new" %}'>new template</a>.
+        </li>
+        <li>
+          You&rsquo;re now ready to send your subscribers <a href='{% url "campaign-new" %}'>a first email</a>! 👏
+        </li>
+
+      </ol>
+    </div>
+  </div>
 
 
 {% endblock %}
