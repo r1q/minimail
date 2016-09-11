@@ -6,6 +6,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
 from django.core.mail import send_mail, get_connection, EmailMultiAlternatives
+from django.http.response import HttpResponse
 
 from campaign_management.models import Campaign
 from subscriber_management.models import List, Subscriber
@@ -154,6 +155,17 @@ def send_test_email(request, pk):
         return redirect('campaign-review', pk=pk)
 
 
+@login_required
+def show_campaign_email_preview(request, pk):
+    """show_template_preview
+
+    :param request:
+    :param pk:
+    """
+    campaign = Campaign.objects.get(pk=pk)
+    return HttpResponse(campaign.html_template)
+
+
 def _gen_campaign_emails(campaign):
     """_make_newsletter_emails
 
@@ -209,3 +221,4 @@ def send_one_campaign_to_one_list(request, pk):
         campaign.save()
     finally:
         return redirect('campaign-detail', pk=pk)
+
