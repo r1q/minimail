@@ -15,7 +15,7 @@
 <form>
   <div class="form-group">
     <textarea rows="10" class="form-control" disabled>
-      <form method="POST" action="//minimail.fullweb.io/{{list_item.uuid}}/join">
+      <form method="POST" action="//minimail.fullweb.io/subscribers/list/{{list_item.uuid}}/join">
         <label for="email">Email</label>
         <input name="email" id="email" type="text" tabindex="1" value=""/>
         <div style="position: absolute; left: -5000px;">
@@ -25,7 +25,7 @@
       </form>
     </textarea>
     <textarea rows="10" class="form-control" id="signup_form_snippet" style="position: absolute; left: -9999px;">
-      <form method="POST" action="//minimail.fullweb.io/{{list_item.uuid}}/join">
+      <form method="POST" action="//minimail.fullweb.io/subscribers/list/{{list_item.uuid}}/join">
         <label for="email">Email</label>
         <input name="email" id="email" type="text" tabindex="1" value=""/>
         <div style="position: absolute; left: -5000px;">
