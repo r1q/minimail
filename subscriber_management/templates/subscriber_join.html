@@ -7,6 +7,12 @@
 {% block content %}
 <form method="POST">
   <legend>Subcribe to {{list_item.title}}</legend>
+  {% if list_item.description %}
+    <p class="">{{list_item.description}}</p>
+  {% endif %}
+  {% if list_item.image %}
+    <img src="{{list_item.image}}"/>
+  {% endif %}
   {% for input in form %}
     {% if input.name != 'timezone' %}
       <div class="form-group">

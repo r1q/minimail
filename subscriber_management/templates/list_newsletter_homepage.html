@@ -1,16 +1,12 @@
 {% extends "master.html" %}
 {% load i18n %}
 
-
 {% block content %}
-<legend>
-  {{ list_item.name }} subscribers ({{list_item.count_subscribers}})
-  <a class="btn btn-primary btn-xs pull-right" href="#" data-toggle="modal" data-target="#subscriber_import_csv">{% trans 'Import CSV' %}</a>
-</legend>
+{% include 'list_header.html' %}
 <ul class="nav nav-tabs">
   <li role="presentation"><a href="{% url 'subscriber-management-list-subscribers' list_item.uuid %}">{% trans 'Subscribers' %}</a></li>
   <li role="presentation" class="active"><a href="{% url 'subscriber-management-list-newsletter-homepage' list_item.uuid %}">{% trans 'Newsletter homepage' %}</a></li>
-  <li role="presentation"><a href="{% url 'subscriber-management-list-sign-up-form' list_item.uuid %}">{% trans 'Signup Form' %}</a></li>
+  <li role="presentation"><a href="{% url 'subscriber-management-list-sign-up-form' list_item.uuid %}">{% trans 'Signup form' %}</a></li>
   <li role="presentation"><a href="{% url 'subscriber-management-list-settings' list_item.uuid %}">{% trans 'Settings' %}</a></li>
 </ul>
 <br>
@@ -34,13 +30,13 @@
       <span class="error-block text-danger">{{error}}</span>
     {% endfor %}
   </div>
-  <div class="form-group">
+  <!-- <div class="form-group">
     <label for="{{form_object.url.auto_id}}">{{form_object.url.label}}</label>
     <input type="text" class="form-control" name="{{form_object.url.name}}" id="{{form_object.url.auto_id}}" placeholder="" value="{{form_object.url.value}}">
     {% for error in form_object.url.errors %}
       <span class="error-block text-danger">{{error}}</span>
     {% endfor %}
-  </div>
+  </div> -->
   <hr>
   <div class="form-group">
     <label for="{{form_object.success_template.auto_id}}">{{form_object.success_template.label}}</label>

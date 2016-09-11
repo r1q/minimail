@@ -4,28 +4,34 @@
 
 
 {% block content %}
-<legend>
-  {{ list_item.name }} subscribers ({{list_item.count_subscribers}})
-  <a class="btn btn-primary btn-xs pull-right" href="#" data-toggle="modal" data-target="#subscriber_import_csv">{% trans 'Import CSV' %}</a>
-</legend>
-
+{% include 'list_header.html' %}
 <ul class="nav nav-tabs">
   <li role="presentation" ><a href="{% url 'subscriber-management-list-subscribers' list_item.uuid %}">{% trans 'Subscribers' %}</a></li>
   <li role="presentation"><a href="{% url 'subscriber-management-list-newsletter-homepage' list_item.uuid %}">{% trans 'Newsletter homepage' %}</a></li>
-  <li role="presentation" class="active"><a href="{% url 'subscriber-management-list-sign-up-form' list_item.uuid %}">{% trans 'Signup Form' %}</a></li>
+  <li role="presentation" class="active"><a href="{% url 'subscriber-management-list-sign-up-form' list_item.uuid %}">{% trans 'Signup form' %}</a></li>
   <li role="presentation"><a href="{% url 'subscriber-management-list-settings' list_item.uuid %}">{% trans 'Settings' %}</a></li>
 </ul>
 <br>
 <form>
   <div class="form-group">
-    <textarea rows="10" class="form-control" id="signup_form_snippet">
+    <textarea rows="10" class="form-control" disabled>
       <form method="POST" action="//minimail.fullweb.io/{{list_item.uuid}}/join">
         <label for="email">Email</label>
         <input name="email" id="email" type="text" tabindex="1" value=""/>
         <div style="position: absolute; left: -5000px;">
               <input type="text" name="{{list_item.signup_token}}" tabindex="-1" value="">
         </div>
-        <button type="submit" tabindex="2">{% trans 'Sign Up' %}</button>
+        <button type="submit" tabindex="2">{% trans 'Register' %}</button>
+      </form>
+    </textarea>
+    <textarea rows="10" class="form-control" id="signup_form_snippet" style="position: absolute; left: -9999px;">
+      <form method="POST" action="//minimail.fullweb.io/{{list_item.uuid}}/join">
+        <label for="email">Email</label>
+        <input name="email" id="email" type="text" tabindex="1" value=""/>
+        <div style="position: absolute; left: -5000px;">
+              <input type="text" name="{{list_item.signup_token}}" tabindex="-1" value="">
+        </div>
+        <button type="submit" tabindex="2">{% trans 'Register' %}</button>
       </form>
     </textarea>
   </div>

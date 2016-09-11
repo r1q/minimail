@@ -3,15 +3,11 @@
 
 
 {% block content %}
-<legend>
-  {{ list.name }} subscribers ({{total_count}})
-  <a class="btn btn-primary btn-xs pull-right" href="#" data-toggle="modal" data-target="#subscriber_import_csv">{% trans 'Import CSV' %}</a>
-</legend>
-
+{% include 'list_header.html' %}
 <ul class="nav nav-tabs">
   <li role="presentation" class="active"><a href="{% url 'subscriber-management-list-subscribers' list.uuid %}">{% trans 'Subscribers' %}</a></li>
   <li role="presentation"><a href="{% url 'subscriber-management-list-newsletter-homepage' list.uuid %}">{% trans 'Newsletter homepage' %}</a></li>
-  <li role="presentation"><a href="{% url 'subscriber-management-list-sign-up-form' list.uuid %}">{% trans 'Signup Form' %}</a></li>
+  <li role="presentation"><a href="{% url 'subscriber-management-list-sign-up-form' list.uuid %}">{% trans 'Signup form' %}</a></li>
   <li role="presentation"><a href="{% url 'subscriber-management-list-settings' list.uuid %}">{% trans 'Settings' %}</a></li>
 </ul>
 <br>
@@ -25,7 +21,8 @@
           <th><input type="checkbox" id="select_all"/></th>
           <th>{% trans 'Email' %}</th>
           <th>{% trans 'Name' %}</th>
-          <th>{% trans 'Timezone' %}</th>
+          <th>{% trans 'Location' %}</th>
+          <th>{% trans 'Country' %}</th>
           <th>{% trans 'Date join' %}</th>
           <th>{% trans 'Action' %}</th>
         <tr>
@@ -37,6 +34,7 @@
             <td>{{ item.email }}</td>
             <td>{{ item.full_name }}</td>
             <td>{{ item.timezone_str }}</td>
+            <td>{{ item.cc }}</td>
             <td>{{ item.created }}</td>
             <td>
               <a
