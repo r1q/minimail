@@ -16,12 +16,12 @@
   <div class='row'>
     <div class='col-lg-12'>
       <h3>
-        <a href='{% url 'campaign-list' %}'>{% trans "Campaigns" %}</a>
+        <a href='{% url 'campaign-list' %}'>{% trans "Emails" %}</a>
         {% if campaign %}
         / <a href='{% url 'campaign-detail' campaign.id %}'>{{campaign.name}}</a>
         / Edit
         {% else %}
-        / {% trans "New campaign" %}
+        / {% trans "New email" %}
         {% endif %}
       </h3>
     </div>
@@ -31,27 +31,11 @@
 
   <div class='row'>
     <form method='post'>
-      <div class='col-lg-6'>
+      <div class='col-lg-6 col-lg-offset-3'>
 
         {% csrf_token %}
 
-        <h3>1. Email Setup</h3>
-        <div class="form-group">
-          <label for="{{form.name.auto_id}}">Campaign name:</label>
-          <input id="{{form.name.auto_id}}" name="{{form.name.name}}"
-                 class='form-control' tabindex='1'
-                 maxlength='{{form.name.field.max_length}}'
-                 value='{{form.name.value|default:""}}'/>
-          <div class='help-block'>Visible only to you.</div>
-        </div>
-        <div class="form-group">
-          <label for="{{form.email_subject.auto_id}}" class='control-label'>Email subject:</label>
-          <input id="{{form.email_subject.auto_id}}"
-                 name="{{form.email_subject.name}}" class='form-control' tabindex='2'
-                 maxlength='{{form.email_subject.field.max_length}}'
-                 value='{{form.email_subject.value|default:""}}'/>
-          <div class='help-block'>Max 150 characters. You can you emojis too.</div>
-        </div>
+        <h3>Email Header</h3>
         <div class="form-group">
           <label for="{{form.email_from_name.auto_id}}" class='control-label'>From name:</label>
           <input id="{{form.email_from_name.auto_id}}" name="{{form.email_from_name.name}}" class='form-control'
@@ -70,21 +54,23 @@
                  value='{{form.email_from_email.value|default:""}}'/>
           <div class='help-block'>The email address your recipients will see in the <code>From:</code> field.</div>
         </div>
-
-        <br />
-
-      </div>
-      <div class='col-lg-6'>
-
-        <h3>2. Recipients</h3>
+        <div class="form-group">
+          <label for="{{form.email_subject.auto_id}}" class='control-label'>Email subject:</label>
+          <input id="{{form.email_subject.auto_id}}"
+                 name="{{form.email_subject.name}}" class='form-control' tabindex='2'
+                 maxlength='{{form.email_subject.field.max_length}}'
+                 value='{{form.email_subject.value|default:""}}'/>
+          <div class='help-block'>Max 150 characters. You can you emojis too.</div>
+        </div>
+        <div class="form-group">
+          <label for="{{form.email_list.auto_id}}">To recipients:</label>
         {% if not lists %}
-          <div class='alert alert-warning'>
-            You don’t have an email list yet.
-            <a href="{% url 'subscriber-management-create' %}">Go create one &raquo;</a>
-          </div>
+          <textarea id='{{form.email_list.auto_id}}' class='form-control'
+            rows='3' placeholder='john@doe.com, John Doe
+janet@gmail.com, Janet Dupont'></textarea>
+          <div class='help-block'>Max 100 subscribers, one subscriber per
+            line.<br /><a href="{% url 'subscriber-management-create' %}">Create a new list for more subscribers</a>.</div>
         {% else %}
-          <div class="form-group">
-            <label for="{{form.email_list.auto_id}}">Select a list:</label>
             <select id="{{form.email_list.auto_id}}" name="{{form.email_list.name}}" class="form-control">
             {% for list in lists %}
             <option value='{{list.id}}' {% if list.id == campaign.email_list.id %}selected{%endif %}>
@@ -93,46 +79,15 @@
             {% endfor %}
             </select>
           <div class='help-block'>Or <a href="{% url 'subscriber-management-create' %}"> create a new list</a>.</div>
-          </div>
         {% endif %}
-
-        <br />
-
-        <h3>3. Template</h3>
-        {% if not templates %}
-          <div class='alert alert-warning'>
-            You don’t have any email template yet.
-            <a href="{% url 'template-new' %}">Go create one &raquo;</a>
-          </div>
-        {% else %}
-          <div class='form-group'>
-            <label for="id_template">Select a template:</label>
-            <select id="id_template" name="template" class="form-control">
-            {% for template in templates %}
-            <option value='{{template.id}}' {% if template.id == campaign.email_template.id %}selected{%endif %}>
-              {{template.name}}
-            </option>
-            {% endfor %}
-            </select>
-            <div class='help-block'>Or <a href='{% url 'template-new' %}'> create a new template</a>.</div>
-          </div>
-          <div class="checkbox">
-            <label>
-              <input type="checkbox" name='inline_css' checked />
-              Inline CSS styles automatically <small class='text-muted'>(recommended)</small>
-            </label>
-          </div>
-        {% endif %}
-
+        </div>
 
       </div>
 
       <div class='row'>
-        <div class='col-lg-12'>
-          <br />
-          <br />
-          <br />
-          <button class='btn btn-lg btn-success center-block'>Save and review campaign</button>
+        <div class='col-lg-6 col-lg-offset-3'>
+          <hr />
+          <button class='btn btn-success pull-right'>Next: <strong>Compose Email</strong> &raquo;</button>
         </div>
       </div>
 

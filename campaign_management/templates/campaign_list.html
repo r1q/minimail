@@ -13,12 +13,12 @@
   <div class='row'>
     <div class='col-lg-6 col-sm-6'>
       <h3>
-        {% trans "Campaigns" %}
+        {% trans "Emails" %}
       </h3>
     </div>
     <div class='col-lg-6 col-sm-6 text-right'>
       <br />
-      <a class='btn btn-default' href='{% url "campaign-new" %}'>{% trans 'Create a new campaign' %}</a>
+      <a class='btn btn-default' href='{% url "campaign-new" %}'>{% trans 'Compose email' %}</a>
     </div>
   </div>
 
@@ -54,8 +54,8 @@
           </a>
         {% empty %}
           <div class='alert alert-warning'>
-            No campaign created yet.
-            <a href="{% url 'campaign-new' %}">Go create one &raquo;</a>
+            No email composed yet.
+            <a href="{% url 'campaign-new' %}">Go compose one &raquo;</a>
           </div>
         {% endfor %}
       </div>

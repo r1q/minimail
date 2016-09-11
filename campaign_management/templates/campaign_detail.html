@@ -27,7 +27,7 @@
         <div class='panel panel-default'>
           <div class='preview' style='position: relative; min-height: 600px; height:auto; background: #f9f9f9; overflow: hidden;'>
             <iframe style='border: 0; position: absolute; top: 0; bottom: 0; left: 0; right: 0; z-index: 10; transform: scale(0.90); transform-origin: 0 0; height: 112%; width: 112%;'
-              src='{% url "template-preview" campaign.email_template.id %}'> </iframe>
+              src='{% url "campaign-email-preview" campaign.id %}'> </iframe>
             <div class='cover' style='position: absolute; top: 0; bottom: 0; left: 0; right: 0; z-index: 100;'></div>
           </div>
         </div>
@@ -57,7 +57,7 @@
                 </li>
               {% endif %}
               <li>
-                <a class='text-primary' href="{% url 'template-preview' campaign.email_template.id %}" target='_blank'>
+                <a class='text-primary' href="{% url 'campaign-email-preview' campaign.id %}" target='_blank'>
                   {% if campaign.is_sent %}
                     {% trans 'View email sent' %}
                   {% else %}

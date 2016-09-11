@@ -12,7 +12,7 @@ class Campaign(models.Model):
     author = models.ForeignKey(User)
     email_list = models.ForeignKey(List)
     # Core info
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, blank=True)
     email_subject = models.CharField(max_length=150)
     email_from_name = models.CharField(max_length=100)
     email_from_email = models.CharField(max_length=100)

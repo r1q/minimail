@@ -8,6 +8,10 @@ urlpatterns = [
         views.CampaignCreate.as_view(),
         name='campaign-new'),
 
+    url(r'^(?P<pk>\d+)/email-preview',
+        views.show_campaign_email_preview,
+        name='campaign-email-preview'),
+
     url(r'^(?P<pk>\d+)/review',
         views.CampaignReview.as_view(),
         name='campaign-review'),
