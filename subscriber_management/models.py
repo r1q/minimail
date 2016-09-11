@@ -40,6 +40,10 @@ class List(models.Model):
         """count_subscribers"""
         return Subscriber.objects.filter(list__id=self.id).count()
 
+    def signup_token(self):
+        t = str(self.uuid)+"_"+self.token
+        return t.replace("-","_", -1)
+
 
 class Subscriber(models.Model):
     """Subscriber"""
@@ -79,3 +83,6 @@ class Subscriber(models.Model):
 
     def __str__(self):
         return self.email
+
+    def full_name(self):
+        return self.first_name+" "+self.last_name

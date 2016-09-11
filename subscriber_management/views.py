@@ -84,6 +84,16 @@ class SubscriberListUpdateView(LoginRequiredMixin, UpdateView):
         return super(SubscriberListUpdateView, self).form_invalid(form)
 
 
+class SubscriberListSignUpForm(LoginRequiredMixin, View):
+
+    """
+    SubscriberListSignUpForm displays the signup form
+    """
+
+    def get(self, request, uuid):
+        list_item = List.objects.get(uuid=uuid)
+        return render(request, "subscriber_signup_form.html", locals())
+
 class SubscriberListDeleteView(LoginRequiredMixin, View):
 
     """
