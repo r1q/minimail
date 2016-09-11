@@ -37,14 +37,6 @@
           <small class='text-muted'>created: {{ item.created }}</small>
         </p>
       </a>
-      <p style="margin-top:5px;" class="text-right">
-        <a class="btn btn-primary right btn-sm" href="{% url 'subscriber-management-list-update' item.id %}">
-          {% trans 'Update' %}
-        </a>
-        <button data-delete-url="{% url 'subscriber-management-list-delete' item.uuid %}" data-title="{{item.title}}" class="btn btn-danger btn-sm right" data-toggle="modal" data-target="#list-delete-confirmation">
-          {% trans 'Delete' %}
-        </button>
-      </p>
     </div>
   {% empty %}
     <div class='alert alert-warning'>
