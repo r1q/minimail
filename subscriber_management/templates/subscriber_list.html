@@ -50,8 +50,8 @@
           </tr>
         {% endfor %}
       </tbody>
-    <table>
-    <button class="btn btn-danger" name="bulk_action" value="delete" disabled>{% trans 'Bulk delete' %}</button>
+    </table>
+    <button class="btn btn-danger" data-toggle="modal"  name="bulk_action" data-target="#subscriber-delete-bulk-confirmation" disabled>{% trans 'Bulk delete' %}</button>
   <form>
   <br>
   <br>
@@ -87,6 +87,33 @@
 
 {% include 'import_csv.html' %}
 
+<div id='subscriber-delete-bulk-confirmation' class="modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <form method='post' action='{% url "subscriber-management-list-subscribers-bulk" list.uuid %}'>
+        {% csrf_token %}
+        <input type="hidden" name="user_list" value=""/>
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title">Please confirm subscriber deletion from {{list.name}}</h4>
+        </div>
+        <div class="modal-body">
+          <p>
+            <strong>Are you sure you can to delete the selected subscribers?</strong>
+          </p>
+          <ul>
+            <li>All the information about them will be lost forever.</li>
+          </ul>
+        </div>
+        <div class="modal-footer">
+          <a href='javascript:void(0)' type="button" class="btn btn-default" data-dismiss="modal">No, keep it</a>
+          <button type="submit" class="btn btn-danger">Yes, delete it</button>
+        </div>
+      </form>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div>
+
 <div id='subscriber-delete-confirmation' class="modal" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -117,6 +144,7 @@
 {% block script %}
     <script>
     function bulkButton() {
+      buildBulkDeleteList()
       var items = $('.item-checkbox').get()
       $('[name="bulk_action"]').prop('disabled', true)
       for (var i = 0; i < items.length; i++) {
@@ -126,6 +154,21 @@
         }
       }
     }
+
+    function buildBulkDeleteList() {
+      var users = []
+      var items = $('.item-checkbox').get()
+      for (var i = 0; i < items.length; i++) {
+        if ($(items[i]).prop('checked') == true) {
+          users.push($(items[i]).val())
+        }
+      }
+      $('[name="user_list"]').val(JSON.stringify(users))
+    }
+
+    $('[name="bulk_action"]').click(function (ev) {
+      ev.preventDefault()
+    })
 
     $('#select_all').click(function() {
       var val = $(this).prop('checked')

@@ -7,6 +7,7 @@ import csv
 from datetime import datetime
 from tempfile import NamedTemporaryFile
 import pytz
+import json
 
 import django.db.utils
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -253,17 +254,15 @@ class SubscriberListSubscribersView(LoginRequiredMixin, ListView):
 class SubscriberListSubscribersBulkView(LoginRequiredMixin, View):
 
     def post(self, request, uuid):
-        if 'bulk_action' not in request.POST:
+        print(request.POST)
+        if 'user_list' not in request.POST:
             return redirect('subscriber-management-list-subscribers', uuid)
-        if 'bulk_item' not in request.POST:
-            return redirect('subscriber-management-list-subscribers', uuid)
-
-        if request.POST['bulk_action'] == 'delete':
-            for subscriber_uuid in request.POST.getlist('bulk_item'):
-                try:
-                    Subscriber.objects.get(list__uuid=uuid, uuid=subscriber_uuid).delete()
-                except:
-                    pass
+        subs = json.loads(request.POST['user_list'])
+        for subscriber_uuid in subs:
+            try:
+                Subscriber.objects.get(list__uuid=uuid, uuid=subscriber_uuid).delete()
+            except:
+                pass
         return redirect('subscriber-management-list-subscribers', uuid)
 
 class SubscriberJoin(View):
