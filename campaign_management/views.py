@@ -56,9 +56,8 @@ class CampaignReview(LoginRequiredMixin, DetailView):
 class CampaignCreate(LoginRequiredMixin, CreateView):
     """CampaignCreate"""
     model = Campaign
-    fields = ['email_list', 'email_template', 'name', 'email_subject',
-              'email_from_name', 'email_from_email', 'email_list',
-              'email_template']
+    fields = ['email_list', 'name', 'email_subject',
+              'email_from_name', 'email_from_email', 'email_list']
     template_name = 'campaign_new_or_edit.html'
 
     def get_context_data(self, **kwargs):

@@ -106,8 +106,8 @@
           </div>
         {% else %}
           <div class='form-group'>
-            <label for="{{form.email_template.auto_id}}">Select a template:</label>
-            <select id="{{form.email_template.auto_id}}" name="{{form.email_template.name}}" class="form-control">
+            <label for="id_template">Select a template:</label>
+            <select id="id_template" name="template" class="form-control">
             {% for template in templates %}
             <option value='{{template.id}}' {% if template.id == campaign.email_template.id %}selected{%endif %}>
               {{template.name}}
@@ -115,6 +115,12 @@
             {% endfor %}
             </select>
             <div class='help-block'>Or <a href='{% url 'template-new' %}'> create a new template</a>.</div>
+          </div>
+          <div class="checkbox">
+            <label>
+              <input type="checkbox" name='inline_css' checked />
+              Inline CSS styles automatically <small class='text-muted'>(recommended)</small>
+            </label>
           </div>
         {% endif %}
 
