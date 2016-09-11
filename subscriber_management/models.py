@@ -26,6 +26,8 @@ class List(models.Model):
     url = models.URLField(max_length=4000, blank=True)
     image = models.ImageField(upload_to='subscribe_list/images/', null=True,
                               blank=True)
+    token = models.CharField(default=_gen_token, max_length=17,
+                                       blank=True)
 
     # custom templates
     subscribe_template = models.TextField(blank=True)
