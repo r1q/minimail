@@ -290,6 +290,10 @@ class SubscriberJoin(View):
 
     def post(self, request, uuid):
         list_item = List.objects.get(uuid=uuid)
+        if list_item.signup_token() in request.POST:
+            if request.POST[list_item.signup_token()] != "":
+                return render(request, "subscriber_join_success.html", locals())
+
         subscriber_item = Subscriber()
         form = SubscriberForm(request.POST, instance=subscriber_item)
         try:

@@ -30,6 +30,9 @@
   {% if duplicate_error %}
     <div class="alert alert-danger" role="alert">{{duplicate_error}}</div>
   {% endif %}
+  <div style="position: absolute; left: -5000px;">
+        <input type="text" name="{{list_item.signup_token}}" tabindex="-1" value="">
+  </div>
   <button class="btn btn-primary">{% trans 'Subscribe' %}</button>
 </form>
 <script>
