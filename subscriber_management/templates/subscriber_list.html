@@ -5,7 +5,7 @@
 {% block content %}
 <legend>
   {{ list.name }} subscribers ({{total_count}})
-  <a class="btn btn-primary btn-xs pull-right" href="{% url 'subscriber-management-list-import' list.uuid %}">{% trans 'Import CSV' %}</a>
+  <a class="btn btn-primary btn-xs pull-right" href="#" data-toggle="modal" data-target="#subscriber_import_csv">{% trans 'Import CSV' %}</a>
 </legend>
 
 <ul class="nav nav-tabs">
@@ -87,7 +87,7 @@
   {% endif %}
 {% endif %}
 
-
+{% include 'import_csv.html' %}
 
 <div id='subscriber-delete-confirmation' class="modal" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
@@ -113,6 +113,7 @@
       </form>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
+</div>
 {% endblock %}
 
 {% block script %}

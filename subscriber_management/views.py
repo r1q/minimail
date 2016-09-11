@@ -230,6 +230,7 @@ class SubscriberListSubscribersView(LoginRequiredMixin, ListView):
         context = super(SubscriberListSubscribersView, self).get_context_data(**kwargs)
         list_uuid = self.kwargs['uuid']
         list_item = List.objects.get(uuid=list_uuid)
+        context['list_item'] = list_item
         context['list'] = list_item
         context['total_count'] = context['object_list'].count()
         paginator = Paginator(context['object_list'], 100)
