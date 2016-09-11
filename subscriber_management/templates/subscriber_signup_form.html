@@ -13,7 +13,7 @@
   <li role="presentation" ><a href="{% url 'subscriber-management-list-subscribers' list_item.uuid %}">{% trans 'Subscribers' %}</a></li>
   <li role="presentation"><a href="">{% trans 'Newsletter homepage' %}</a></li>
   <li role="presentation" class="active"><a href="#">{% trans 'Signup Form' %}</a></li>
-  <li role="presentation"><a href="/">{% trans 'Settings' %}</a></li>
+  <li role="presentation"><a href="{% url 'subscriber-management-list-settings' list_item.uuid %}">{% trans 'Settings' %}</a></li>
 </ul>
 <br>
 <form>

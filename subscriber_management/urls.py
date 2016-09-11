@@ -8,11 +8,11 @@ urlpatterns = [
     url(r'^list/(?P<uuid>[^/]+)/signup$',views.SubscriberListSignUpForm.as_view(), name='subscriber-management-list-sign-up-form'),
     url(r'^list/(?P<uuid>[^/]+)/bulk$',views.SubscriberListSubscribersBulkView.as_view(), name='subscriber-management-list-subscribers-bulk'),
     url(r'^list/(?P<uuid>[^/]+)/delete$',views.SubscriberListDeleteView.as_view(), name='subscriber-management-list-delete'),
-    url(r'^list/(?P<pk>\d+)/edit',views.SubscriberListUpdateView.as_view(), name='subscriber-management-list-update'),
+    url(r'^list/(?P<uuid>[^/]+)/settings',views.SubscriberListSettingsView.as_view(), name='subscriber-management-list-settings'),
     url(r'^list/(?P<uuid>[^/]+)/join$',views.SubscriberJoin.as_view(), name='subscriber-management-join'),
     url(r'^list/(?P<uuid>[^/]+)/import$',views.SubscriberListImportCSV.as_view(), name='subscriber-management-list-import'),
     url(r'^list/(?P<uuid>[^/]+)/subscriber/(?P<subscriber_uuid>[^/]+)/delete',views.SubscriberDeleteView.as_view(), name='subscriber-management-subscriber-delete'),
-    url(r'^create$',views.SubscriberCreateView.as_view(), name='subscriber-management-create'),
+    url(r'^create$',views.SubscriberListCreateView.as_view(), name='subscriber-management-create'),
     url(r'^subscriber/(?P<uuid>[^/]+)/unsubscribe/(?P<token>[^/]+)$',views.SubscriberUnsubscribeView.as_view(), name='subscriber-management-subscriber-unsubscribe'),
 
 ]

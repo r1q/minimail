@@ -20,7 +20,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.decorators.csrf import csrf_exempt
 
 from subscriber_management.models import List, Subscriber
-from subscriber_management.forms import ListForm, SubscriberForm
+from subscriber_management.forms import ListForm, SubscriberForm, ListSettings
 
 DATE_FORMAT = '%Y-%m-%d %H:%M:%S'
 
@@ -42,7 +42,7 @@ class SubscriberListView(LoginRequiredMixin, ListView):
         return context
 
 
-class SubscriberCreateView(LoginRequiredMixin, CreateView):
+class SubscriberListCreateView(LoginRequiredMixin, CreateView):
 
     """
     SubscriberCreateView create a new empty list of subscribers.
@@ -57,31 +57,33 @@ class SubscriberCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         messages.success(self.request, form.instance.name + self.success_message)
         form.instance.user = self.request.user
-        return super(SubscriberCreateView, self).form_valid(form)
+        return super(SubscriberListCreateView, self).form_valid(form)
 
     def form_invalid(self, form):
-        return super(SubscriberCreateView, self).form_valid(form)
+        return super(SubscriberListCreateView, self).form_valid(form)
 
 
-class SubscriberListUpdateView(LoginRequiredMixin, UpdateView):
+class SubscriberListSettingsView(LoginRequiredMixin, View):
 
     """
-    SubscriberListUpdateView updates an existing list for subscribers.
+    SubscriberListSettingsView updates an existing list for subscribers.
     """
 
-    model = List
-    template_name = 'list_update.html'
-    fields = ['image', 'name', 'title', 'description', 'url', 'success_template']
-    success_url = "/subscribers/"
     success_message = _(" was successfully updated")
 
-    def form_valid(self, form):
-        messages.success(self.request, form.instance.name + self.success_message)
-        print(form.instance)
-        return super(SubscriberListUpdateView, self).form_valid(form)
+    def get(self, request, uuid):
+        list_item = List.objects.get(uuid=uuid)
+        form_object = ListSettings(instance=list_item)
+        return render(request, "list_settings.html", locals())
 
-    def form_invalid(self, form):
-        return super(SubscriberListUpdateView, self).form_invalid(form)
+    def post(self, request, uuid):
+        list_item = List.objects.get(uuid=uuid)
+        form_object = ListSettings(request.POST, instance=list_item)
+        if form_object.is_valid():
+            messages.success(self.request, form_object.instance.name + self.success_message)
+            form_object.save()
+            return redirect('subscriber-management-list-settings', uuid)
+        return render(request, "list_settings.html", locals())
 
 
 class SubscriberListSignUpForm(LoginRequiredMixin, View):

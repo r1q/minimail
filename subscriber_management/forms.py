@@ -26,3 +26,11 @@ class SubscriberForm(ModelForm):
 
     email = forms.EmailField(widget=forms.TextInput(attrs={'class':'form-control'}), required=True)
     timezone = forms.IntegerField(widget=forms.TextInput(attrs={'type':'hidden'}), required=True)
+
+class ListSettings(ModelForm):
+    class Meta:
+        model = List
+        localized_fields = ('name',)
+        fields = ('name',)
+
+    name = forms.CharField(required=True)
