@@ -65,8 +65,6 @@ class CampaignCreate(LoginRequiredMixin, CreateView):
         # Call the base implementation first to get a context
         context = super(CampaignCreate, self).get_context_data(**kwargs)
         context['lists'] = List.objects.filter(user=self.request.user)
-        context['templates'] = Template.objects\
-                                       .filter(author=self.request.user)
         return context
 
     def form_valid(self, form):
