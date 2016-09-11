@@ -14,8 +14,12 @@
   <li role="presentation"><a href="{% url 'subscriber-management-list-settings' list_item.uuid %}">{% trans 'Settings' %}</a></li>
 </ul>
 <br>
-<form method="POST">
+<form method="POST" enctype="multipart/form-data">
   {% csrf_token %}
+  <div class="form-group">
+    <label for="{{form_object.image.auto_id}}">{{form_object.image.label}}</label>
+    {{form_object.image}}
+  </div>
   <div class="form-group">
     <label for="{{form_object.title.auto_id}}">{{form_object.title.label}}</label>
     <input type="text" class="form-control" name="{{form_object.title.name}}" id="{{form_object.title.auto_id}}" placeholder="" value="{{form_object.title.value}}">

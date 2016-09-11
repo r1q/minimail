@@ -38,8 +38,7 @@ class ListSettings(ModelForm):
 class ListNewsletterHomepage(ModelForm):
     class Meta:
         model = List
-        localized_fields = ('title', 'description', 'url', 'success_template',)
-        fields = ('title', 'description', 'url', 'success_template',)
+        localized_fields = ('image', 'title', 'description', 'url', 'success_template',)
+        fields = ('image', 'title', 'description', 'url', 'success_template',)
 
     title = forms.CharField(required=True)
-    description = forms.CharField(required=True)
