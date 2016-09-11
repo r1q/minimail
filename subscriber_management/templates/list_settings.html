@@ -9,7 +9,7 @@
 </legend>
 <ul class="nav nav-tabs">
   <li role="presentation"><a href="{% url 'subscriber-management-list-subscribers' list_item.uuid %}">{% trans 'Subscribers' %}</a></li>
-  <li role="presentation"><a href="#">{% trans 'Newsletter homepage' %}</a></li>
+  <li role="presentation"><a href="{% url 'subscriber-management-list-newsletter-homepage' list_item.uuid %}">{% trans 'Newsletter homepage' %}</a></li>
   <li role="presentation"><a href="{% url 'subscriber-management-list-sign-up-form' list_item.uuid %}">{% trans 'Signup Form' %}</a></li>
   <li role="presentation" class="active"><a href="{% url 'subscriber-management-list-settings' list_item.uuid %}">{% trans 'Settings' %}</a></li>
 </ul>
@@ -17,7 +17,7 @@
 <form method="POST" class="form-inline">
     {% csrf_token %}
   <div class="form-group">
-    <label for="{{form_object.name.auto_id}}">List name</label>
+    <label for="{{form_object.name.auto_id}}">{{form_object.name.label}}</label>
     <input type="text" class="form-control" name="{{form_object.name.name}}" id="{{form_object.name.auto_id}}" placeholder="" value="{{form_object.name.value}}">
   </div>
   <button type="submit" class="btn btn-default">{% trans 'Save' %}</button>

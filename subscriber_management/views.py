@@ -20,7 +20,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.decorators.csrf import csrf_exempt
 
 from subscriber_management.models import List, Subscriber
-from subscriber_management.forms import ListForm, SubscriberForm, ListSettings
+from subscriber_management.forms import ListForm, SubscriberForm, \
+    ListSettings, ListNewsletterHomepage
 
 DATE_FORMAT = '%Y-%m-%d %H:%M:%S'
 
@@ -84,6 +85,28 @@ class SubscriberListSettingsView(LoginRequiredMixin, View):
             form_object.save()
             return redirect('subscriber-management-list-settings', uuid)
         return render(request, "list_settings.html", locals())
+
+class SubscriberListNewsletterHomepageView(LoginRequiredMixin, View):
+
+    """
+    SubscriberListNewsletterHomepageView updates an existing list for subscribers.
+    """
+
+    success_message = _(" was successfully updated")
+
+    def get(self, request, uuid):
+        list_item = List.objects.get(uuid=uuid)
+        form_object = ListNewsletterHomepage(instance=list_item)
+        return render(request, "list_newsletter_homepage.html", locals())
+
+    def post(self, request, uuid):
+        list_item = List.objects.get(uuid=uuid)
+        form_object = ListNewsletterHomepage(request.POST, instance=list_item)
+        if form_object.is_valid():
+            messages.success(self.request, form_object.instance.name + self.success_message)
+            form_object.save()
+            return redirect('subscriber-management-list-newsletter-homepage', uuid)
+        return render(request, "list_newsletter_homepage.html", locals())
 
 
 class SubscriberListSignUpForm(LoginRequiredMixin, View):

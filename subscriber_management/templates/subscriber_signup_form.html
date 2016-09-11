@@ -11,8 +11,8 @@
 
 <ul class="nav nav-tabs">
   <li role="presentation" ><a href="{% url 'subscriber-management-list-subscribers' list_item.uuid %}">{% trans 'Subscribers' %}</a></li>
-  <li role="presentation"><a href="">{% trans 'Newsletter homepage' %}</a></li>
-  <li role="presentation" class="active"><a href="#">{% trans 'Signup Form' %}</a></li>
+  <li role="presentation"><a href="{% url 'subscriber-management-list-newsletter-homepage' list_item.uuid %}">{% trans 'Newsletter homepage' %}</a></li>
+  <li role="presentation" class="active"><a href="{% url 'subscriber-management-list-sign-up-form' list_item.uuid %}">{% trans 'Signup Form' %}</a></li>
   <li role="presentation"><a href="{% url 'subscriber-management-list-settings' list_item.uuid %}">{% trans 'Settings' %}</a></li>
 </ul>
 <br>
@@ -25,7 +25,7 @@
         <div style="position: absolute; left: -5000px;">
               <input type="text" name="{{list_item.signup_token}}" tabindex="-1" value="">
         </div>
-        <button type="submit" tabindex="2">{% trans 'Signup' %}</button>
+        <button type="submit" tabindex="2">{% trans 'Sign Up' %}</button>
       </form>
     </textarea>
   </div>
