@@ -25,4 +25,34 @@
 {% for error in form_object.name.errors %}
   <span class="error-block text-danger">{{error}}</span>
 {% endfor %}
+<hr>
+<a href="#" class="btn btn-danger" data-toggle="modal" data-target="#subscriber_list_delete_confirmation">{% trans 'Delete all '%}({{list_item.count_subscribers}})</a>
+
+<div id='subscriber_list_delete_confirmation' class="modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <form method='POST' action="{% url 'subscriber-management-list-delete' list_item.uuid %}">
+        {% csrf_token %}
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title">Please confirm deletion of {{list_item.name}}</h4>
+        </div>
+        <div class="modal-body">
+          <p>
+            <strong>Are you sure you want to delete {{list_item.name}}?</strong>
+          </p>
+          <ul>
+            <li>All the information will be lost forever.</li>
+          </ul>
+          <ul>
+            <li>{{list_item.count_subscribers}} {% trans 'subscribers will be deleted' %}.</li>
+          </ul>
+        </div>
+        <div class="modal-footer">
+          <a href='javascript:void(0)' type="button" class="btn btn-default" data-dismiss="modal">No, keep it</a>
+          <button type="submit" class="btn btn-danger">Yes, delete it</button>
+        </div>
+      </form>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
 {% endblock %}

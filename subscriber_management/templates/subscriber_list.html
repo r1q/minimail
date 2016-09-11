@@ -14,6 +14,7 @@
   <li role="presentation"><a href="{% url 'subscriber-management-list-sign-up-form' list.uuid %}">{% trans 'Signup Form' %}</a></li>
   <li role="presentation"><a href="{% url 'subscriber-management-list-settings' list.uuid %}">{% trans 'Settings' %}</a></li>
 </ul>
+<br>
 {% if not object_list %}
   <p>{% trans 'No subscribers' %}</p>
 {% else %}
