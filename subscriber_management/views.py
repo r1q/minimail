@@ -8,7 +8,6 @@ from datetime import datetime
 from tempfile import NamedTemporaryFile
 import pytz
 import json
-import socket
 
 from localize import geo, timezone
 
@@ -428,8 +427,6 @@ class SubscriberValidatedView(View):
     def get(self, request, uuid, token):
         try:
             subscriber = Subscriber.objects.get(uuid=uuid, token_subscribe=token)
-            if subscriber.validated == True:
-                raise Http404()
             subscriber.validated = True
             subscriber.save()
             list_item = subscriber.list
