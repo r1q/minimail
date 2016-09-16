@@ -71,6 +71,7 @@ class Subscriber(models.Model):
     ip_subscribe = models.GenericIPAddressField(blank=True, null=True)
     ip_validate = models.GenericIPAddressField(blank=True, null=True)
     extra = models.TextField(blank=True)
+    notes = models.TextField(blank=True)
 
     class Meta:
         unique_together = ('list', 'email',)
