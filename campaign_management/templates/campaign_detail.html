@@ -68,7 +68,12 @@
               {% if not campaign.is_sent %}
               <li>
                 <a class='text-primary' href="{% url 'campaign-update' campaign.id %}">
-                  {% trans 'Edit' %}
+                  {% trans 'Edit header' %}
+                </a>
+              </li>
+              <li>
+                <a class='text-primary' href="{% url 'campaign-compose-email' campaign.id %}">
+                  {% trans 'Compose email' %}
                 </a>
               </li>
               {% endif %}
