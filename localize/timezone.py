@@ -62,7 +62,11 @@ def timezone_offset(name):
                 return tzone.localize(date, is_dst=False).strftime('%z')
 
 def human_timezone(name):
-    return '{} ({})'.format(name, timezone_offset(name))
+    try:
+        return '{} ({})'.format(name, timezone_offset(name))
+    except Exception as e:
+        print(e)
+        return ''
 
 def iso_code_to_timezone(iso):
     out = pytz.country_timezones(iso)
