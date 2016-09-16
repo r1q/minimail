@@ -12,6 +12,10 @@ urlpatterns = [
         views.show_campaign_email_preview,
         name='campaign-email-preview'),
 
+    url(r'^(?P<pk>\d+)/compose',
+        views.ComposeEmailView.as_view(),
+        name='campaign-compose-email'),
+
     url(r'^(?P<pk>\d+)/review',
         views.CampaignReview.as_view(),
         name='campaign-review'),

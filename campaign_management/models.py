@@ -32,4 +32,4 @@ class Campaign(models.Model):
         return self.name
 
     def get_absolute_url(self):
-        return reverse('campaign-review', kwargs={'pk': self.pk})
+        return reverse('campaign-compose-email', kwargs={'pk': self.pk})
