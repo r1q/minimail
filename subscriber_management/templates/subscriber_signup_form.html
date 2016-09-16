@@ -37,6 +37,22 @@
   </div>
 </form>
 <button class="btn btn-primary copy_button" name="copy" data-clipboard-target="#signup_form_snippet">{% trans 'Copy' %}</button>
+<br>
+<br>
+<p>Or with ajax</p>
+<pre>
+    $.post(
+        'http://minimail.fullweb.io/subscribers/list/{{list_item.uuid}}/join',
+        {
+            email: '',
+            '{{list_item.signup_token}}': '' //this field SHOULD always be empty!
+        },
+        function (data) {
+            //your handler
+        },
+        'json'
+    )
+</pre>
 
 {% include 'import_csv.html' %}
 {% endblock %}

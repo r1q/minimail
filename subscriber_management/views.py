@@ -10,6 +10,7 @@ import pytz
 import json
 
 import django.db.utils
+from django.http import JsonResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render, redirect
 from django.views.generic import ListView, CreateView, UpdateView
@@ -265,6 +266,7 @@ class SubscriberListSubscribersBulkView(LoginRequiredMixin, View):
                 pass
         return redirect('subscriber-management-list-subscribers', uuid)
 
+
 class SubscriberJoin(View):
 
     """
@@ -292,7 +294,17 @@ class SubscriberJoin(View):
         list_item = List.objects.get(uuid=uuid)
         if list_item.signup_token() in request.POST:
             if request.POST[list_item.signup_token()] != "":
-                return render(request, "subscriber_join_success.html", locals())
+                if request.is_ajax():
+                    return JsonResponse({"error": _('invalid form')})
+                else:
+                    messages.error(request, _("invalid form"))
+                    return redirect('subscriber-management-join-error', uuid)
+        else:
+            if request.is_ajax():
+                return JsonResponse({"error": _("validation field required")})
+            else:
+                messages.error(request, _("validation field required"))
+                return redirect('subscriber-management-join-error', uuid)
 
         subscriber_item = Subscriber()
         form = SubscriberForm(request.POST, instance=subscriber_item)
@@ -304,16 +316,43 @@ class SubscriberJoin(View):
                 form.instance.accept_language = request.META.get('HTTP_ACCEPT_LANGUAGE', '')
                 form.save()
             else:
-                print(form)
-                raise Exception('invalid form')
+                if request.is_ajax():
+                    return JsonResponse({"error": _('invalid form')})
+                else:
+                    raise Exception('invalid form')
         except django.db.utils.IntegrityError:
             duplicate_error = _('You are already registered to this list')
-            return render(request, "subscriber_join.html", locals())
+            if request.is_ajax():
+                return JsonResponse({"error": duplicate_error})
+            else:
+                messages.error(request, duplicate_error)
+                return redirect('subscriber-management-join-error', uuid)
         except Exception as err:
-            print(err)
-            return render(request, "subscriber_join.html", locals())
+            if request.is_ajax():
+                return JsonResponse({"error": err})
+            else:
+                messages.error(request, err)
+                return redirect('subscriber-management-join-error', uuid)
         else:
-            return render(request, "subscriber_join_success.html", locals())
+            if request.is_ajax():
+                if list_item.success_template == "":
+                    return JsonResponse({"success": _("sucess")})
+                else:
+                    return JsonResponse({"success": list_item.success_template})
+            else:
+                return redirect('subscriber-management-join-success', uuid)
+
+class SubscriberJoinSuccess(View):
+
+    def get(self, request, uuid):
+        list_item = List.objects.get(uuid=uuid)
+        return render(request, "subscriber_join_success.html", locals())
+
+class SubscriberJoinError(View):
+
+    def get(self, request, uuid):
+        list_item = List.objects.get(uuid=uuid)
+        return render(request, "subscriber_join_error.html", locals())
 
 
 class SubscriberDeleteView(LoginRequiredMixin, View):
