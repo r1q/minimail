@@ -8,6 +8,8 @@ flake8==3.0.4
 isort==4.2.5
 lazy-object-proxy==1.2.2
 lxml==3.6.4
+maxminddb==1.2.1
+maxminddb-geolite2==2015.708
 mccabe==0.5.2
 oauthlib==1.1.2
 Pillow==3.3.1
