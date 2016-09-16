@@ -3,7 +3,14 @@
 
 <legend>
   {{ list_item.name }} subscribers
-  <a class="btn btn-primary btn-xs pull-right" href="#" data-toggle="modal" data-target="#subscriber_import_csv">{% trans 'Import CSV' %}</a>
+    <div class="btn-group pull-right">
+        <button type="button" class="btn btn-primary btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Import <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li><a href="#" data-toggle="modal" data-target="#subscriber_import_csv">{% trans 'From Mailchimp csv' %}</a></li>
+        </ul>
+    </div>
 </legend>
 <p>
   <span class="lead">{{list_item.count_subscribers|intcomma}}</span> {% trans 'subscriber' %}{{list_item.count_subscribers|pluralize}}
