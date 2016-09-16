@@ -1,3 +1,5 @@
 from django.contrib import admin
+from subscriber_management.models import Subscriber, List
 
-# Register your models here.
+admin.site.register(Subscriber)
+admin.site.register(List)
