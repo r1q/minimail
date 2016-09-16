@@ -2,6 +2,7 @@ import uuid
 from django.db import models
 from django.contrib.auth.models import User
 from strgen import StringGenerator
+from localize import timezone
 
 
 def _gen_token():
@@ -62,21 +63,14 @@ class Subscriber(models.Model):
     email = models.EmailField(max_length=50, blank=True)
     first_name = models.CharField(max_length=50, blank=True)
     last_name = models.CharField(max_length=50, blank=True)
+    validated = models.BooleanField(blank=True, default=False)
+    timezone = models.CharField(max_length=50, blank=True)
+    country = models.CharField(max_length=50, blank=True)
     user_agent = models.TextField(blank=True)
     accept_language = models.TextField(blank=True)
-    timezone = models.IntegerField(blank=True, null=True)
-    timezone_str = models.CharField(max_length=50, blank=True)
-    member_rating = models.FloatField(blank=True, null=True)
-    optin_time = models.DateTimeField(blank=True, null=True)
-    optin_ip = models.GenericIPAddressField(blank=True, null=True)
-    confim_time = models.DateTimeField(blank=True, null=True)
-    confim_ip = models.GenericIPAddressField(blank=True, null=True)
-    latitude = models.FloatField(blank=True, null=True)
-    longitude = models.FloatField(blank=True, null=True)
-    cc = models.CharField(max_length=50, blank=True)
-    region = models.CharField(max_length=50, blank=True)
-    ip = models.GenericIPAddressField(blank=True, null=True)
-    notes = models.TextField(blank=True)
+    ip_subscribe = models.GenericIPAddressField(blank=True, null=True)
+    ip_validate = models.GenericIPAddressField(blank=True, null=True)
+    extra = models.TextField(blank=True)
 
     class Meta:
         unique_together = ('list', 'email',)
@@ -86,3 +80,6 @@ class Subscriber(models.Model):
 
     def full_name(self):
         return self.first_name+" "+self.last_name
+
+    def human_tz(self):
+        return timezone.human_timezone(self.timezone)

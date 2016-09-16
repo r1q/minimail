@@ -8,6 +8,9 @@ from datetime import datetime
 from tempfile import NamedTemporaryFile
 import pytz
 import json
+import socket
+
+from localize import geo, timezone
 
 import django.db.utils
 from django.http import JsonResponse
@@ -160,30 +163,18 @@ class SubscriberListImportCSV(LoginRequiredMixin, View):
                 new_subscriber.first_name = name_info[0]
             else:
                 pass
-            if row['TIMEZONE'] != '':
-                new_subscriber.timezone_str = row['TIMEZONE']
-                d = datetime.now(pytz.timezone(row['TIMEZONE']))
-                new_subscriber.timezone = d.utcoffset().total_seconds()/60/60
+            if 'TIMEZONE' in row and row['TIMEZONE'] != "":
+                new_subscriber.timezone = row['TIMEZONE']
             else:
-                new_subscriber.timezone_str = 'UTC'
-                new_subscriber.timezone = 0
-
-            new_subscriber.member_rating = int(row['MEMBER_RATING']) / 5
-            if row['OPTIN_TIME'] != '':
-                new_subscriber.optin_time = datetime.strptime(row['OPTIN_TIME'], DATE_FORMAT)
-            new_subscriber.optin_ip = row['OPTIN_IP']
-            new_subscriber.ip = row['OPTIN_IP']
-            if row['CONFIRM_TIME'] != '':
-                new_subscriber.confim_time = datetime.strptime(row['CONFIRM_TIME'], DATE_FORMAT)
-            new_subscriber.confim_ip = row['CONFIRM_IP']
-            if row['LATITUDE'] != '':
-                new_subscriber.latitude = float(row['LATITUDE'])
-            if row['LONGITUDE'] != '':
-                new_subscriber.longitude = float(row['LONGITUDE'])
-            new_subscriber.cc = row['CC']
-            new_subscriber.region = row['REGION']
-            new_subscriber.notes = row['NOTES']
+                new_subscriber.timezone = "GMT"
+            new_subscriber.country = timezone.timezone_to_iso_code(new_subscriber.timezone)
+            if 'OPTIN_IP' in row and row['OPTIN_IP'] != "":
+                new_subscriber.ip_subscribe = row['OPTIN_IP']
+                print("test", geo.get_country_code(row['OPTIN_IP']))
+            if 'CONFIRM_IP' in row and row['CONFIRM_IP'] != "":
+                new_subscriber.ip_validate = row['CONFIRM_IP']
             new_subscriber.validated = True
+            new_subscriber.extra = json.dumps(row)
             new_subscriber.save()
         except Exception as e:
             print(e)
@@ -285,6 +276,10 @@ class SubscriberJoin(View):
         else:
             return req.META.get('REMOTE_ADDR')
 
+    def _get_country_from_ip(self, req):
+        ip = self._get_client_ip(req)
+        return geo.get_country_code(ip)
+
     def get(self, request, uuid):
         list_item = List.objects.get(uuid=uuid)
         form = SubscriberForm()
@@ -312,6 +307,8 @@ class SubscriberJoin(View):
             if form.is_valid():
                 form.instance.list = list_item
                 form.instance.ip = self._get_client_ip(request)
+                form.instance.country = self._get_country_from_ip(request)
+                form.instance.timezone = geo.get_timezone(form.instance.ip)
                 form.instance.user_agent = request.META.get('HTTP_USER_AGENT', '')
                 form.instance.accept_language = request.META.get('HTTP_ACCEPT_LANGUAGE', '')
                 form.save()
