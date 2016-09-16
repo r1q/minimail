@@ -233,7 +233,7 @@ class SubscriberListSubscribersView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         list_uuid = self.kwargs['uuid']
-        return Subscriber.objects.filter(list__uuid=list_uuid,actived=True).order_by('email')
+        return Subscriber.objects.filter(list__uuid=list_uuid,validated=True).order_by('email')
 
     def get_context_data(self, **kwargs):
         context = super(SubscriberListSubscribersView, self).get_context_data(**kwargs)
