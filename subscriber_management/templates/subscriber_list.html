@@ -62,24 +62,23 @@
         {% if object_list.has_previous %}
         <li>
           <a href="{% url 'subscriber-management-list-subscribers' list.uuid %}?page={{object_list.previous_page_number}}" aria-label="Previous">
-            <span aria-hidden="true">&laquo;</span>
+            <span aria-hidden="true">{% trans 'Prev' %}</span>
           </a>
         </li>
         {% endif %}
-        {% for page in page_nums %}
-          {% if object_list.number == page %}
-          <li class="active"><a href="{% url 'subscriber-management-list-subscribers' list.uuid %}?page={{page}}">{{page}}</a></li>
-          {% else %}
-          <li><a href="{% url 'subscriber-management-list-subscribers' list.uuid %}?page={{page}}">{{page}}</a></li>
-          {% endif %}
-        {% endfor %}
         {% if object_list.has_next %}
         <li>
           <a href="{% url 'subscriber-management-list-subscribers' list.uuid %}?page={{object_list.next_page_number}}" aria-label="Next">
-            <span aria-hidden="true">&raquo;</span>
+            <span aria-hidden="true">{% trans 'Next' %}</span>
           </a>
         </li>
         {% endif %}
+        <li>
+            <span  aria-label="Next">
+              <span aria-hidden="true">{{object_list.number}} / {{ object_list.paginator.num_pages }}</span>
+          </span>
+
+        </li>
       </ul>
     </nav>
   {% endif %}
