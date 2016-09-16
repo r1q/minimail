@@ -1,0 +1,11 @@
+{% extends "master.html" %}
+{% load i18n %}
+
+{% block header %}
+{% endblock %}
+
+{% block content %}
+<p>
+  {% trans 'Your account has successfully been validated to' %} {{list_item.title}}
+</p>
+{% endblock %}

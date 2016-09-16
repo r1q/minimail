@@ -81,5 +81,8 @@ class Subscriber(models.Model):
     def full_name(self):
         return self.first_name+" "+self.last_name
 
+    def validation_link(self):
+        return 'http://minimail.fullweb.io/subscribers/subscriber/{}/validate/{}'.format(self.uuid, self.token_subscribe)
+
     def human_tz(self):
         return timezone.human_timezone(self.timezone)

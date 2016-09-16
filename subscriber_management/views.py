@@ -14,6 +14,7 @@ from localize import geo, timezone
 
 import django.db.utils
 from django.http import JsonResponse
+from django.core.mail import send_mail
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render, redirect
 from django.views.generic import ListView, CreateView, UpdateView
@@ -29,6 +30,22 @@ from subscriber_management.forms import ListForm, SubscriberForm, \
     ListSettings, ListNewsletterHomepage
 
 DATE_FORMAT = '%Y-%m-%d %H:%M:%S'
+
+VALIDATION_EMAIL = _("""
+Minimail
+
+click here to confirm your email:
+{}
+""")
+
+def send_validation_email(list_name, subscriber):
+    send_mail(
+    list_name+_(' email validation'),
+    VALIDATION_EMAIL.format(subscriber.validation_link()),
+    'noreply@minimail.fullweb.com',
+    [subscriber.email],
+    fail_silently=False,
+)
 
 
 class SubscriberListView(LoginRequiredMixin, ListView):
@@ -312,6 +329,7 @@ class SubscriberJoin(View):
                 form.instance.user_agent = request.META.get('HTTP_USER_AGENT', '')
                 form.instance.accept_language = request.META.get('HTTP_ACCEPT_LANGUAGE', '')
                 form.save()
+                send_validation_email(list_item.title, form.instance)
             else:
                 if request.is_ajax():
                     return JsonResponse({"error": _('invalid form')})
@@ -398,4 +416,25 @@ class SubscriberUnsubscribeView(View):
             raise Http404()
         else:
             return render(request, "subscriber_unsubscribe_success.html", locals())
+        raise Http404()
+
+
+class SubscriberValidatedView(View):
+
+    """
+    SubscriberActivateView activates a subscriber's account
+    """
+
+    def get(self, request, uuid, token):
+        try:
+            subscriber = Subscriber.objects.get(uuid=uuid, token_subscribe=token)
+            if subscriber.validated == True:
+                raise Http404()
+            subscriber.validated = True
+            subscriber.save()
+            list_item = subscriber.list
+        except Exception as e:
+            raise Http404()
+        else:
+            return render(request, "subscriber_validated.html", locals())
         raise Http404()

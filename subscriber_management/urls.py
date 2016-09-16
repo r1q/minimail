@@ -16,6 +16,7 @@ urlpatterns = [
     url(r'^list/(?P<uuid>[^/]+)/import$',views.SubscriberListImportCSV.as_view(), name='subscriber-management-list-import'),
     url(r'^list/(?P<uuid>[^/]+)/subscriber/(?P<subscriber_uuid>[^/]+)/delete',views.SubscriberDeleteView.as_view(), name='subscriber-management-subscriber-delete'),
     url(r'^create$',views.SubscriberListCreateView.as_view(), name='subscriber-management-create'),
+    url(r'^subscriber/(?P<uuid>[^/]+)/validate/(?P<token>[^/]+)',views.SubscriberValidatedView.as_view(), name='subscriber-management-subscriber-validate'),
     url(r'^subscriber/(?P<uuid>[^/]+)/unsubscribe/(?P<token>[^/]+)$',views.SubscriberUnsubscribeView.as_view(), name='subscriber-management-subscriber-unsubscribe'),
 
 ]
