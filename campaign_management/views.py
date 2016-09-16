@@ -4,9 +4,10 @@ from django.urls import reverse_lazy
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 from django.core.mail import send_mail, get_connection, EmailMultiAlternatives
 from django.http.response import HttpResponse
+from django.views import View
 
 from campaign_management.models import Campaign
 from subscriber_management.models import List, Subscriber
@@ -59,7 +60,7 @@ class CampaignCreate(LoginRequiredMixin, CreateView):
     model = Campaign
     fields = ['email_list', 'name', 'email_subject',
               'email_from_name', 'email_from_email', 'email_list']
-    template_name = 'campaign_new_or_edit.html'
+    template_name = 'campaign_header.html'
 
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
@@ -78,17 +79,14 @@ class CampaignCreate(LoginRequiredMixin, CreateView):
 class CampaignUpdate(LoginRequiredMixin, UpdateView):
     """CampaignUpdate"""
     model = Campaign
-    fields = ['email_list', 'email_template', 'name', 'email_subject',
-              'email_from_name', 'email_from_email', 'email_list',
-              'email_template']
-    template_name = 'campaign_new_or_edit.html'
+    fields = ['email_list', 'name', 'email_subject',
+              'email_from_name', 'email_from_email', 'email_list']
+    template_name = 'campaign_header.html'
 
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
         context = super(CampaignUpdate, self).get_context_data(**kwargs)
         context['lists'] = List.objects.filter(user=self.request.user)
-        context['templates'] = Template.objects\
-                                       .filter(author=self.request.user)
         return context
 
     def form_valid(self, form):
@@ -220,3 +218,19 @@ def send_one_campaign_to_one_list(request, pk):
     finally:
         return redirect('campaign-detail', pk=pk)
 
+
+class ComposeEmailView(View):
+
+    def get(self, request, pk):
+        campaign = Campaign.objects.get(pk=pk)
+        return render(request, 'campaign_compose.html', locals())
+
+    def post(self, request, pk):
+        #TODO: Inline CSS from HTML
+        html_email = request.POST.get('html_email')
+        text_email = request.POST.get('text_email')
+        campaign = Campaign.objects.get(pk=pk)
+        campaign.html_template = html_email
+        campaign.text_template = text_email
+        campaign.save()
+        return redirect('campaign-review', pk=pk)
