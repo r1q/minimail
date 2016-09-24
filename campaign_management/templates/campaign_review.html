@@ -28,15 +28,20 @@
       <div class="panel panel-default">
         <ul class="list-group">
           <li class="list-group-item">
+            <strong>From:</strong>
+            {{ campaign.email_from_name}} &lt;{{campaign.email_from_email}}&gt;
+            <a href='{% url "campaign-update" campaign.id %}'><small>edit</small></a>
+          </li>
+          <li class="list-group-item">
+            <strong>Reply To:</strong>
+            {{campaign.email_reply_to_email}}
+            <a href='{% url "campaign-update" campaign.id %}'><small>edit</small></a>
+          </li>
+          <li class="list-group-item">
             <strong>To recipient list:</strong>
             {{ campaign.email_list }} &mdash;
             {{campaign.email_list.count_validated_subscribers|intcomma}}
             {% trans 'subscriber' %}{{campaign.email_list.count_validated_subscribers|pluralize}}
-            <a href='{% url "campaign-update" campaign.id %}'><small>edit</small></a>
-          </li>
-          <li class="list-group-item">
-            <strong>From:</strong>
-            {{ campaign.email_from_name}} &lt;{{campaign.email_from_email}}&gt;
             <a href='{% url "campaign-update" campaign.id %}'><small>edit</small></a>
           </li>
           <li class="list-group-item">

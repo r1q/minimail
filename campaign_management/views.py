@@ -58,7 +58,7 @@ class CampaignReview(LoginRequiredMixin, DetailView):
 class CampaignCreate(LoginRequiredMixin, CreateView):
     """CampaignCreate"""
     model = Campaign
-    fields = ['email_list', 'name', 'email_subject',
+    fields = ['email_list', 'name', 'email_subject', 'email_reply_to_email',
               'email_from_name', 'email_from_email', 'email_list']
     template_name = 'campaign_header.html'
 
@@ -66,6 +66,9 @@ class CampaignCreate(LoginRequiredMixin, CreateView):
         # Call the base implementation first to get a context
         context = super(CampaignCreate, self).get_context_data(**kwargs)
         context['lists'] = List.objects.filter(user=self.request.user)
+        # TODO: Should move this list comprehension into .filter above
+        context['lists'] = [x for x in context['lists']
+                            if x.count_validated_subscribers() > 0]
         return context
 
     def form_valid(self, form):
@@ -79,7 +82,7 @@ class CampaignCreate(LoginRequiredMixin, CreateView):
 class CampaignUpdate(LoginRequiredMixin, UpdateView):
     """CampaignUpdate"""
     model = Campaign
-    fields = ['email_list', 'name', 'email_subject',
+    fields = ['email_list', 'name', 'email_subject', 'email_reply_to_email',
               'email_from_name', 'email_from_email', 'email_list']
     template_name = 'campaign_header.html'
 
@@ -137,7 +140,8 @@ def send_test_email(request, pk):
                       campaign.email_from_email,
                       [recipient],
                       fail_silently=False,
-                      html_message=campaign.html_template)
+                      html_message=campaign.html_template,
+                      reply_to=[campaign.email_reply_to_email])
     except Exception as ex:
         messages.error(request,
                        "Test email not sent: {}".format(ex),
@@ -169,14 +173,16 @@ def _gen_campaign_emails(campaign):
     if not campaign:
         return tuple()
     # If we got a campaign
-    subscribers = Subscriber.objects.filter(list=campaign.email_list, validated=True)
+    subscribers = Subscriber.objects.filter(list=campaign.email_list,
+                                            validated=True)
     for subscriber in subscribers:
         _from = "{} <{}>".format(campaign.email_from_name,
                                  campaign.email_from_email)
         email = EmailMultiAlternatives(campaign.email_subject,  # email subject
                                        "",  # body text version
                                        _from,  # from sender
-                                       [subscriber.email])  # recipient
+                                       [subscriber.email],  # recipient
+                                       reply_to=[campaign.email_reply_to_email])
         email.attach_alternative(campaign.html_template, "text/html")
         # Avoid use list of Object in RAM
         yield email
