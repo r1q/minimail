@@ -169,7 +169,7 @@ def _gen_campaign_emails(campaign):
     if not campaign:
         return tuple()
     # If we got a campaign
-    subscribers = Subscriber.objects.filter(list=campaign.email_list)
+    subscribers = Subscriber.objects.filter(list=campaign.email_list, validated=True)
     for subscriber in subscribers:
         _from = "{} <{}>".format(campaign.email_from_name,
                                  campaign.email_from_email)
@@ -177,8 +177,7 @@ def _gen_campaign_emails(campaign):
                                        "",  # body text version
                                        _from,  # from sender
                                        [subscriber.email])  # recipient
-        email.attach_alternative(campaign.html_template,
-                                 "text/html")
+        email.attach_alternative(campaign.html_template, "text/html")
         # Avoid use list of Object in RAM
         yield email
 
@@ -212,7 +211,7 @@ def send_one_campaign_to_one_list(request, pk):
         # Update campaign status
         campaign.is_sent = True
         campaign.is_draft = False
-        campaign.recipient_count = campaign.email_list.count_subscribers()
+        campaign.recipient_count = campaign.email_list.count_validated_subscribers()
         campaign.save()
     finally:
         return redirect('campaign-detail', pk=pk)
