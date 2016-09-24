@@ -13,104 +13,106 @@
 
 {% block content %}
 
-  <div class='row'>
-    <div class='col-lg-12'>
-      <h3>
-        <a href='{% url 'campaign-list' %}'>{% trans "Emails" %}</a>
-        {% if campaign %}
-        / <a href='{% url 'campaign-detail' campaign.id %}'>{{campaign.email_subject}}</a>
-        / Edit
-        {% else %}
-        / {% trans "New email" %}
-        {% endif %}
-      </h3>
+  <div class='container'>
+    <div class='row'>
+      <div class='col-lg-12'>
+        <h3>
+          <a href='{% url 'campaign-list' %}'>{% trans "Emails" %}</a>
+          {% if campaign %}
+          / <a href='{% url 'campaign-detail' campaign.id %}'>{{campaign.email_subject}}</a>
+          / Edit
+          {% else %}
+          / {% trans "New email" %}
+          {% endif %}
+        </h3>
+      </div>
     </div>
-  </div>
 
-  <hr />
+    <hr />
 
-  <div class='row'>
-    <form method='post'>
-      <div class='col-lg-6 col-lg-offset-3'>
-
-        {% csrf_token %}
-
-        <h3>Email Header</h3>
-        <div class="form-group">
-          <label for="{{form.email_from_name.auto_id}}" class='control-label'>From name:</label>
-          <input id="{{form.email_from_name.auto_id}}"
-                 name="{{form.email_from_name.name}}"
-                 class='form-control'
-                 tabindex='3'
-                 maxlength='{{form.email_from_name.field.max_length}}'
-                 value='{{form.email_from_name.value|default:user.first_name}}'
-                 required />
-          <div class='help-block'>The name your recipients will see in the <code>From:</code> field.</div>
-        </div>
-        <div class="form-group">
-          <label for="{{form.email_from_email.auto_id}}" class='control-label'>From email:</label>
-          <input type='email'
-                 id="{{form.email_from_email.auto_id}}"
-                 name="{{form.email_from_email.name}}"
-                 class='form-control'
-                 tabindex='3'
-                 maxlength='{{form.email_from_email.field.max_length}}'
-                 value='{{form.email_from_email.value|default:user.email}}'
-                 required />
-          <div class='help-block'>The email address your recipients will see in the <code>From:</code> field.</div>
-        </div>
-        <div class="form-group">
-          <label for="{{form.email_reply_to_email.auto_id}}" class='control-label'>Reply To email:</label>
-          <input type='email'
-                 id="{{form.email_reply_to_email.auto_id}}"
-                 name="{{form.email_reply_to_email.name}}"
-                 class='form-control'
-                 tabindex='3'
-                 maxlength='{{form.email_reply_to_email.field.max_length}}'
-                 value='{{form.email_reply_to_email.value|default:user.email}}'
-                 required />
-          <div class='help-block'>The email address where your subscribers can reply to.</div>
-        </div>
-        <div class="form-group">
-          <label for="{{form.email_subject.auto_id}}" class='control-label'>Email subject:</label>
-          <input id="{{form.email_subject.auto_id}}"
-                 name="{{form.email_subject.name}}" class='form-control' tabindex='2'
-                 maxlength='{{form.email_subject.field.max_length}}'
-                 placeholder='Issue #1: About this newsletter'
-                 value='{{form.email_subject.value|default:""}}'/>
-          <div class='help-block'>Max 150 characters. You can you emojis too.</div>
-        </div>
-        <div class="form-group">
-          <label for="{{form.email_list.auto_id}}">To recipients:</label>
-        {% if not lists %}
-          <textarea id='{{form.email_list.auto_id}}' class='form-control'
-            rows='3' placeholder='john@doe.com, John Doe
-janet@gmail.com, Janet Dupont'></textarea>
-          <div class='help-block'>Max 100 subscribers, one subscriber per
-            line.<br /><a href="{% url 'subscriber-management-create' %}">Create a new list for more subscribers</a>.</div>
-        {% else %}
-            <select id="{{form.email_list.auto_id}}" name="{{form.email_list.name}}" class="form-control">
-            {% for list in lists %}
-            <option value='{{list.id}}' {% if list.id == campaign.email_list.id %}selected{%endif %}>
-              {{list.name}} &mdash; {{list.count_validated_subscribers}} {% trans 'subscriber' %}{{list.count_validated_subscribers|pluralize}}
-            </option>
-            {% endfor %}
-            </select>
-          <div class='help-block'>Or <a href="{% url 'subscriber-management-create' %}"> create a new list</a>.</div>
-        {% endif %}
-        </div>
-
-      </div>
-
-      <div class='row'>
+    <div class='row'>
+      <form method='post'>
         <div class='col-lg-6 col-lg-offset-3'>
-          <hr />
-          <button class='btn btn-success pull-right'>Next: <strong>Compose Email</strong> &raquo;</button>
+
+          {% csrf_token %}
+
+          <h3>Email Header</h3>
+          <div class="form-group">
+            <label for="{{form.email_from_name.auto_id}}" class='control-label'>From name:</label>
+            <input id="{{form.email_from_name.auto_id}}"
+                   name="{{form.email_from_name.name}}"
+                   class='form-control'
+                   tabindex='3'
+                   maxlength='{{form.email_from_name.field.max_length}}'
+                   value='{{form.email_from_name.value|default:user.first_name}}'
+                   required />
+            <div class='help-block'>The name your recipients will see in the <code>From:</code> field.</div>
+          </div>
+          <div class="form-group">
+            <label for="{{form.email_from_email.auto_id}}" class='control-label'>From email:</label>
+            <input type='email'
+                   id="{{form.email_from_email.auto_id}}"
+                   name="{{form.email_from_email.name}}"
+                   class='form-control'
+                   tabindex='3'
+                   maxlength='{{form.email_from_email.field.max_length}}'
+                   value='{{form.email_from_email.value|default:user.email}}'
+                   required />
+            <div class='help-block'>The email address your recipients will see in the <code>From:</code> field.</div>
+          </div>
+          <div class="form-group">
+            <label for="{{form.email_reply_to_email.auto_id}}" class='control-label'>Reply To email:</label>
+            <input type='email'
+                   id="{{form.email_reply_to_email.auto_id}}"
+                   name="{{form.email_reply_to_email.name}}"
+                   class='form-control'
+                   tabindex='3'
+                   maxlength='{{form.email_reply_to_email.field.max_length}}'
+                   value='{{form.email_reply_to_email.value|default:user.email}}'
+                   required />
+            <div class='help-block'>The email address where your subscribers can reply to.</div>
+          </div>
+          <div class="form-group">
+            <label for="{{form.email_subject.auto_id}}" class='control-label'>Email subject:</label>
+            <input id="{{form.email_subject.auto_id}}"
+                   name="{{form.email_subject.name}}" class='form-control' tabindex='2'
+                   maxlength='{{form.email_subject.field.max_length}}'
+                   placeholder='Issue #1: About this newsletter'
+                   value='{{form.email_subject.value|default:""}}'/>
+            <div class='help-block'>Max 150 characters. You can you emojis too.</div>
+          </div>
+          <div class="form-group">
+            <label for="{{form.email_list.auto_id}}">To recipients:</label>
+          {% if not lists %}
+            <textarea id='{{form.email_list.auto_id}}' class='form-control'
+              rows='3' placeholder='john@doe.com, John Doe
+  janet@gmail.com, Janet Dupont'></textarea>
+            <div class='help-block'>Max 100 subscribers, one subscriber per
+              line.<br /><a href="{% url 'subscriber-management-create' %}">Create a new list for more subscribers</a>.</div>
+          {% else %}
+              <select id="{{form.email_list.auto_id}}" name="{{form.email_list.name}}" class="form-control">
+              {% for list in lists %}
+              <option value='{{list.id}}' {% if list.id == campaign.email_list.id %}selected{%endif %}>
+                {{list.name}} &mdash; {{list.count_validated_subscribers}} {% trans 'subscriber' %}{{list.count_validated_subscribers|pluralize}}
+              </option>
+              {% endfor %}
+              </select>
+            <div class='help-block'>Or <a href="{% url 'subscriber-management-create' %}"> create a new list</a>.</div>
+          {% endif %}
+          </div>
+
         </div>
-      </div>
 
-    </form>
+        <div class='row'>
+          <div class='col-lg-6 col-lg-offset-3'>
+            <hr />
+            <button class='btn btn-success pull-right'>Next: <strong>Compose Email</strong> &raquo;</button>
+          </div>
+        </div>
 
+      </form>
+
+    </div>
   </div>
 
 {% endblock %}
