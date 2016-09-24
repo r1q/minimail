@@ -131,14 +131,13 @@ def send_test_email(request, pk):
             # Forbid sending to more than 3 recipients
             if count >= 3:
                 break
-            campaign = Campaign.objects.select_related('email_template')\
-                                       .get(pk=pk)
+            campaign = Campaign.objects.get(pk=pk)
             send_mail("[TEST] {}".format(campaign.email_subject),
                       "",
                       campaign.email_from_email,
                       [recipient],
                       fail_silently=False,
-                      html_message=campaign.email_template.html_template)
+                      html_message=campaign.html_template)
     except Exception as ex:
         messages.error(request,
                        "Test email not sent: {}".format(ex),
@@ -178,7 +177,7 @@ def _gen_campaign_emails(campaign):
                                        "",  # body text version
                                        _from,  # from sender
                                        [subscriber.email])  # recipient
-        email.attach_alternative(campaign.email_template.html_template,
+        email.attach_alternative(campaign.html_template,
                                  "text/html")
         # Avoid use list of Object in RAM
         yield email
@@ -193,7 +192,7 @@ def send_one_campaign_to_one_list(request, pk):
     """
 
     try:
-        campaign = Campaign.objects.select_related('email_template').get(pk=pk)
+        campaign = Campaign.objects.get(pk=pk)
         # Start the SMTP connection
         smtp_connection = get_connection()
         smtp_connection.open()
