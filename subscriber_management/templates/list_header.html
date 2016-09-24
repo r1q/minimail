@@ -5,10 +5,11 @@
   {{ list_item.name }} subscribers
     <div class="btn-group pull-right">
         <button type="button" class="btn btn-primary btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Import <span class="caret"></span>
+            Import subscribers <span class="caret"></span>
         </button>
         <ul class="dropdown-menu">
-            <li><a href="#" data-toggle="modal" data-target="#subscriber_import_csv">{% trans 'From Mailchimp csv' %}</a></li>
+            <li><a href="#" data-toggle="modal" data-target="#subscriber_import_csv">{% trans 'From Mailchimp CSV' %}</a></li>
+            <li><a href="#" data-toggle="modal" data-target="#">{% trans 'Copy/paste email addresses' %}</a></li>
         </ul>
     </div>
 </legend>
