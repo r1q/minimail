@@ -9,60 +9,145 @@
 
 {% block content %}
 
-  <div class='row'>
-    <div class='col-lg-12'>
-      <h3>
-        <a href='{% url 'campaign-list' %}'>{% trans "Emails" %}</a>
-        {% if campaign %}
-        / <a href='{% url 'campaign-detail' campaign.id %}'>{{campaign.email_subject}}</a>
-        / Compose
-        {% else %}
-        / {% trans "Compose email" %}
-        {% endif %}
-      </h3>
+  <div class='container'>
+    <div class='row'>
+      <div class='col-lg-12'>
+        <ol class='breadcrumb'>
+          <li>
+            <a href='{% url 'campaign-list' %}'>{% trans "Emails" %}</a>
+          </li>
+          <li>
+            <a href='{% url 'campaign-detail' campaign.id %}'>{{campaign.email_subject}}</a>
+          </li>
+          <li class='active'>{% trans 'Compose' %}</li>
+        </ol>
+      </div>
     </div>
   </div>
 
-  <hr />
 
   <div class='row'>
-    <form method='post'>
-      <div class='col-lg-6 col-lg-offset-3'>
-
+      <form method='post'>
         {% csrf_token %}
-
-        <h3>Email Body</h3>
-
-        <ul class="nav nav-tabs">
-          <li role="presentation" class="active"><a href="#html-email" data-toggle="tab">HTML email</a></li>
-          <li role="presentation"><a href="#text-email" data-toggle="tab">Text email</a></li>
-        </ul>
-        <div class="tab-content">
-          <div role="tabpanel" class="tab-pane active" id="html-email">
-            <textarea class='form-control'
-                      rows='20'
-                      name='html_email'
-                     placeholder='html email body'>{{campaign.html_template}}</textarea>
-          </div>
-          <div role="tabpanel" class="tab-pane" id="text-email">
-            <textarea class='form-control'
-                      name='text_email'
-                      rows='20'
-                      placeholder='text email body'>{{campaign.text_template}}</textarea>
-          </div>
-        </div>
-
-      </div>
-
-      <div class='row'>
-        <div class='col-lg-6 col-lg-offset-3'>
+        <div class='col-lg-6 col-sm-6'>
+          <textarea id='id_html_email'
+                    class='form-control'
+                    rows='20'
+                    name='html_email'
+                    placeholder='html email body'
+                    required>{{campaign.html_template}}</textarea>
           <hr />
           <button class='btn btn-success pull-right'>Next: <strong>Review email</strong> &raquo;</button>
         </div>
+      </form>
+
+      <!--  HTML Preview and Text email -->
+      <div class='col-lg-6 col-sm-6'>
+
+            <div class="btn-group btn-group-sm pull-left" role="group" aria-label="Preview Size">
+              <button type="button" data-size='1000x768' class="btn btn-default active btn-resize-preview">Desktop</button>
+              <button type="button" data-size='380x500' class="btn btn-default btn-resize-preview">Mobile</button>
+<!--               <div class="btn-group" role="group"> -->
+<!--                 <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> -->
+<!--                   Other <span class="caret"></span> -->
+<!--                 </button> -->
+<!--                 <ul class="dropdown-menu"> -->
+<!--                   <li><a href="#">iPhone 7</a></li> -->
+<!--                   <li><a href="#">iPhone 6S</a></li> -->
+<!--                   <li><a href="#">iPhone 5</a></li> -->
+<!--                 </ul> -->
+<!--               </div> -->
+            </div>
+        <form action='{% url "campaign-send-test-email" campaign.pk %}' method='post' class='pull-right' style='width:400px'>
+          {% csrf_token %}
+          <div>
+            <div class="input-group input-group-sm">
+              <span class="input-group-addon" id="sizing-addon1">
+                Send a test email to
+              </span>
+              <input type="text" name="email" class="form-control" placeholder="your email..." value="{{user.email}}" maxlength=150/>
+              <span class="input-group-btn">
+                <button type="submit" class="btn btn-default">Send</button>
+              </span>
+            </div>
+          </div>
+        </form>
+
+        <div class='text-center'>
+          <iframe id='id_html_email_preview' style='max-width: 100%; border: 0; width: 100%;
+            box-shadow: 0 1px 1px #969696; min-height: 500px; transition: width 0.2s ease-in; height:
+            500px;margin: 7px auto; border-right: 1px solid #eaeaea;border-top: 1px solid #eaeaea;'></iframe>
+        </div>
       </div>
 
-    </form>
 
   </div>
 
+{% endblock %}
+
+
+{% block styles %}
+  <link rel="stylesheet" href='{% static "css/codemirror.css" %}' />
+  <link rel="stylesheet" href='{% static "css/base16-light.css" %}' />
+  <style>
+    .CodeMirror, textarea#id_html_email {
+      border: 1px solid #EEE;
+      min-height: 537px;
+      height: 537px;
+      font-family: Menlo, monospace;
+      font-size: 12px;
+    }
+    .CodeMirror-linenumbers {
+      background: #DEDEDE;
+    }
+    .CodeMirror-scroll {
+      max-height: 3200px;
+      max-height: 400vh;
+    }
+  </style>
+{% endblock %}
+
+
+{% block script %}
+  <script src='{% static "js/vendor/codemirror.js" %}'></script>
+  <script src='{% static "js/vendor/xml.js" %}'></script>
+  <script src='{% static "js/vendor/htmlmixed.js" %}'></script>
+  <script>
+    // Enable the tab navigation
+    /*$('#newTemplateTabs a').click(function (ev) {
+      ev.preventDefault()
+      $(this).tab('show')
+    })*/
+    // Init the HTML editor
+    var html_email_texarea = document.getElementById('id_html_email');
+    var html_editor = CodeMirror.fromTextArea(html_email_texarea, {
+      theme: 'base16-light',
+      lineNumbers: true,
+      mode: "text/html",
+      viewportMargin: Infinity,
+      tabindex: "1"
+    });
+    // Init the HTML preview
+    var html_delay;
+    html_editor.on("change", function() {
+      clearTimeout(html_delay);
+      html_delay = setTimeout(updateHTMLPreview, 300);
+    });
+    function updateHTMLPreview() {
+      var previewFrame = document.getElementById('id_html_email_preview');
+      var preview =  previewFrame.contentDocument || previewFrame.contentWindow.document;
+      preview.open();
+      preview.write(html_editor.getValue());
+      preview.close();
+    }
+    setTimeout(updateHTMLPreview, 300);
+    // Resize HTML Preview buttons
+    $('.btn-resize-preview').on('click', function (ev) {
+      $('.btn-resize-preview').toggleClass('active');
+      var size = $(this).data('size').split('x');
+      $('#id_html_email_preview').css('width', size[0]+'px')
+      $(this).blur()
+    });
+
+  </script>
 {% endblock %}

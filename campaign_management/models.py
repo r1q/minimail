@@ -20,7 +20,7 @@ class Campaign(models.Model):
     schedule_send = models.DateTimeField(blank=True, null=True)
     # No foreign key for these, as the template may change
     html_template = models.TextField()
-    text_template = models.TextField(blank=True)
+    text_template = models.TextField(blank=True, default='')
     # Status
     is_sent = models.BooleanField(default=False)
     recipient_count = models.PositiveIntegerField(blank=True, null=True)

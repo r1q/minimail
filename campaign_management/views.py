@@ -140,8 +140,7 @@ def send_test_email(request, pk):
                       campaign.email_from_email,
                       [recipient],
                       fail_silently=False,
-                      html_message=campaign.html_template,
-                      reply_to=[campaign.email_reply_to_email])
+                      html_message=campaign.html_template)
     except Exception as ex:
         messages.error(request,
                        "Test email not sent: {}".format(ex),
@@ -231,8 +230,9 @@ class ComposeEmailView(View):
 
     def post(self, request, pk):
         #TODO: Inline CSS from HTML
+        #TODO: Use striped tag version of HTML for text
         html_email = request.POST.get('html_email')
-        text_email = request.POST.get('text_email')
+        text_email = ""
         campaign = Campaign.objects.get(pk=pk)
         campaign.html_template = html_email
         campaign.text_template = text_email
