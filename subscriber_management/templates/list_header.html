@@ -13,7 +13,7 @@
     </div>
 </legend>
 <p>
-  <span class="lead">{{list_item.count_subscribers|intcomma}}</span> {% trans 'subscriber' %}{{list_item.count_subscribers|pluralize}}
+  <span class="lead">{{list_item.count_validated_subscribers|intcomma}}</span> {% trans 'subscriber' %}{{list_item.count_validated_subscribers|pluralize}}
   <br>
   <br>
   Homepage url: <a target="_blank" href="{% url 'subscriber-management-join' list_item.uuid %}">http://minimail.fullweb.io{% url 'subscriber-management-join' list_item.uuid %}</a>

@@ -37,13 +37,18 @@ class List(models.Model):
     def __str__(self):
         return self.name
 
-    def count_subscribers(self):
-        """count_subscribers"""
+    def count_all_subscribers(self):
+        """count_all_subscribers"""
         return Subscriber.objects.filter(list__id=self.id).count()
 
+    def count_validated_subscribers(self):
+        """count_validated_subscribers"""
+        return Subscriber.objects.filter(list__id=self.id, validated=True).count()
+
     def signup_token(self):
+        """signup_token"""
         t = str(self.uuid)+"_"+self.token
-        return t.replace("-","_", -1)
+        return t.replace("-", "_", -1)
 
 
 class Subscriber(models.Model):
@@ -63,7 +68,6 @@ class Subscriber(models.Model):
     email = models.EmailField(max_length=50, blank=True)
     first_name = models.CharField(max_length=50, blank=True)
     last_name = models.CharField(max_length=50, blank=True)
-    validated = models.BooleanField(blank=True, default=False)
     timezone = models.CharField(max_length=50, blank=True)
     country = models.CharField(max_length=50, blank=True)
     user_agent = models.TextField(blank=True)
