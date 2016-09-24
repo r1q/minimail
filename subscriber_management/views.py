@@ -31,20 +31,26 @@ from subscriber_management.forms import ListForm, SubscriberForm, \
 DATE_FORMAT = '%Y-%m-%d %H:%M:%S'
 
 VALIDATION_EMAIL = _("""
-Minimail
-
-click here to confirm your email:
 {}
+
+Click this link to confirm your subscription:
+{}
+
+If you didn't subscribe, you can ignore this email. You won't be subscribed if you don't click the link above.
+
+
+— Sent with Minimail
 """)
 
 def send_validation_email(list_name, subscriber):
     send_mail(
-    list_name+_(' email validation'),
-    VALIDATION_EMAIL.format(subscriber.validation_link()),
-    'noreply@minimail.fullweb.com',
-    [subscriber.email],
-    fail_silently=False,
-)
+        "{}: {}".format(list_name, _('Please Confirm Subscription')), # Subject
+        VALIDATION_EMAIL.format(list_name, subscriber.validation_link()), # Text email
+        # TODO: Replace that with user's verified From: email
+        'hi@fullweb.io', # From: email
+        [subscriber.email], # To:
+        fail_silently=False,
+    )
 
 
 class SubscriberListView(LoginRequiredMixin, ListView):
