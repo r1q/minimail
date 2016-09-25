@@ -4,7 +4,7 @@
 
 
 {% block title %}
-  Campaign "{{ campaign.name }}"
+  Email "{{ campaign.email_subject }}"
 {% endblock %}
 
 
@@ -14,8 +14,8 @@
     <div class='row'>
       <div class='col-lg-12'>
         <h3>
-          <a href='{% url 'campaign-list' %}'>{% trans "Campaigns" %}</a>
-          / {{ campaign.name }}
+          <a href='{% url 'campaign-list' %}'>{% trans "Emails" %}</a>
+          / {{ campaign.email_subject }}
         </h3>
       </div>
     </div>
@@ -108,15 +108,15 @@
           {% csrf_token %}
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title">Please confirm campaign deletion</h4>
+            <h4 class="modal-title">Please confirm email deletion</h4>
           </div>
           <div class="modal-body">
             <p>
-              <strong>Are you sure you can to delete this campaign?</strong>
+              <strong>Are you sure you can to delete this email?</strong>
             </p>
             <ul>
-              <li>All this campaign info will be permanently deleted.</li>
-              <li>The template used to send this campaign will NOT be deleted.</li>
+              <li>All this email info will be permanently deleted.</li>
+              <li>The template used to send this email (if any) will NOT be deleted.</li>
             </ul>
           </div>
           <div class="modal-footer">
