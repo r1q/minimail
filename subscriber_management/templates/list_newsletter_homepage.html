@@ -2,7 +2,7 @@
 {% load i18n %}
 
 {% block content %}
-{% include 'list_header.html' %}
+{% include 'parts/list_header.html' %}
 <ul class="nav nav-tabs">
   <li role="presentation"><a href="{% url 'subscriber-management-list-subscribers' list_item.uuid %}">{% trans 'Subscribers' %}</a></li>
   <li role="presentation" class="active"><a href="{% url 'subscriber-management-list-newsletter-homepage' list_item.uuid %}">{% trans 'Newsletter homepage' %}</a></li>

@@ -6,7 +6,7 @@
 {% block content %}
   <div class='row'>
     <div class='col-lg-12'>
-      {% include 'list_header.html' %}
+      {% include 'parts/list_header.html' %}
       <ul class="nav nav-tabs">
         <li role="presentation"><a href="{% url 'subscriber-management-list-subscribers' list_item.uuid %}">{% trans 'Subscribers' %}</a></li>
         <li role="presentation"><a href="{% url 'subscriber-management-list-newsletter-homepage' list_item.uuid %}">{% trans 'Newsletter homepage' %}</a></li>

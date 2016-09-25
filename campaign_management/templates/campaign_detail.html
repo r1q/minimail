@@ -10,92 +10,94 @@
 
 {% block content %}
 
-  <div class='row'>
-    <div class='col-lg-12'>
-      <h3>
-        <a href='{% url 'campaign-list' %}'>{% trans "Campaigns" %}</a>
-        / {{ campaign.name }}
-      </h3>
+  <div class='container'>
+    <div class='row'>
+      <div class='col-lg-12'>
+        <h3>
+          <a href='{% url 'campaign-list' %}'>{% trans "Campaigns" %}</a>
+          / {{ campaign.name }}
+        </h3>
+      </div>
     </div>
-  </div>
 
-  <hr />
+    <hr />
 
-  <div class='row'>
+    <div class='row'>
 
-      <div class='col-lg-8 col-sm-6'>
-        <div class='panel panel-default'>
-          <div class='preview' style='position: relative; min-height: 600px; height:auto; background: #f9f9f9; overflow: hidden;'>
-            <iframe style='border: 0; position: absolute; top: 0; bottom: 0; left: 0; right: 0; z-index: 10; transform: scale(0.90); transform-origin: 0 0; height: 112%; width: 112%;'
-              src='{% url "campaign-email-preview" campaign.id %}'> </iframe>
-            <div class='cover' style='position: absolute; top: 0; bottom: 0; left: 0; right: 0; z-index: 100;'></div>
+        <div class='col-lg-8 col-sm-6'>
+          <div class='panel panel-default'>
+            <div class='preview' style='position: relative; min-height: 600px; height:auto; background: #f9f9f9; overflow: hidden;'>
+              <iframe style='border: 0; position: absolute; top: 0; bottom: 0; left: 0; right: 0; z-index: 10; transform: scale(0.90); transform-origin: 0 0; height: 112%; width: 112%;'
+                src='{% url "campaign-email-preview" campaign.id %}'> </iframe>
+              <div class='cover' style='position: absolute; top: 0; bottom: 0; left: 0; right: 0; z-index: 100;'></div>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div class='col-lg-4 col-sm-6'>
+        <div class='col-lg-4 col-sm-6'>
 
-          <div class='container-fluid'>
-            {% if campaign.is_sent %}
-            <span class='label label-success'>SENT</span>
-            {% else %}
-            <span class='label label-warning'>NOT SENT</span>
-            {% endif %}
-            <br />
-            <br />
-            <ul class='list-unstyled'>
-              {% if not campaign.is_sent %}
+            <div class='container-fluid'>
+              {% if campaign.is_sent %}
+              <span class='label label-success'>SENT</span>
+              {% else %}
+              <span class='label label-warning'>NOT SENT</span>
+              {% endif %}
+              <br />
+              <br />
+              <ul class='list-unstyled'>
+                {% if not campaign.is_sent %}
+                  <li>
+                    <a class='text-primary' href="{% url 'campaign-review' campaign.id %}">
+                      {% trans 'Review and send' %}
+                    </a>
+                  </li>
+                {% else %}
+                  <li>
+                    {% trans "Sent to" %} {{campaign.recipient_count|default:'0'|intcomma}}
+                    {% trans "subscriber"%}{{campaign.recipient_count|pluralize}}
+                  </li>
+                {% endif %}
                 <li>
-                  <a class='text-primary' href="{% url 'campaign-review' campaign.id %}">
-                    {% trans 'Review and send' %}
+                  <a class='text-primary' href="{% url 'campaign-email-preview' campaign.id %}" target='_blank'>
+                    {% if campaign.is_sent %}
+                      {% trans 'View email sent' %}
+                    {% else %}
+                      {% trans 'View email to be sent' %}
+                    {% endif %}
                   </a>
                 </li>
-              {% else %}
+                {% if not campaign.is_sent %}
                 <li>
-                  {% trans "Sent to" %} {{campaign.recipient_count|default:'0'|intcomma}}
-                  {% trans "subscriber"%}{{campaign.recipient_count|pluralize}}
+                  <a class='text-primary' href="{% url 'campaign-update' campaign.id %}">
+                    {% trans 'Edit header' %}
+                  </a>
                 </li>
-              {% endif %}
-              <li>
-                <a class='text-primary' href="{% url 'campaign-email-preview' campaign.id %}" target='_blank'>
-                  {% if campaign.is_sent %}
-                    {% trans 'View email sent' %}
-                  {% else %}
-                    {% trans 'View email to be sent' %}
-                  {% endif %}
-                </a>
-              </li>
-              {% if not campaign.is_sent %}
-              <li>
-                <a class='text-primary' href="{% url 'campaign-update' campaign.id %}">
-                  {% trans 'Edit header' %}
-                </a>
-              </li>
-              <li>
-                <a class='text-primary' href="{% url 'campaign-compose-email' campaign.id %}">
-                  {% trans 'Compose email' %}
-                </a>
-              </li>
-              {% endif %}
-              <li>
-                <a href="{% url 'campaign-delete' campaign.id %}" data-toggle="modal" data-target="#campaign-delete-confirmation" class='text-danger'>
-                  {% trans 'Delete' %}
-                </a>
-              </li>
-            </ul>
-            <hr />
-            <ul class='list-unstyled'>
-              <li>
-                <small class='text-muted'>{% trans "created:" %} {{ campaign.created }}</small>
-              </li>
-              <li>
-                <small class='text-muted'>{% trans "last edited:" %} {{ campaign.edited}}</small>
-              </li>
-            </p>
+                <li>
+                  <a class='text-primary' href="{% url 'campaign-compose-email' campaign.id %}">
+                    {% trans 'Compose email' %}
+                  </a>
+                </li>
+                {% endif %}
+                <li>
+                  <a href="{% url 'campaign-delete' campaign.id %}" data-toggle="modal" data-target="#campaign-delete-confirmation" class='text-danger'>
+                    {% trans 'Delete' %}
+                  </a>
+                </li>
+              </ul>
+              <hr />
+              <ul class='list-unstyled'>
+                <li>
+                  <small class='text-muted'>{% trans "created:" %} {{ campaign.created }}</small>
+                </li>
+                <li>
+                  <small class='text-muted'>{% trans "last edited:" %} {{ campaign.edited}}</small>
+                </li>
+              </p>
+            </div>
           </div>
         </div>
-      </div>
 
+    </div>
   </div>
 
   <!-- Modal for delete deletion confirmation -->
