@@ -65,10 +65,8 @@ class CampaignCreate(LoginRequiredMixin, CreateView):
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
         context = super(CampaignCreate, self).get_context_data(**kwargs)
+        # Allow lists with 0 subscribers
         context['lists'] = List.objects.filter(user=self.request.user)
-        # TODO: Should move this list comprehension into .filter above
-        context['lists'] = [x for x in context['lists']
-                            if x.count_validated_subscribers() > 0]
         return context
 
     def form_valid(self, form):

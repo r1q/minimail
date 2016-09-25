@@ -34,7 +34,7 @@
                     class='form-control'
                     rows='20'
                     name='html_email'
-                    placeholder='html email body'
+                    placeholder='Write or paste your HTML email here'
                     required>{{campaign.html_template}}</textarea>
           <hr />
           <button class='btn btn-success pull-right'>Next: <strong>Review email</strong> &raquo;</button>
@@ -105,6 +105,9 @@
       max-height: 3200px;
       max-height: 400vh;
     }
+    .CodeMirror-empty {
+      color: #999 !important;
+    }
   </style>
 {% endblock %}
 
@@ -113,6 +116,7 @@
   <script src='{% static "js/vendor/codemirror.js" %}'></script>
   <script src='{% static "js/vendor/xml.js" %}'></script>
   <script src='{% static "js/vendor/htmlmixed.js" %}'></script>
+  <script src='{% static "js/vendor/codemirror.placeholder.js" %}'></script>
   <script>
     // Enable the tab navigation
     /*$('#newTemplateTabs a').click(function (ev) {
@@ -126,7 +130,8 @@
       lineNumbers: true,
       mode: "text/html",
       viewportMargin: Infinity,
-      tabindex: "1"
+      tabindex: "1",
+      placeholder: 'Write or paste your HTML email here'
     });
     // Init the HTML preview
     var html_delay;
