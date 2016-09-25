@@ -204,10 +204,6 @@ class SubscriberListImportCSV(LoginRequiredMixin, View):
         else:
             return True
 
-    def get(self, request, uuid):
-        list_item = List.objects.get(uuid=uuid)
-        return render(request, "list_import.html", locals())
-
     def post(self, request, uuid):
         list_item = List.objects.get(uuid=uuid)
         csv_file = request.FILES['csv_file']
@@ -227,6 +223,52 @@ class SubscriberListImportCSV(LoginRequiredMixin, View):
         messages.success(request, str(save_count) + self.success_message)
         return redirect('subscriber-management-list-subscribers', uuid)
 
+
+class SubscriberListImportText(LoginRequiredMixin, View):
+
+    """
+    SubscriberListImportText import and parse a text input.
+    Subscribers are automatically considered as 'validated'.
+    """
+
+    success_message = _(" subscriber(s) imported")
+
+    def save_user(self, list_item, row):
+        try:
+            new_subscriber = Subscriber()
+            new_subscriber.list = list_item
+            new_subscriber.email = row[0]
+            name_info = row[1].split(' ')
+            if len(name_info) == 2:
+                new_subscriber.first_name = name_info[0]
+                new_subscriber.last_name = name_info[1]
+            elif len(name_info) == 1:
+                new_subscriber.first_name = name_info[0]
+            else:
+                pass
+            new_subscriber.timezone = "GMT"
+            new_subscriber.country = timezone.timezone_to_iso_code(new_subscriber.timezone)
+            new_subscriber.validated = True
+            new_subscriber.save()
+        except Exception as e:
+            print(e)
+            return False
+        else:
+            return True
+
+    def post(self, request, uuid):
+        list_item = List.objects.get(uuid=uuid)
+        if 'text_import' not in request.POST:
+            return redirect('subscriber-management-list-subscribers', uuid)
+        content = request.POST['text_import']
+        save_count = 0
+        for row in csv.reader(content.split('\n')):
+            if len(row) != 2:
+                continue
+            if self.save_user(list_item, row) == True:
+                save_count += 1
+        messages.success(request, str(save_count) + self.success_message)
+        return redirect('subscriber-management-list-subscribers', uuid)
 
 class SubscriberListSubscribersView(LoginRequiredMixin, ListView):
 

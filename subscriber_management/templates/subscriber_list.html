@@ -87,8 +87,6 @@
       {% endif %}
     {% endif %}
 
-    {% include 'import_csv.html' %}
-
     <div id='subscriber-delete-bulk-confirmation' class="modal" tabindex="-1" role="dialog">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -143,7 +141,7 @@
         </div><!-- /.modal-content -->
       </div><!-- /.modal-dialog -->
     </div>
-
+    {% include 'import.html' %}
 {% endblock %}
 
 
