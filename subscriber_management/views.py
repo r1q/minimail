@@ -241,7 +241,7 @@ class SubscriberListImportText(LoginRequiredMixin, View):
             name_info = row[1].split(' ')
             if len(name_info) >= 2:
                 new_subscriber.first_name = name_info[0]
-                new_subscriber.last_name = name_info[1:].join(' ')
+                new_subscriber.last_name = ' '.join(name_info[1:])
             elif len(name_info) == 1:
                 new_subscriber.first_name = name_info[0]
             else:
