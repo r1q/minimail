@@ -31,7 +31,6 @@
           {% for campaign in object_list %}
             <a href="{% url 'campaign-detail' campaign.id %}" class="list-group-item">
               <h4 class="list-group-item-heading">
-                {{ campaign.email_subject }}
                 <small>
                   {% if campaign.is_sent %}
                   <span class='label label-success'>SENT</span>
@@ -39,6 +38,7 @@
                   <span class='label label-warning'>NOT SENT</span>
                   {% endif %}
                 </small>
+                {{ campaign.email_subject }}
               </h4>
               <p class="list-group-item-text">
               {% if campaign.is_sent %}
@@ -46,11 +46,11 @@
               subscriber{{campaign.recipient_count|pluralize}}
               <br />
               {% endif %}
-              <strong>Subject:</strong> {{ campaign.email_subject }}
+              <strong>From:</strong> {{ campaign.email_from_name }} &lt;{{ campaign.email_from_email }}&gt;
               <br />
-              <strong>Sent to:</strong> {{ campaign.email_list.count_validated_subscribers|intcomma }} subscriber{{ campaign.email_list.count_validated_subscribers|pluralize }}
+              <strong>To recipients:</strong> {{ campaign.email_list }} &mdash; {{ campaign.email_list.count_validated_subscribers|intcomma }} subscriber{{ campaign.email_list.count_validated_subscribers|pluralize }}
               <br />
-              <small class='text-muted'>created: {{ campaign.created }}</small>
+              <small class='text-muted' title='{{ campaign.created }}'>created: {{ campaign.created|timesince }} ago</small>
               </p>
             </a>
           {% empty %}
