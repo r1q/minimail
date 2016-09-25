@@ -237,11 +237,11 @@ class SubscriberListImportText(LoginRequiredMixin, View):
         try:
             new_subscriber = Subscriber()
             new_subscriber.list = list_item
-            new_subscriber.email = row[0]
+            new_subscriber.email = row[0].strip()
             name_info = row[1].split(' ')
-            if len(name_info) == 2:
+            if len(name_info) >= 2:
                 new_subscriber.first_name = name_info[0]
-                new_subscriber.last_name = name_info[1]
+                new_subscriber.last_name = name_info[1:].join(' ')
             elif len(name_info) == 1:
                 new_subscriber.first_name = name_info[0]
             else:
@@ -268,6 +268,8 @@ class SubscriberListImportText(LoginRequiredMixin, View):
             lines_count = 100
         for row in csv.reader(lines_csv[0:lines_count]):
             if len(row) != 2:
+                continue
+            if row[0].strip() == '':
                 continue
             if self.save_user(list_item, row) == True:
                 save_count += 1
