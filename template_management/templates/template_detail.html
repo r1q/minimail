@@ -9,58 +9,60 @@
 
 {% block content %}
 
-  <div class='row'>
-    <div class='col-lg-6 col-sm-6'>
-      <h2>
-        <a href='{% url 'template-list' %}'>{% trans "Templates" %}</a>
-        / {{ template.name }}
-      </h2>
+  <div class='container'>
+    <div class='row'>
+      <div class='col-lg-6 col-sm-6'>
+        <h2>
+          <a href='{% url 'template-list' %}'>{% trans "Templates" %}</a>
+          / {{ template.name }}
+        </h2>
+      </div>
     </div>
-  </div>
 
-  <hr />
+    <hr />
 
-  <div class='row'>
+    <div class='row'>
 
-      <div class='col-lg-8 col-sm-6'>
-        <div class='panel panel-default'>
-          <div class='preview' style='position: relative; min-height: 600px; height:auto; background: #f9f9f9; overflow: hidden;'>
-            <iframe style='border: 0; position: absolute; top: 0; bottom: 0; left: 0; right: 0; z-index: 10; transform: scale(0.90); transform-origin: 0 0; height: 112%; width: 112%;' src='/templates/{{template.id}}/preview'> </iframe>
-            <div class='cover' style='position: absolute; top: 0; bottom: 0; left: 0; right: 0; z-index: 100;'></div>
+        <div class='col-lg-8 col-sm-6'>
+          <div class='panel panel-default'>
+            <div class='preview' style='position: relative; min-height: 600px; height:auto; background: #f9f9f9; overflow: hidden;'>
+              <iframe style='border: 0; position: absolute; top: 0; bottom: 0; left: 0; right: 0; z-index: 10; transform: scale(0.90); transform-origin: 0 0; height: 112%; width: 112%;' src='/templates/{{template.id}}/preview'> </iframe>
+              <div class='cover' style='position: absolute; top: 0; bottom: 0; left: 0; right: 0; z-index: 100;'></div>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div class='col-lg-4 col-sm-6'>
+        <div class='col-lg-4 col-sm-6'>
 
-          <div class='container-fluid'>
-            <ul class='list-unstyled'>
-              <li>
-                <a class='text-primary' href='#'>{% trans 'Create a campaign with this template' %}</a>
-              </li>
-              <li>
-                <a class='text-primary' href="{% url 'template-preview' template.id %}" target='_blank'>{% trans 'Open template preview' %}</a>
-              </li>
-              <li>
-                <a class='text-primary' href="{% url 'template-update' template.id %}">{% trans 'Edit' %}</a>
-              </li>
-              <li>
-                <a href="{% url 'template-delete' template.id %}" data-toggle="modal" data-target="#template-delete-confirmation" class='text-danger'>{% trans 'Delete' %}</a>
-              </li>
-            </ul>
-            <hr />
-            <ul class='list-unstyled'>
-              <li>
-                <small class='text-muted'>{% trans "created:" %} {{ template.created }}</small>
-              </li>
-              <li>
-                <small class='text-muted'>{% trans "last edited:" %} {{ template.edited}}</small>
-              </li>
-            </p>
+            <div class='container-fluid'>
+              <ul class='list-unstyled'>
+                <li>
+                  <a class='text-primary' href='#'>{% trans 'Create a campaign with this template' %}</a>
+                </li>
+                <li>
+                  <a class='text-primary' href="{% url 'template-preview' template.id %}" target='_blank'>{% trans 'Open template preview' %}</a>
+                </li>
+                <li>
+                  <a class='text-primary' href="{% url 'template-update' template.id %}">{% trans 'Edit' %}</a>
+                </li>
+                <li>
+                  <a href="{% url 'template-delete' template.id %}" data-toggle="modal" data-target="#template-delete-confirmation" class='text-danger'>{% trans 'Delete' %}</a>
+                </li>
+              </ul>
+              <hr />
+              <ul class='list-unstyled'>
+                <li>
+                  <small class='text-muted'>{% trans "created:" %} {{ template.created }}</small>
+                </li>
+                <li>
+                  <small class='text-muted'>{% trans "last edited:" %} {{ template.edited}}</small>
+                </li>
+              </p>
+            </div>
           </div>
         </div>
-      </div>
 
+    </div>
   </div>
 
   <!-- Modal for delete deletion confirmation -->

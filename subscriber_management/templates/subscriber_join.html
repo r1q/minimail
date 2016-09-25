@@ -5,33 +5,35 @@
 {% endblock %}
 
 {% block content %}
-<form method="POST">
-  <legend>Subcribe to {{list_item.title}}</legend>
-  {% if list_item.description %}
-    <p class="">{{list_item.description}}</p>
-  {% endif %}
-  {% if list_item.image %}
-    <img src="{{list_item.image}}"/>
-  {% endif %}
-  {% for input in form %}
-    {% if input.name != 'timezone' %}
-      <div class="form-group">
-        <label for="{{input.name}}">{{input.label}}</label>
-        {{input}}
-        {% for error in input.errors %}
-          <br>
-          <div class="alert alert-danger" role="alert">{{error}}</div>
-        {% endfor %}
-      </div>
-    {% else %}
+<div class='container'>
+  <form method="POST">
+    <legend>Subcribe to {{list_item.title}}</legend>
+    {% if list_item.description %}
+      <p class="">{{list_item.description}}</p>
     {% endif %}
-  {% endfor %}
-  {% if duplicate_error %}
-    <div class="alert alert-danger" role="alert">{{duplicate_error}}</div>
-  {% endif %}
-  <div style="position: absolute; left: -5000px;">
-        <input type="text" name="{{list_item.signup_token}}" tabindex="-1" value="">
-  </div>
-  <button class="btn btn-primary">{% trans 'Subscribe' %}</button>
-</form>
+    {% if list_item.image %}
+      <img src="{{list_item.image}}"/>
+    {% endif %}
+    {% for input in form %}
+      {% if input.name != 'timezone' %}
+        <div class="form-group">
+          <label for="{{input.name}}">{{input.label}}</label>
+          {{input}}
+          {% for error in input.errors %}
+            <br>
+            <div class="alert alert-danger" role="alert">{{error}}</div>
+          {% endfor %}
+        </div>
+      {% else %}
+      {% endif %}
+    {% endfor %}
+    {% if duplicate_error %}
+      <div class="alert alert-danger" role="alert">{{duplicate_error}}</div>
+    {% endif %}
+    <div style="position: absolute; left: -5000px;">
+          <input type="text" name="{{list_item.signup_token}}" tabindex="-1" value="">
+    </div>
+    <button class="btn btn-primary">{% trans 'Subscribe' %}</button>
+  </form>
+</div>
 {% endblock %}

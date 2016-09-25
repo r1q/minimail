@@ -10,40 +10,42 @@
 
 {% block content %}
 
-  <div class='row'>
-    <div class='col-lg-6 col-sm-6'>
-      <h3>
-        {% trans "Subscriber Lists" %}
-      </h3>
+  <div class='container'>
+    <div class='row'>
+      <div class='col-lg-6 col-sm-6'>
+        <h3>
+          {% trans "Subscriber Lists" %}
+        </h3>
+      </div>
+      <div class='col-lg-6 col-sm-6 text-right'>
+        <br />
+        <a class='btn btn-default' href='{% url "subscriber-management-create" %}'>{% trans 'Create a new list' %}</a>
+      </div>
     </div>
-    <div class='col-lg-6 col-sm-6 text-right'>
-      <br />
-      <a class='btn btn-default' href='{% url "subscriber-management-create" %}'>{% trans 'Create a new list' %}</a>
-    </div>
+
+    <hr />
+
+    {% for item in  object_list %}
+      <div class="list-group">
+        <a href="{% url 'subscriber-management-list-subscribers' item.uuid %}" class="list-group-item">
+          <h4 class='list-group-item-heading'>
+            {{ item.name }}
+            <small>
+              {{ item.count_validated_subscribers|intcomma }} subscriber{{item.count_validated_subscribers|pluralize}}
+            </small>
+          </h4>
+          <p class="list-group-item-text">
+            <small class='text-muted'>created: {{ item.created }}</small>
+          </p>
+        </a>
+      </div>
+    {% empty %}
+      <div class='alert alert-warning'>
+        No list created yet.
+        <a href="{% url 'subscriber-management-create' %}">Go create one &raquo;</a>
+      </div>
+    {% endfor %}
   </div>
-
-  <hr />
-
-  {% for item in  object_list %}
-    <div class="list-group">
-      <a href="{% url 'subscriber-management-list-subscribers' item.uuid %}" class="list-group-item">
-        <h4 class='list-group-item-heading'>
-          {{ item.name }}
-          <small>
-            {{ item.count_validated_subscribers|intcomma }} subscriber{{item.count_validated_subscribers|pluralize}}
-          </small>
-        </h4>
-        <p class="list-group-item-text">
-          <small class='text-muted'>created: {{ item.created }}</small>
-        </p>
-      </a>
-    </div>
-  {% empty %}
-    <div class='alert alert-warning'>
-      No list created yet.
-      <a href="{% url 'subscriber-management-create' %}">Go create one &raquo;</a>
-    </div>
-  {% endfor %}
 
   <!-- Modal for delete deletion confirmation -->
   <div id='list-delete-confirmation' class="modal" tabindex="-1" role="dialog">

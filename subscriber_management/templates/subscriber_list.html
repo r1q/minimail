@@ -3,183 +3,190 @@
 
 
 {% block content %}
-{% include 'list_header.html' %}
-<ul class="nav nav-tabs">
-  <li role="presentation" class="active"><a href="{% url 'subscriber-management-list-subscribers' list.uuid %}">{% trans 'Subscribers' %}</a></li>
-  <li role="presentation"><a href="{% url 'subscriber-management-list-newsletter-homepage' list.uuid %}">{% trans 'Newsletter homepage' %}</a></li>
-  <li role="presentation"><a href="{% url 'subscriber-management-list-sign-up-form' list.uuid %}">{% trans 'Signup form' %}</a></li>
-  <li role="presentation"><a href="{% url 'subscriber-management-list-settings' list.uuid %}">{% trans 'Settings' %}</a></li>
-</ul>
-<br>
-{% if not object_list %}
-  <p>{% trans 'No subscribers' %}</p>
-{% else %}
-  <form method="POST" action="{% url 'subscriber-management-list-subscribers-bulk' list.uuid %}">
-    <table class="table">
-      <thead>
-        <tr>
-          <th><input type="checkbox" id="select_all"/></th>
-          <th>{% trans 'Email' %}</th>
-          <th>{% trans 'Name' %}</th>
-          <th>{% trans 'Timezone' %}</th>
-          <th>{% trans 'Country code' %}</th>
-          <th>{% trans 'Date join' %}</th>
-          <th>{% trans 'Action' %}</th>
-        <tr>
-      </thead>
-      <tbody>
-        {% for item in  object_list %}
-          <tr>
-            <td><input type="checkbox" class="item-checkbox" name="bulk_item" value="{{item.uuid}}"/></td>
-            <td>{{ item.email }}</td>
-            <td>{{ item.full_name }}</td>
-            <td>{{ item.human_tz }}</td>
-            <td>{{ item.country }}</td>
-            <td>{{ item.created }}</td>
-            <td>
-              <a
-                href="#"
-                data-delete-url="{% url 'subscriber-management-subscriber-delete' list.uuid item.uuid %}"
-                data-email="{{item.email}}"
-                class="btn btn-danger btn-xs right"
-                data-toggle="modal"
-                data-target="#subscriber-delete-confirmation" class='text-danger'>
-                {% trans 'Delete' %}
+
+  <div class='container'>
+
+    {% include 'parts/list_header.html' %}
+    <ul class="nav nav-tabs">
+      <li role="presentation" class="active"><a href="{% url 'subscriber-management-list-subscribers' list.uuid %}">{% trans 'Subscribers' %}</a></li>
+      <li role="presentation"><a href="{% url 'subscriber-management-list-newsletter-homepage' list.uuid %}">{% trans 'Newsletter homepage' %}</a></li>
+      <li role="presentation"><a href="{% url 'subscriber-management-list-sign-up-form' list.uuid %}">{% trans 'Signup form' %}</a></li>
+      <li role="presentation"><a href="{% url 'subscriber-management-list-settings' list.uuid %}">{% trans 'Settings' %}</a></li>
+    </ul>
+    <br>
+    {% if not object_list %}
+      <p>{% trans 'No subscribers' %}</p>
+    {% else %}
+      <form method="POST" action="{% url 'subscriber-management-list-subscribers-bulk' list.uuid %}">
+        <table class="table">
+          <thead>
+            <tr>
+              <th><input type="checkbox" id="select_all"/></th>
+              <th>{% trans 'Email' %}</th>
+              <th>{% trans 'Name' %}</th>
+              <th>{% trans 'Timezone' %}</th>
+              <th>{% trans 'Country code' %}</th>
+              <th>{% trans 'Date join' %}</th>
+              <th>{% trans 'Action' %}</th>
+            <tr>
+          </thead>
+          <tbody>
+            {% for item in  object_list %}
+              <tr>
+                <td><input type="checkbox" class="item-checkbox" name="bulk_item" value="{{item.uuid}}"/></td>
+                <td>{{ item.email }}</td>
+                <td>{{ item.full_name }}</td>
+                <td>{{ item.human_tz }}</td>
+                <td>{{ item.country }}</td>
+                <td>{{ item.created }}</td>
+                <td>
+                  <a
+                    href="#"
+                    data-delete-url="{% url 'subscriber-management-subscriber-delete' list.uuid item.uuid %}"
+                    data-email="{{item.email}}"
+                    class="btn btn-danger btn-xs right"
+                    data-toggle="modal"
+                    data-target="#subscriber-delete-confirmation" class='text-danger'>
+                    {% trans 'Delete' %}
+                  </a>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <button class="btn btn-danger" data-toggle="modal"  name="bulk_action" data-target="#subscriber-delete-bulk-confirmation" disabled>{% trans 'Bulk delete' %}</button>
+      <form>
+      <br>
+      <br>
+
+      {% if object_list.has_other_pages %}
+        <nav aria-label="Page navigation">
+          <ul class="pagination">
+            {% if object_list.has_previous %}
+            <li>
+              <a href="{% url 'subscriber-management-list-subscribers' list.uuid %}?page={{object_list.previous_page_number}}" aria-label="Previous">
+                <span aria-hidden="true">{% trans 'Prev' %}</span>
               </a>
-            </td>
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-    <button class="btn btn-danger" data-toggle="modal"  name="bulk_action" data-target="#subscriber-delete-bulk-confirmation" disabled>{% trans 'Bulk delete' %}</button>
-  <form>
-  <br>
-  <br>
+            </li>
+            {% endif %}
+            {% if object_list.has_next %}
+            <li>
+              <a href="{% url 'subscriber-management-list-subscribers' list.uuid %}?page={{object_list.next_page_number}}" aria-label="Next">
+                <span aria-hidden="true">{% trans 'Next' %}</span>
+              </a>
+            </li>
+            {% endif %}
+            <li>
+                <span  aria-label="Next">
+                  <span aria-hidden="true">{{object_list.number}} / {{ object_list.paginator.num_pages }}</span>
+              </span>
 
-  {% if object_list.has_other_pages %}
-    <nav aria-label="Page navigation">
-      <ul class="pagination">
-        {% if object_list.has_previous %}
-        <li>
-          <a href="{% url 'subscriber-management-list-subscribers' list.uuid %}?page={{object_list.previous_page_number}}" aria-label="Previous">
-            <span aria-hidden="true">{% trans 'Prev' %}</span>
-          </a>
-        </li>
-        {% endif %}
-        {% if object_list.has_next %}
-        <li>
-          <a href="{% url 'subscriber-management-list-subscribers' list.uuid %}?page={{object_list.next_page_number}}" aria-label="Next">
-            <span aria-hidden="true">{% trans 'Next' %}</span>
-          </a>
-        </li>
-        {% endif %}
-        <li>
-            <span  aria-label="Next">
-              <span aria-hidden="true">{{object_list.number}} / {{ object_list.paginator.num_pages }}</span>
-          </span>
-
-        </li>
-      </ul>
-    </nav>
-  {% endif %}
-{% endif %}
-
-{% include 'import_csv.html' %}
-
-<div id='subscriber-delete-bulk-confirmation' class="modal" tabindex="-1" role="dialog">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <form method='post' action='{% url "subscriber-management-list-subscribers-bulk" list.uuid %}'>
-        {% csrf_token %}
-        <input type="hidden" name="user_list" value=""/>
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title">Please confirm subscriber deletion from {{list.name}}</h4>
-        </div>
-        <div class="modal-body">
-          <p>
-            <strong>Are you sure you can to delete the selected subscribers?</strong>
-          </p>
-          <ul>
-            <li>All the information about them will be lost forever.</li>
+            </li>
           </ul>
-        </div>
-        <div class="modal-footer">
-          <a href='javascript:void(0)' type="button" class="btn btn-default" data-dismiss="modal">No, keep it</a>
-          <button type="submit" class="btn btn-danger">Yes, delete it</button>
-        </div>
-      </form>
-    </div><!-- /.modal-content -->
-  </div><!-- /.modal-dialog -->
-</div>
+        </nav>
+      {% endif %}
+    {% endif %}
 
-<div id='subscriber-delete-confirmation' class="modal" tabindex="-1" role="dialog">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <form method='post' action='/'>
-        {% csrf_token %}
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title">Please confirm subscriber deletion from {{list.name}}</h4>
-        </div>
-        <div class="modal-body">
-          <p>
-            <strong>Are you sure you can to delete <span id="user_email"></span> from {{list.name}}?</strong>
-          </p>
-          <ul>
-            <li>All the information about this subscriber will be lost forever.</li>
-          </ul>
-        </div>
-        <div class="modal-footer">
-          <a href='javascript:void(0)' type="button" class="btn btn-default" data-dismiss="modal">No, keep it</a>
-          <a type="button" class="btn btn-danger" href="#" id="confirm_delete_subscriber_button">Yes, delete it</a>
-        </div>
-      </form>
-    </div><!-- /.modal-content -->
-  </div><!-- /.modal-dialog -->
-</div>
+    {% include 'import_csv.html' %}
+
+    <div id='subscriber-delete-bulk-confirmation' class="modal" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <form method='post' action='{% url "subscriber-management-list-subscribers-bulk" list.uuid %}'>
+            {% csrf_token %}
+            <input type="hidden" name="user_list" value=""/>
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title">Please confirm subscriber deletion from {{list.name}}</h4>
+            </div>
+            <div class="modal-body">
+              <p>
+                <strong>Are you sure you can to delete the selected subscribers?</strong>
+              </p>
+              <ul>
+                <li>All the information about them will be lost forever.</li>
+              </ul>
+            </div>
+            <div class="modal-footer">
+              <a href='javascript:void(0)' type="button" class="btn btn-default" data-dismiss="modal">No, keep it</a>
+              <button type="submit" class="btn btn-danger">Yes, delete it</button>
+            </div>
+          </form>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div>
+
+  </div>
+
+    <div id='subscriber-delete-confirmation' class="modal" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <form method='post' action='/'>
+            {% csrf_token %}
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title">Please confirm subscriber deletion from {{list.name}}</h4>
+            </div>
+            <div class="modal-body">
+              <p>
+                <strong>Are you sure you can to delete <span id="user_email"></span> from {{list.name}}?</strong>
+              </p>
+              <ul>
+                <li>All the information about this subscriber will be lost forever.</li>
+              </ul>
+            </div>
+            <div class="modal-footer">
+              <a href='javascript:void(0)' type="button" class="btn btn-default" data-dismiss="modal">No, keep it</a>
+              <a type="button" class="btn btn-danger" href="#" id="confirm_delete_subscriber_button">Yes, delete it</a>
+            </div>
+          </form>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div>
+
 {% endblock %}
+
 
 {% block script %}
     <script>
-    function bulkButton() {
-      buildBulkDeleteList()
-      var items = $('.item-checkbox').get()
-      $('[name="bulk_action"]').prop('disabled', true)
-      for (var i = 0; i < items.length; i++) {
-        if ($(items[i]).prop('checked') == true) {
-          $('[name="bulk_action"]').prop('disabled', false)
-          return
+      function bulkButton() {
+        buildBulkDeleteList()
+        var items = $('.item-checkbox').get()
+        $('[name="bulk_action"]').prop('disabled', true)
+        for (var i = 0; i < items.length; i++) {
+          if ($(items[i]).prop('checked') == true) {
+            $('[name="bulk_action"]').prop('disabled', false)
+            return
+          }
         }
       }
-    }
 
-    function buildBulkDeleteList() {
-      var users = []
-      var items = $('.item-checkbox').get()
-      for (var i = 0; i < items.length; i++) {
-        if ($(items[i]).prop('checked') == true) {
-          users.push($(items[i]).val())
+      function buildBulkDeleteList() {
+        var users = []
+        var items = $('.item-checkbox').get()
+        for (var i = 0; i < items.length; i++) {
+          if ($(items[i]).prop('checked') == true) {
+            users.push($(items[i]).val())
+          }
         }
+        $('[name="user_list"]').val(JSON.stringify(users))
       }
-      $('[name="user_list"]').val(JSON.stringify(users))
-    }
 
-    $('[name="bulk_action"]').click(function (ev) {
-      ev.preventDefault()
-    })
+      $('[name="bulk_action"]').click(function (ev) {
+        ev.preventDefault()
+      })
 
-    $('#select_all').click(function() {
-      var val = $(this).prop('checked')
-      $('.item-checkbox').prop('checked', val)
-      bulkButton()
-    })
-    $('.item-checkbox').on('change', function () {
-      bulkButton()
-    })
-    $('[data-delete-url]').click(function() {
-      $('#user_email').text($(this).data('email'))
-      $('#confirm_delete_subscriber_button').attr('href', $(this).data('delete-url'))
-    })
+      $('#select_all').click(function() {
+        var val = $(this).prop('checked')
+        $('.item-checkbox').prop('checked', val)
+        bulkButton()
+      })
+      $('.item-checkbox').on('change', function () {
+        bulkButton()
+      })
+      $('[data-delete-url]').click(function() {
+        $('#user_email').text($(this).data('email'))
+        $('#confirm_delete_subscriber_button').attr('href', $(this).data('delete-url'))
+      })
     </script>
 {% endblock %}

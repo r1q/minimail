@@ -150,7 +150,10 @@ def send_test_email(request, pk):
                          "Test email successfully sent to {}"
                          .format(", ".join(email_recipients)))
     finally:
-        return redirect('campaign-review', pk=pk)
+        if request.POST.get('redirect-to') == 'compose':
+            return redirect('campaign-compose-email', pk=pk)
+        else:
+            return redirect('campaign-review', pk=pk)
 
 
 @login_required
@@ -183,7 +186,7 @@ def _gen_campaign_emails(campaign):
                                        [subscriber.email],  # recipient
                                        reply_to=[campaign.email_reply_to_email])
         email.attach_alternative(campaign.html_template, "text/html")
-        # Avoid use list of Object in RAM
+        # Avoid keepting a list of Object in RAM
         yield email
 
 
