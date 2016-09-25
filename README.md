@@ -27,6 +27,29 @@ For Python libraries in use, see `requirements.txt`.
 6. Link the app nginx configuration file to nginx default conf folder: `sudo ln -s /path/to/repo/server_conf/minimail.nginx.conf /path/to/nginx/main/conf/minimail.nginx.conf`
 7. Test and reload nginx: `sudo nginx -t && nginx -s reload`
 
+## systemd
+
+1. create the service description in `/etc/systemd/system/minimail.service`
+
+```
+[Unit]
+Description=app
+After=network.target
+
+[Service]
+Type=simple
+User=root
+Group=root
+WorkingDirectory=<your app directory>/minimail
+ExecStart=<your app directory>/minimail/server_conf/start.sh
+
+[Install]
+WantedBy=multi-user.target
+```
+
+2. `sudo systemctl daemon-reload`
+3. `sudo systemctl start minimail`
+
 ## Code syntax
 
 ### Python
