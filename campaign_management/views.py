@@ -13,6 +13,9 @@ from campaign_management.models import Campaign
 from subscriber_management.models import List, Subscriber
 from template_management.models import Template
 
+import premailer
+from bs4 import BeautifulSoup as HTMLParser
+
 
 class CampaignList(LoginRequiredMixin, ListView):
     """CampaignList"""
@@ -162,7 +165,12 @@ def show_campaign_email_preview(request, pk):
     :param pk:
     """
     campaign = Campaign.objects.get(pk=pk)
-    return HttpResponse(campaign.html_template)
+    if request.GET.get('format') == 'text':
+        resp = HttpResponse(campaign.text_template)
+        resp['Content-Type'] = 'text/plain; charset=UTF-8'
+        return resp
+    else:
+        return HttpResponse(campaign.html_template)
 
 
 def _gen_campaign_emails(campaign):
@@ -230,10 +238,17 @@ class ComposeEmailView(View):
         return render(request, 'campaign_compose.html', locals())
 
     def post(self, request, pk):
-        #TODO: Inline CSS from HTML
-        #TODO: Use striped tag version of HTML for text
         html_email = request.POST.get('html_email')
-        text_email = ""
+        # Inline CSS from HTML
+        # html_email = premailer.transform(html_email)
+        # Use striped tag version of HTML for text
+        html_tree = HTMLParser(html_email, "html5lib")
+        html_email_body = html_tree.find('body')
+        for link in html_email_body.findAll('a'):
+            link.replace_with("{} ({})".format(link.text, link.get('href', '')))
+        text_email = html_email_body.get_text()
+        # TODO: Remove the too many white-spaces
+        # Save email HTML and text body
         campaign = Campaign.objects.get(pk=pk)
         campaign.html_template = html_email
         campaign.text_template = text_email
