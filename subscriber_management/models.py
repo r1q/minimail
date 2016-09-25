@@ -3,6 +3,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from strgen import StringGenerator
 from localize import timezone
+from django.urls import reverse
 
 
 def _gen_token():
@@ -87,7 +88,11 @@ class Subscriber(models.Model):
         return self.first_name+" "+self.last_name
 
     def validation_link(self):
-        return 'http://minimail.fullweb.io/subscribers/subscriber/{}/validate/{}'.format(self.uuid, self.token_subscribe)
+        #return 'http://minimail.fullweb.io/subscribers/subscriber/{}/validate/{}'.format(self.uuid, self.token_subscribe)
+        return reverse('subscriber-management-subscriber-validate', self.uuid, self.token_subscribe)
+
+    def unsubscribe_link(self):
+        return reverse('subscriber-management-subscriber-unsubscribe', self.uuid, self.token_unsubscribe)
 
     def human_tz(self):
         return timezone.human_timezone(self.timezone)
