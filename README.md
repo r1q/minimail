@@ -49,6 +49,7 @@ WantedBy=multi-user.target
 
 2. `sudo systemctl daemon-reload`
 3. `sudo systemctl start minimail`
+4. `sudo systemctl enable minimail` to launch minimail on startup
 
 ## Code syntax
 
