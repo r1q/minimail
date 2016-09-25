@@ -10,58 +10,60 @@
 
 {% block content %}
 
-  <div class='row'>
-    <div class='col-lg-12'>
-      <h2>
-        <a href='{% url 'template-list' %}'>{% trans "Templates" %}</a>
-        / New template
-      </h2>
+  <div class='container'>
+    <div class='row'>
+      <div class='col-lg-12'>
+        <h2>
+          <a href='{% url 'template-list' %}'>{% trans "Templates" %}</a>
+          / New template
+        </h2>
+      </div>
     </div>
-  </div>
 
-  <hr />
+    <hr />
 
-  <div class='row'>
-    <div class='col-lg-12'>
+    <div class='row'>
+      <div class='col-lg-12'>
 
-      <form method='post'>
+        <form method='post'>
 
-        {% csrf_token %}
+          {% csrf_token %}
 
-        <p>
-          <label for="{{form.name.auto_id}}">Template name:</label>
-          <input id="{{form.name.auto_id}}" name="{{form.name.name}}" class='form-control input-lg' autofocus tabindex='0' />
-        </p>
+          <p>
+            <label for="{{form.name.auto_id}}">Template name:</label>
+            <input id="{{form.name.auto_id}}" name="{{form.name.name}}" class='form-control input-lg' autofocus tabindex='0' />
+          </p>
 
-        <br />
+          <br />
 
-        <ul id="newTemplateTabs" class="nav nav-tabs" role="tablist">
-          <li role="presentation" class="active">
-            <a href="#html-email" tabindex='4'>HTML Email</a></li>
-          <li role="presentation">
-            <a href="#text-email" tabindex='3'>Text Email</a></li>
-        </ul>
-        <div class="tab-content">
-          <div id="html-email" class="tab-pane active" role='tabpanel'>
-            <textarea tabindex='1' id="{{form.html_template.auto_id}}" name="{{form.html_template.name}}" class='form-control' rows='15'>
-
+          <ul id="newTemplateTabs" class="nav nav-tabs" role="tablist">
+            <li role="presentation" class="active">
+              <a href="#html-email" tabindex='4'>HTML Email</a></li>
+            <li role="presentation">
+              <a href="#text-email" tabindex='3'>Text Email</a></li>
+          </ul>
+          <div class="tab-content">
+            <div id="html-email" class="tab-pane active" role='tabpanel'>
+              <textarea tabindex='1' id="{{form.html_template.auto_id}}" name="{{form.html_template.name}}" class='form-control' rows='15'>
 
 
 
 
-</textarea>
+
+  </textarea>
+            </div>
+            <div id='text-email' class='tab-pane' role='tabpanel'>
+              <textarea id="{{form.text_template.auto_id}}" name="{{form.text_template.name}}" class='form-control' rows='15'></textarea>
+            </div>
           </div>
-          <div id='text-email' class='tab-pane' role='tabpanel'>
-            <textarea id="{{form.text_template.auto_id}}" name="{{form.text_template.name}}" class='form-control' rows='15'></textarea>
-          </div>
-        </div>
 
-        <br />
-        <br />
-        <button class='btn btn-success center-block'>Save this new template</button>
+          <br />
+          <br />
+          <button class='btn btn-success center-block'>Save this new template</button>
 
-      </form>
+        </form>
 
+      </div>
     </div>
   </div>
 

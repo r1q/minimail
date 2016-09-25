@@ -5,9 +5,10 @@
 {% endblock %}
 
 {% block content %}
+<div class='container'>
 <h1>{% trans 'Are you sure that you want to unsubscribe from' %} {{list.name}}?</h1>
 <form method="POST">
   <button class="btn btn-primary">{% trans 'Unsubscribe' %}</button>
 </form>
-
+</div>
 {% endblock %}

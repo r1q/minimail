@@ -3,6 +3,7 @@
 
 
 {% block content %}
+  <div class='container'>
   <form method="POST" enctype="multipart/form-data">
     {% csrf_token %}
     <legend>Update {{form.instance.name}}:</legend>
@@ -48,4 +49,5 @@
     </div>
     <button class="btn btn-primary">{% trans 'Update' %}</button>
   </form>
+  </div>
 {% endblock %}
