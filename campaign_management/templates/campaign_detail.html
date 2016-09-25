@@ -13,14 +13,16 @@
   <div class='container'>
     <div class='row'>
       <div class='col-lg-12'>
-        <h3>
-          <a href='{% url 'campaign-list' %}'>{% trans "Emails" %}</a>
-          / {{ campaign.email_subject }}
-        </h3>
+        <ol class='breadcrumb'>
+          <li>
+            <a href='{% url 'campaign-list' %}'>{% trans "Emails" %}</a>
+          </li>
+          <li class='active'>
+            {{campaign.email_subject}}
+          </li>
+        </ol>
       </div>
     </div>
-
-    <hr />
 
     <div class='row'>
 
