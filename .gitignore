@@ -90,3 +90,6 @@ ENV/
 db.sqlite3
 
 migrations
+bin
+include
+pip-selfcheck.json
