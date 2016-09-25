@@ -262,7 +262,11 @@ class SubscriberListImportText(LoginRequiredMixin, View):
             return redirect('subscriber-management-list-subscribers', uuid)
         content = request.POST['text_import']
         save_count = 0
-        for row in csv.reader(content.split('\n')):
+        lines_csv = content.split('\n')
+        lines_count = len(lines_csv)
+        if lines_count > 100:
+            lines_count = 100
+        for row in csv.reader(lines_csv[0:lines_count]):
             if len(row) != 2:
                 continue
             if self.save_user(list_item, row) == True:
