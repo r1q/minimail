@@ -60,6 +60,7 @@
             </div>
         <form action='{% url "campaign-send-test-email" campaign.pk %}' method='post' class='pull-right' style='width:400px'>
           {% csrf_token %}
+          <input type="hidden" name="redirect-to" value="compose" />
           <div>
             <div class="input-group input-group-sm">
               <span class="input-group-addon" id="sizing-addon1">
