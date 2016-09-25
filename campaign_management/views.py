@@ -239,15 +239,16 @@ class ComposeEmailView(View):
 
     def post(self, request, pk):
         html_email = request.POST.get('html_email')
-        # Inline CSS from HTML
-        # html_email = premailer.transform(html_email)
-        # Use striped tag version of HTML for text
         html_tree = HTMLParser(html_email, "html5lib")
+        # Inline CSS from HTML
+        # Using regularized/sanitized version by BeautifulSoup
+        html_email = premailer.transform(html_tree.prettify(formatter="html"))
+        # Use striped tag version of HTML for text
         html_email_body = html_tree.find('body')
         for link in html_email_body.findAll('a'):
             link.replace_with("{} ({})".format(link.text, link.get('href', '')))
-        text_email = html_email_body.get_text()
         # TODO: Remove the too many white-spaces
+        text_email = html_email_body.get_text()
         # Save email HTML and text body
         campaign = Campaign.objects.get(pk=pk)
         campaign.html_template = html_email
