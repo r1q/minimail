@@ -186,6 +186,7 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 
+BASE_URL = 'https://minimail.fullweb.io'
 
 try:
   from .local_settings import *

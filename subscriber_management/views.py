@@ -399,6 +399,7 @@ class SubscriberJoin(View):
             if request.is_ajax():
                 return JsonResponse({"error": err})
             else:
+                print(err)
                 messages.error(request, err)
                 return redirect('subscriber-management-join-error', uuid)
         else:
