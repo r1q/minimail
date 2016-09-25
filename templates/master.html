@@ -26,12 +26,18 @@
 
       {% block notifs %}
         {% if messages %}
-          {% for message in messages %}
-            <p class="alert alert-dismissable {% if message.tags %}alert-{{ message.tags }}"{% endif %}>
-              <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-              {{ message }}
-            </p>
-          {% endfor %}
+        <div class='container'>
+          <div class='row'>
+            <div class='col-lg-6 col-lg-offset-3'>
+              {% for message in messages %}
+                <p class="alert alert-dismissable {% if message.tags %}alert-{{ message.tags }}"{% endif %}>
+                  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                  {{ message }}
+                </p>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
         {% endif %}
       {% endblock %}
 
