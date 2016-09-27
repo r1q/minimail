@@ -33,9 +33,9 @@
               <h4 class="list-group-item-heading">
                 <small>
                   {% if campaign.is_sent %}
-                  <span class='label label-success'>SENT</span>
+                  <span class='label label-success'><i class='glyphicon glyphicon-ok'></i> SENT</span>
                   {% else %}
-                  <span class='label label-warning'>NOT SENT</span>
+                  <span class='label label-warning'><i class='glyphicon glyphicon-pencil'></i> DRAFT</span>
                   {% endif %}
                 </small>
                 {{ campaign.email_subject }}
