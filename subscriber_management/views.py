@@ -42,7 +42,7 @@ If you didn't subscribe, you can ignore this email. You won't be subscribed if y
 — Sent with Minimail
 """)
 
-def send_validation_email(list_name, subscriber):
+def _send_validation_email(list_name, subscriber):
     send_mail(
         "{}: {}".format(list_name, _('Please Confirm Subscription')), # Subject
         VALIDATION_EMAIL.format(list_name, subscriber.validation_link()), # Text email
@@ -63,7 +63,8 @@ class SubscriberListView(LoginRequiredMixin, ListView):
     template_name = 'list_list.html'
 
     def get_queryset(self):
-        return List.objects.filter(user__id=self.request.user.id)
+        return List.objects.filter(user__id=self.request.user.id)\
+                           .order_by('-created')
 
     def get_context_data(self, **kwargs):
         context = super(SubscriberListView, self).get_context_data(**kwargs)
@@ -382,7 +383,7 @@ class SubscriberJoin(View):
                 form.instance.user_agent = request.META.get('HTTP_USER_AGENT', '')
                 form.instance.accept_language = request.META.get('HTTP_ACCEPT_LANGUAGE', '')
                 form.save()
-                send_validation_email(list_item.title, form.instance)
+                _send_validation_email(list_item.title, form.instance)
             else:
                 if request.is_ajax():
                     return JsonResponse({"error": _('invalid form')})
