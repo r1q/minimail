@@ -16,6 +16,7 @@ class Campaign(models.Model):
     email_subject = models.CharField(max_length=150)
     email_from_name = models.CharField(max_length=100)
     email_reply_to_email = models.CharField(max_length=100)
+    email_from_email = models.CharField(max_length=100, blank=True) # populated from email_list.from_email
     schedule_send = models.DateTimeField(blank=True, null=True)
     # No foreign key for these, as the template may change
 #    html_email_for_editing = models.TextField()

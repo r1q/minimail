@@ -62,13 +62,13 @@
           </div>
 
           <div class="form-group">
-            <label class='control-label'>From email:</label>
+            <label for="{{form.email_from_email.auto_id}}" class='control-label'>From email:</label>
             {% if from_emails %}
-                <select class="form-control">
+              <select id="{{form.email_from_email.auto_id}}" class="form-control">
                 {% for email in from_emails %}
-                  <option value='email'> {{email}} </option>
+                  <option value='{{email}}'> {{email}} </option>
                 {% endfor %}
-                </select>
+              </select>
             {% else %}
               <div class='alert-warning alert' style='margin-bottom: 0'>
                 No email verified yet.

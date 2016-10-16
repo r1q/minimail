@@ -68,6 +68,9 @@ class CampaignReview(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(CampaignReview, self).get_context_data(**kwargs)
+        context['from_emails'] = List.objects.filter(user=self.request.user,
+                                                     from_email_verified=True)\
+                                             .values_list('from_email', flat=True)
         return context
 
 
@@ -81,15 +84,17 @@ class CampaignCreate(LoginRequiredMixin, CreateView):
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
         context = super(CampaignCreate, self).get_context_data(**kwargs)
-        # Allow lists with 0 subscribers
         context['from_emails'] = List.objects.filter(user=self.request.user,
                                                      from_email_verified=True)\
                                              .values_list('from_email', flat=True)
+        # Allow lists with 0 subscribers
         context['lists'] = List.objects.filter(user=self.request.user)
         return context
 
     def form_valid(self, form):
         form.instance.author = self.request.user
+        from_email = List.objects.get(pk=form.instance.email_list.id).from_email
+        form.instance.email_from_email = from_email
         return super(CampaignCreate, self).form_valid(form)
 
     def form_invalid(self, form):
