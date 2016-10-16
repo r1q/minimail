@@ -141,7 +141,7 @@ def send_test_email(request, pk):
                       campaign.email_from_email,
                       [recipient],
                       fail_silently=False,
-                      html_message=campaign.html_template)
+                      html_message=campaign.html_email)
     except Exception as ex:
         messages.error(request,
                        "Test email not sent: {}".format(ex),
@@ -166,11 +166,11 @@ def show_campaign_email_preview(request, pk):
     """
     campaign = Campaign.objects.get(pk=pk)
     if request.GET.get('format') == 'text':
-        resp = HttpResponse(campaign.text_template)
+        resp = HttpResponse(campaign.text_email)
         resp['Content-Type'] = 'text/plain; charset=UTF-8'
         return resp
     else:
-        return HttpResponse(campaign.html_template)
+        return HttpResponse(campaign.html_email)
 
 
 def _gen_campaign_emails(campaign):
@@ -187,11 +187,11 @@ def _gen_campaign_emails(campaign):
         _from = "{} <{}>".format(campaign.email_from_name,
                                  campaign.email_from_email)
         email = EmailMultiAlternatives(campaign.email_subject,  # email subject
-                                       "",  # body text version
+                                       campaign.text_email,  # body text version
                                        _from,  # from sender
                                        [subscriber.email],  # recipient
                                        reply_to=[campaign.email_reply_to_email])
-        email.attach_alternative(campaign.html_template, "text/html")
+        email.attach_alternative(campaign.html_email, "text/html")
         # Avoid keepting a list of Object in RAM
         yield email
 
@@ -243,15 +243,22 @@ class ComposeEmailView(View):
         # Inline CSS from HTML
         # Using regularized/sanitized version by BeautifulSoup
         html_email = premailer.transform(html_tree.prettify(formatter="html"))
+        # TODO: check if we have the unsubscribe link
         # Use striped tag version of HTML for text
         html_email_body = html_tree.find('body')
         for link in html_email_body.findAll('a'):
             link.replace_with("{} ({})".format(link.text, link.get('href', '')))
+        for h1 in html_email_body.findAll('h1'):
+            h1.text.replace("# {}".format(h1.text))
+        for h2 in html_email_body.findAll('h2'):
+            h2.text.replace("## {}".format(h2.text))
+        for h3 in html_email_body.findAll('h3'):
+            h3.text.replace("### {}".format(h3.text))
         # TODO: Remove the too many white-spaces
         text_email = html_email_body.get_text()
         # Save email HTML and text body
         campaign = Campaign.objects.get(pk=pk)
-        campaign.html_template = html_email
-        campaign.text_template = text_email
+        campaign.html_email = html_email
+        campaign.text_email = text_email
         campaign.save()
         return redirect('campaign-review', pk=pk)

@@ -19,8 +19,8 @@ class Campaign(models.Model):
     email_reply_to_email = models.CharField(max_length=100)
     schedule_send = models.DateTimeField(blank=True, null=True)
     # No foreign key for these, as the template may change
-    html_template = models.TextField()
-    text_template = models.TextField(blank=True, default='')
+    html_email = models.TextField()
+    text_email = models.TextField(blank=True, default='')
     # Status
     is_sent = models.BooleanField(default=False)
     recipient_count = models.PositiveIntegerField(blank=True, null=True)
