@@ -37,7 +37,23 @@
         <hr>
           <div class="form-group">
             <label for="" class="control-label">{% trans 'From email' %}</label>
-            <p>{{list_item.from_email|default:"No email configured yet."}}</p>
+            <p>
+              {% if list_item.from_email %}
+                {{list_item.from_email}}
+                <br />
+                {% if list_item.from_email_verified %}
+                  <span class='label label-success'>Verified</span>
+                  {% else %}
+                  <span class='label label-danger'>Not verified yet</span>
+                  <a href='mailto:julien@nepsilon.net?subject=Minimail - Please verify this email address'>Contact us</a> to verify your sender email.
+                {% endif %}
+              {% else %}
+                <div class='alert-warning alert' style='margin-bottom: 0'>
+                  No email verified yet.
+                  <a href='mailto:julien@nepsilon.net?subject=Minimail - Please verify this email address'>Contact us</a> to verify your sender email.
+                </div>
+              {% endif %}
+            </p>
             <small class='help-block'>The email address your recipients will see in the <code>From:</code> field.</small>
           </div>
         {% for error in form_object.name.errors %}

@@ -75,13 +75,16 @@ class CampaignCreate(LoginRequiredMixin, CreateView):
     """CampaignCreate"""
     model = Campaign
     fields = ['email_list', 'name', 'email_subject', 'email_reply_to_email',
-              'email_from_name', 'email_from_email', 'email_list']
+              'email_from_name', 'email_list']
     template_name = 'campaign_header.html'
 
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
         context = super(CampaignCreate, self).get_context_data(**kwargs)
         # Allow lists with 0 subscribers
+        context['from_emails'] = List.objects.filter(user=self.request.user,
+                                                     from_email_verified=True)\
+                                             .values_list('from_email', flat=True)
         context['lists'] = List.objects.filter(user=self.request.user)
         return context
 
@@ -97,7 +100,7 @@ class CampaignUpdate(LoginRequiredMixin, UpdateView):
     """CampaignUpdate"""
     model = Campaign
     fields = ['email_list', 'name', 'email_subject', 'email_reply_to_email',
-              'email_from_name', 'email_from_email', 'email_list']
+              'email_from_name', 'email_list']
     template_name = 'campaign_header.html'
 
     def get_context_data(self, **kwargs):
@@ -151,7 +154,7 @@ def send_test_email(request, pk):
             campaign = Campaign.objects.get(pk=pk)
             send_mail("[TEST] {}".format(campaign.email_subject),
                       "",
-                      campaign.email_from_email,
+                      campaign.email_list.from_email,
                       [recipient],
                       fail_silently=False,
                       html_message=campaign.html_email)
@@ -208,7 +211,7 @@ def _gen_campaign_emails(campaign):
     for subscriber in subscribers:
         html_email, text_email = _inject_unsubscribe_link(subscriber, campaign)
         _from = "{} <{}>".format(campaign.email_from_name,
-                                 campaign.email_from_email)
+                                 campaign.email_list.from_email)
         email = EmailMultiAlternatives(campaign.email_subject,  # email subject
                                        text_email,  # body text version
                                        _from,  # from sender
