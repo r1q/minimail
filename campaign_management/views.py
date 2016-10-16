@@ -95,6 +95,8 @@ class CampaignCreate(LoginRequiredMixin, CreateView):
         form.instance.author = self.request.user
         from_email = List.objects.get(pk=form.instance.email_list.id).from_email
         form.instance.email_from_email = from_email
+        # TODO: Append HTML snippet including placeholder for unsubscribe mail
+        # if not available in the page.
         return super(CampaignCreate, self).form_valid(form)
 
     def form_invalid(self, form):
@@ -196,9 +198,9 @@ def show_campaign_email_preview(request, pk):
 
 def _inject_unsubscribe_link(subscriber, campaign):
     unsubscribe_link = subscriber.unsubscribe_link()
-    html_email = campaign.html_email.replace('*|UNSUB|*',
+    html_email = campaign.html_email.replace('*%7CUNSUB%7C*',
                                              unsubscribe_link)
-    text_email = campaign.text_email.replace('*|UNSUB|*',
+    text_email = campaign.text_email.replace('*%7CUNSUB%7C*',
                                              unsubscribe_link)
     return html_email, text_email
 
@@ -300,6 +302,8 @@ class ComposeEmailView(View):
         # Regularize/Sanitize HTML with BeautifulSoup
         normalized_html = html_tree.prettify(formatter=_custom_substitute_html_entities)
         # Inline CSS from HTML
+        # TODO: premailer breaks responsive email and
+        # don't give control on html entities conversion
         css_inliner = Premailer(normalized_html,
                                 preserve_internal_links=True,
                                 include_star_selectors=True)
