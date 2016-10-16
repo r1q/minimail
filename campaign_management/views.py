@@ -16,6 +16,7 @@ from template_management.models import Template
 from premailer import Premailer
 from bs4 import BeautifulSoup as HTMLParser
 from bs4.dammit import EntitySubstitution
+import htmlmin
 
 
 def _custom_substitute_html_entities(text):
@@ -68,6 +69,9 @@ class CampaignReview(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(CampaignReview, self).get_context_data(**kwargs)
+        context['from_emails'] = List.objects.filter(user=self.request.user,
+                                                     from_email_verified=True)\
+                                             .values_list('from_email', flat=True)
         return context
 
 
@@ -75,18 +79,25 @@ class CampaignCreate(LoginRequiredMixin, CreateView):
     """CampaignCreate"""
     model = Campaign
     fields = ['email_list', 'name', 'email_subject', 'email_reply_to_email',
-              'email_from_name', 'email_from_email', 'email_list']
+              'email_from_name', 'email_list']
     template_name = 'campaign_header.html'
 
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
         context = super(CampaignCreate, self).get_context_data(**kwargs)
+        context['from_emails'] = List.objects.filter(user=self.request.user,
+                                                     from_email_verified=True)\
+                                             .values_list('from_email', flat=True)
         # Allow lists with 0 subscribers
         context['lists'] = List.objects.filter(user=self.request.user)
         return context
 
     def form_valid(self, form):
         form.instance.author = self.request.user
+        from_email = List.objects.get(pk=form.instance.email_list.id).from_email
+        form.instance.email_from_email = from_email
+        # TODO: Append HTML snippet including placeholder for unsubscribe mail
+        # if not available in the page.
         return super(CampaignCreate, self).form_valid(form)
 
     def form_invalid(self, form):
@@ -97,7 +108,7 @@ class CampaignUpdate(LoginRequiredMixin, UpdateView):
     """CampaignUpdate"""
     model = Campaign
     fields = ['email_list', 'name', 'email_subject', 'email_reply_to_email',
-              'email_from_name', 'email_from_email', 'email_list']
+              'email_from_name', 'email_list']
     template_name = 'campaign_header.html'
 
     def get_context_data(self, **kwargs):
@@ -151,7 +162,7 @@ def send_test_email(request, pk):
             campaign = Campaign.objects.get(pk=pk)
             send_mail("[TEST] {}".format(campaign.email_subject),
                       "",
-                      campaign.email_from_email,
+                      campaign.email_list.from_email,
                       [recipient],
                       fail_silently=False,
                       html_message=campaign.html_email)
@@ -188,9 +199,9 @@ def show_campaign_email_preview(request, pk):
 
 def _inject_unsubscribe_link(subscriber, campaign):
     unsubscribe_link = subscriber.unsubscribe_link()
-    html_email = campaign.html_email.replace('*|UNSUB|*',
+    html_email = campaign.html_email.replace('*%7CUNSUB%7C*',
                                              unsubscribe_link)
-    text_email = campaign.text_email.replace('*|UNSUB|*',
+    text_email = campaign.text_email.replace('*%7CUNSUB%7C*',
                                              unsubscribe_link)
     return html_email, text_email
 
@@ -208,7 +219,7 @@ def _gen_campaign_emails(campaign):
     for subscriber in subscribers:
         html_email, text_email = _inject_unsubscribe_link(subscriber, campaign)
         _from = "{} <{}>".format(campaign.email_from_name,
-                                 campaign.email_from_email)
+                                 campaign.email_list.from_email)
         email = EmailMultiAlternatives(campaign.email_subject,  # email subject
                                        text_email,  # body text version
                                        _from,  # from sender
@@ -293,14 +304,17 @@ class ComposeEmailView(View):
         normalized_html = html_tree.prettify(formatter=_custom_substitute_html_entities)
         # Inline CSS from HTML
         css_inliner = Premailer(normalized_html,
+                                keep_style_tags=True,
                                 preserve_internal_links=True,
                                 include_star_selectors=True)
         inlined_html_email = css_inliner.transform()
+        # Minify HTML (gmail cut long emails, char limit)
+        minified_html_email = htmlmin.minify(inlined_html_email)
         # Use striped tag version of HTML for text
         text_email = _textify_html_email(html_tree.find('body'))
         # Save email HTML and text body
         campaign = Campaign.objects.get(pk=pk)
-        campaign.html_email = inlined_html_email
+        campaign.html_email = minified_html_email
         campaign.text_email = text_email
         campaign.save()
         return redirect('campaign-review', pk=pk)

@@ -63,19 +63,18 @@
 
           <div class="form-group">
             <label for="{{form.email_from_email.auto_id}}" class='control-label'>From email:</label>
-            <input type='email'
-                   id="{{form.email_from_email.auto_id}}"
-                   name="{{form.email_from_email.name}}"
-                   class='form-control'
-                   tabindex='3'
-                   maxlength='{{form.email_from_email.field.max_length}}'
-                   value='{{form.email_from_email.value|default:user.email}}'
-                   />
-            <small class='text-danger'><strong>
-              {% for error in form.email_from_email.errors %}
-                {{ error }}
-              {% endfor %}
-            </strong></small>
+            {% if from_emails %}
+              <select id="{{form.email_from_email.auto_id}}" class="form-control">
+                {% for email in from_emails %}
+                  <option value='{{email}}'> {{email}} </option>
+                {% endfor %}
+              </select>
+            {% else %}
+              <div class='alert-warning alert' style='margin-bottom: 0'>
+                No email verified yet.
+                <a href='mailto:julien@nepsilon.net?subject=Minimail - Please verify this email address'>Contact us</a> to verify your sender email.
+              </div>
+            {% endif %}
             <small class='help-block'>The email address your recipients will see in the <code>From:</code> field.</small>
           </div>
 
