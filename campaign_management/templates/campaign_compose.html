@@ -25,26 +25,30 @@
     </div>
   </div>
 
+  <a name='content' style='margin-bottom:1rem;display:block'></a>
 
-  <div class='row'>
-      <form method='post' novalidate>
-        {% csrf_token %}
-        <div class='col-lg-6 col-sm-6'>
-          <textarea id='id_html_email'
-                    class='form-control'
-                    rows='20'
-                    name='html_email'
-                    placeholder='Write or paste your HTML email here'
-                    required>{{campaign.html_template}}</textarea>
-          <hr />
-          <button class='btn btn-success pull-right'>Next: <strong>Review email</strong> &raquo;</button>
-        </div>
-      </form>
+  <div id='wrap' style='position: fixed; width: 100%; z-index: 100; right: 0; background: #FFF; top: 0; bottom: 0;'>
+    <div class='row'>
+        <form method='post' novalidate>
+          {% csrf_token %}
+          <div style='position: fixed; width: 50%; left: 0; top: 0; bottom: 0;'>
+            <textarea id='id_html_email'
+                      class='form-control'
+                      rows='20'
+                      name='html_email'
+                      placeholder='Write or paste your HTML email here'
+                      required>{{campaign.html_email}}</textarea>
+            <hr />
+            <button class='btn btn-success pull-right'>Next: <strong>Review email</strong> &raquo;</button>
+<!--             <button class='btn btn-default pull-right' style='margin-right:5px'>Save draft</button> -->
+          </div>
+        </form>
 
-      <!--  HTML Preview and Text email -->
-      <div class='col-lg-6 col-sm-6'>
+        <!--  HTML Preview and Text email -->
+        <div style='position: fixed; width: 49%; width: calc(50% - 15px);
+          z-index: 100; right: 5px; top: 5px; bottom: 0; text-align: center'>
 
-            <div class="btn-group btn-group-sm pull-left" role="group" aria-label="Preview Size">
+            <div class="btn-group btn-group-sm" role="group" aria-label="Preview Size">
               <button type="button" data-size='1000x768' class="btn btn-default active btn-resize-preview">Desktop</button>
               <button type="button" data-size='380x500' class="btn btn-default btn-resize-preview">Mobile</button>
 <!--               <div class="btn-group" role="group"> -->
@@ -58,30 +62,29 @@
 <!--                 </ul> -->
 <!--               </div> -->
             </div>
-        <form action='{% url "campaign-send-test-email" campaign.pk %}' method='post' class='pull-right' style='width:400px'>
-          {% csrf_token %}
-          <input type="hidden" name="redirect-to" value="compose" />
-          <div>
-            <div class="input-group input-group-sm">
-              <span class="input-group-addon" id="sizing-addon1">
-                Send a test email to
-              </span>
-              <input type="text" name="email" class="form-control" placeholder="your email..." value="{{user.email}}" maxlength=150/>
-              <span class="input-group-btn">
-                <button type="submit" class="btn btn-default">Send</button>
-              </span>
-            </div>
-          </div>
-        </form>
+            <br/>
+<!--           <form action='{% url "campaign-send-test-email" campaign.pk %}' method='post' class='pull-right' style='width:400px'> -->
+<!--             {% csrf_token %} -->
+<!--             <input type="hidden" name="redirect-to" value="compose" /> -->
+<!--             <div> -->
+<!--               <div class="input-group input-group-sm"> -->
+<!--                 <span class="input-group-addon" id="sizing-addon1"> -->
+<!--                   Send a test email to -->
+<!--                 </span> -->
+<!--                 <input type="text" name="email" class="form-control" placeholder="your email..." value="{{user.email}}" maxlength=150/> -->
+<!--                 <span class="input-group-btn"> -->
+<!--                   <button type="submit" class="btn btn-default">Send</button> -->
+<!--                 </span> -->
+<!--               </div> -->
+<!--             </div> -->
+<!--           </form> -->
 
-        <div class='text-center'>
           <iframe id='id_html_email_preview' style='max-width: 100%; border: 0; width: 100%;
-            box-shadow: 0 1px 1px #969696; min-height: 500px; transition: width 0.2s ease-in; height:
-            500px;margin: 7px auto; border-right: 1px solid #eaeaea;border-top: 1px solid #eaeaea;'></iframe>
+            box-shadow: 0 1px 1px #969696; min-height: 645px; transition: width 0.2s ease-in; height:
+            645px;margin: 7px auto; border-right: 1px solid #eaeaea;border-top: 1px solid #eaeaea;'></iframe>
         </div>
-      </div>
 
-
+    </div>
   </div>
 
 {% endblock %}
@@ -93,8 +96,8 @@
   <style>
     .CodeMirror, textarea#id_html_email {
       border: 1px solid #EEE;
-      min-height: 537px;
-      height: 537px;
+      min-height: 687px;
+      height: 687px;
       font-family: Menlo, monospace;
       font-size: 12px;
     }
