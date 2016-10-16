@@ -13,8 +13,20 @@ from campaign_management.models import Campaign
 from subscriber_management.models import List, Subscriber
 from template_management.models import Template
 
-import premailer
+from premailer import Premailer
 from bs4 import BeautifulSoup as HTMLParser
+from bs4.dammit import EntitySubstitution
+
+
+def _custom_substitute_html_entities(text):
+    """
+        Substitute all special characters to their HTML entities,
+        with the exception for template tags.
+    """
+    if text.strip().startswith('*|') and text.strip().endswith('|*'):
+        return text
+    else:
+        return EntitySubstitution.substitute_html(text)
 
 
 class CampaignList(LoginRequiredMixin, ListView):
@@ -49,6 +61,7 @@ class CampaignReview(LoginRequiredMixin, DetailView):
     """CampaignDetail"""
     model = Campaign
     template_name = 'campaign_review.html'
+    # TODO: If no unsubscribe link, append HTML snippet with it
 
     def get_queryset(self):
         return Campaign.objects.filter(author=self.request.user)
@@ -173,6 +186,15 @@ def show_campaign_email_preview(request, pk):
         return HttpResponse(campaign.html_email)
 
 
+def _inject_unsubscribe_link(subscriber, campaign):
+    unsubscribe_link = subscriber.unsubscribe_link()
+    html_email = campaign.html_email.replace('*|UNSUB|*',
+                                             unsubscribe_link)
+    text_email = campaign.text_email.replace('*|UNSUB|*',
+                                             unsubscribe_link)
+    return html_email, text_email
+
+
 def _gen_campaign_emails(campaign):
     """_make_newsletter_emails
 
@@ -184,14 +206,15 @@ def _gen_campaign_emails(campaign):
     subscribers = Subscriber.objects.filter(list=campaign.email_list,
                                             validated=True)
     for subscriber in subscribers:
+        html_email, text_email = _inject_unsubscribe_link(subscriber, campaign)
         _from = "{} <{}>".format(campaign.email_from_name,
                                  campaign.email_from_email)
         email = EmailMultiAlternatives(campaign.email_subject,  # email subject
-                                       campaign.text_email,  # body text version
+                                       text_email,  # body text version
                                        _from,  # from sender
                                        [subscriber.email],  # recipient
                                        reply_to=[campaign.email_reply_to_email])
-        email.attach_alternative(campaign.html_email, "text/html")
+        email.attach_alternative(html_email, "text/html")
         # Avoid keepting a list of Object in RAM
         yield email
 
@@ -211,7 +234,11 @@ def send_one_campaign_to_one_list(request, pk):
         smtp_connection.open()
         # Send all emails
         for email in _gen_campaign_emails(campaign):
-            email.send()
+            if not email:
+                # TODO: Log fail to generate email
+                continue
+            else:
+                email.send()
         # Close connection
         smtp_connection.close()
     except Exception as ex:
@@ -231,6 +258,28 @@ def send_one_campaign_to_one_list(request, pk):
         return redirect('campaign-detail', pk=pk)
 
 
+def _textify_html_email(html_email_body_root):
+    try:
+        # Reformat links
+        for link in html_email_body_root.findAll('a'):
+            link.replace_with("{} ({})".format(link.text, link.get('href', '')))
+        # Reformat headers
+        for h1 in html_email_body_root.findAll('h1'):
+            h1.text.replace("# {}".format(h1.text), h1.text)
+        for h2 in html_email_body_root.findAll('h2'):
+            h2.text.replace("## {}".format(h2.text), h2.text)
+        for h3 in html_email_body_root.findAll('h3'):
+            h3.text.replace("### {}".format(h3.text), h3.text)
+        # TODO: Remove the too many white-spaces
+        # Get striped tags version
+        text_email = html_email_body_root.get_text()
+    except Exception as ex:
+        print(ex)
+        text_email = ""
+    finally:
+        return text_email
+
+
 class ComposeEmailView(View):
 
     def get(self, request, pk):
@@ -240,25 +289,18 @@ class ComposeEmailView(View):
     def post(self, request, pk):
         html_email = request.POST.get('html_email')
         html_tree = HTMLParser(html_email, "html5lib")
+        # Regularize/Sanitize HTML with BeautifulSoup
+        normalized_html = html_tree.prettify(formatter=_custom_substitute_html_entities)
         # Inline CSS from HTML
-        # Using regularized/sanitized version by BeautifulSoup
-        html_email = premailer.transform(html_tree.prettify(formatter="html"))
-        # TODO: check if we have the unsubscribe link
+        css_inliner = Premailer(normalized_html,
+                                preserve_internal_links=True,
+                                include_star_selectors=True)
+        inlined_html_email = css_inliner.transform()
         # Use striped tag version of HTML for text
-        html_email_body = html_tree.find('body')
-        for link in html_email_body.findAll('a'):
-            link.replace_with("{} ({})".format(link.text, link.get('href', '')))
-        for h1 in html_email_body.findAll('h1'):
-            h1.text.replace("# {}".format(h1.text))
-        for h2 in html_email_body.findAll('h2'):
-            h2.text.replace("## {}".format(h2.text))
-        for h3 in html_email_body.findAll('h3'):
-            h3.text.replace("### {}".format(h3.text))
-        # TODO: Remove the too many white-spaces
-        text_email = html_email_body.get_text()
+        text_email = _textify_html_email(html_tree.find('body'))
         # Save email HTML and text body
         campaign = Campaign.objects.get(pk=pk)
-        campaign.html_email = html_email
+        campaign.html_email = inlined_html_email
         campaign.text_email = text_email
         campaign.save()
         return redirect('campaign-review', pk=pk)
