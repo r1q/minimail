@@ -76,5 +76,8 @@ class Login(View):
                 messages.error(request, _("Email or password invalid"))
             else:
                 login(request, user)
-                return redirect('/')
+                if request.GET['next'] == "":
+                    return redirect('/')
+                else:
+                    return redirect(request.GET['next'])
         return render(request, "user_management/user_login.html", locals())
