@@ -23,14 +23,23 @@
         <form method="POST" class="">
             {% csrf_token %}
           <div class="form-group">
-            <label for="{{form_object.name.auto_id}}">{% trans 'Rename this list' %}</label>
-            <input type="text" class="form-control" name="{{form_object.name.name}}"
-            id="{{form_object.name.auto_id}}" placeholder=""
-                                              value="{{form_object.name.value}}"
-                                              required>
+              <div class="form-group {% if form_object.email.errors %}has-error{% endif %}">
+                <label for="{{form_object.name.auto_id}}" class="control-label">{% trans 'Rename this list' %}</label>
+                <input id="{{form_object.name.auto_id}}" name="{{form_object.name.name}}" class='form-control input-lg' autofocus tabindex='0' value ="{{form_object.name.value | default_if_none:""}}" required/>
+                {% for error in form_object.name.errors %}
+                  <span class="error-block">{{error}}</span>
+                {% endfor %}
+              </div>
+              <div class="form-group {% if form_object.from_email.errors %}has-error{% endif %}">
+                <label for="{{form_object.from_email.auto_id}}" class="control-label">{{form_object.from_email.label}}</label>
+                <input id="{{form_object.from_email.auto_id}}" name="{{form_object.from_email.name}}" class='form-control input-lg' autofocus tabindex='1' value ="{{form_object.from_email.value | default_if_none:""}}" required/>
+                {% for error in form_object.from_email.errors %}
+                  <span class="error-block">{{error}}</span>
+                {% endfor %}
+              </div>
             <div class='help-block'>This name is only visible to you. Go to your <a href='{% url 'subscriber-management-list-newsletter-homepage' list_item.uuid  %}'>newsletter homepage</a> for more.</div>
           </div>
-          <button type="submit" class="btn btn-default">{% trans 'Rename' %}</button>
+          <button type="submit" class="btn btn-default">{% trans 'Update' %}</button>
         </form>
         {% for error in form_object.name.errors %}
           <span class="error-block text-danger">{{error}}</span>

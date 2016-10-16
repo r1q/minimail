@@ -7,11 +7,11 @@ from subscriber_management.models import List, Subscriber
 class ListForm(ModelForm):
     class Meta:
         model = List
-        localized_fields = ('image', 'name','title', 'description', 'url', 'success_template',)
-        fields = ('image', 'name','title', 'description', 'url', 'success_template',)
+        localized_fields = ('image', 'from_email','name','title', 'description', 'url', 'success_template',)
+        fields = ('image', 'from_email', 'name', 'title', 'description', 'url', 'success_template',)
 
     name = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}), required=True)
-    name = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}), required=True)
+    from_email = forms.EmailField(widget=forms.TextInput(attrs={'class':'form-control'}), required=True)
     title = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}), required=True)
     description = forms.CharField(widget=forms.Textarea(attrs={'class':'form-control'}), required=False)
     url = forms.URLField(widget=forms.TextInput(attrs={'class':'form-control'}),max_length=4000, required=False)
@@ -29,8 +29,8 @@ class SubscriberForm(ModelForm):
 class ListSettings(ModelForm):
     class Meta:
         model = List
-        localized_fields = ('name',)
-        fields = ('name',)
+        localized_fields = ('name','from_email')
+        fields = ('name','from_email')
 
     name = forms.CharField(required=True)
 

@@ -3,6 +3,7 @@
 
 
 {% block content %}
+<div class="container">
   <form method="POST">
     {% csrf_token %}
     <legend>Create new list:</legend>
@@ -14,4 +15,5 @@
     {% endfor %}
     <button class="btn btn-primary">{% trans 'Create' %}</button>
   </form>
+</div>
 {% endblock %}

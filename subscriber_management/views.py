@@ -88,7 +88,7 @@ class SubscriberListCreateView(LoginRequiredMixin, CreateView):
         return super(SubscriberListCreateView, self).form_valid(form)
 
     def form_invalid(self, form):
-        return super(SubscriberListCreateView, self).form_valid(form)
+        return super(SubscriberListCreateView, self).form_invalid(form)
 
 
 class SubscriberListSettingsView(LoginRequiredMixin, View):
