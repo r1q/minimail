@@ -26,6 +26,7 @@ class List(models.Model):
     # Visible to subscribers
     title = models.CharField(max_length=125, blank=True)
     from_email = models.CharField(max_length=125, blank=True)
+    from_email_verified = models.BooleanField(default=False, blank=True)
     description = models.TextField(blank=True)
     url = models.URLField(max_length=4000, blank=True)
     image = models.ImageField(upload_to='subscribe_list/images/', null=True,

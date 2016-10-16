@@ -29,8 +29,8 @@ class SubscriberForm(ModelForm):
 class ListSettings(ModelForm):
     class Meta:
         model = List
-        localized_fields = ('name','from_email')
-        fields = ('name','from_email')
+        localized_fields = ('name',)
+        fields = ('name',)
 
     name = forms.CharField(required=True)
 

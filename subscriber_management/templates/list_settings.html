@@ -30,12 +30,9 @@
                   <span class="error-block">{{error}}</span>
                 {% endfor %}
               </div>
-              <div class="form-group {% if form_object.from_email.errors %}has-error{% endif %}">
-                <label for="{{form_object.from_email.auto_id}}" class="control-label">{{form_object.from_email.label}}</label>
-                <input id="{{form_object.from_email.auto_id}}" name="{{form_object.from_email.name}}" class='form-control input-lg' autofocus tabindex='1' value ="{{form_object.from_email.value | default_if_none:""}}" required/>
-                {% for error in form_object.from_email.errors %}
-                  <span class="error-block">{{error}}</span>
-                {% endfor %}
+              <div class="form-group">
+                <label for="" class="control-label">{% trans 'From email' %}</label>
+                <p>{{list_item.from_email}}</p>
               </div>
             <div class='help-block'>This name is only visible to you. Go to your <a href='{% url 'subscriber-management-list-newsletter-homepage' list_item.uuid  %}'>newsletter homepage</a> for more.</div>
           </div>
