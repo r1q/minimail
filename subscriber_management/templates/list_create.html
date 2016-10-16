@@ -4,16 +4,73 @@
 
 {% block content %}
 <div class="container">
-  <form method="POST">
-    {% csrf_token %}
-    <legend>Create new list:</legend>
-    {% for input in  form %}
-      <div class="form-group">
-        <label for="email">{{input.label}}</label>
-        {{input}}
-      </div>
-    {% endfor %}
-    <button class="btn btn-primary">{% trans 'Create' %}</button>
-  </form>
+  <div class="row">
+    <div class="col-lg-6 col-lg-offset-3">
+      <h3>Create a new list</h3>
+      <form method="post">
+        {% csrf_token %}
+<!--         <div class="form-group"> -->
+<!--           <label for="{{form.image.name.auto_id}}">Image:</label> -->
+<!--           <input id="{{form.image.name.auto_id}}" -->
+<!--                  name="{{form.image.name}}" -->
+<!--                  type="file" -->
+<!--                  class='form-control' -->
+<!--                  tabindex='1' /> -->
+<!--         </div> -->
+        <div class="form-group">
+          <label for="{{form.name.name.auto_id}}">Private list name:</label>
+          <input id="{{form.name.name.auto_id}}"
+                 name="{{form.name.name}}"
+                 type="text"
+                 class='form-control'
+                 required
+                 autofocus
+                 tabindex='1' />
+          <small class='text-danger'><strong>
+            {% for error in form.name.errors %}
+              {{ error }}
+            {% endfor %}
+          </strong></small>
+          <small class='help-block'>This name is not visible to your
+            subscribers. It’s only for your own usage.</small>
+        </div>
+        <div class="form-group">
+          <label for="{{form.title.name.auto_id}}">Public list name:</label>
+          <input id="{{form.title.name.auto_id}}"
+                 name="{{form.title.name}}"
+                 type="text"
+                 required
+                 class='form-control'
+                 tabindex='3' />
+          <small class='text-danger'><strong>
+            {% for error in form.title.errors %}
+              {{ error }}
+            {% endfor %}
+          </strong></small>
+          <small class='help-block'>This name is visible to your subscribers on
+          your newsletter homepage.</small>
+        </div>
+        <div class="form-group">
+          <label for="{{form.from_email.name.auto_id}}">From email:</label>
+          <input id="{{form.from_email.name.auto_id}}"
+                 name="{{form.from_email.name}}"
+                 type="email"
+                 required
+                 class='form-control'
+                 tabindex='4' />
+          <small class='text-danger'><strong>
+            {% for error in form.from_email.errors %}
+              {{ error }}
+            {% endfor %}
+          </strong></small>
+          <small class='help-block'>
+            This is the email address your subscribers will see when they
+            receive your emails.
+          </small>
+        </div>
+        <button class="btn btn-primary">{% trans 'Create this list' %}</button>
+      </form>
+    </div>
+  </div>
 </div>
 {% endblock %}
