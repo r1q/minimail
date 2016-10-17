@@ -2,6 +2,35 @@
 
 A simple webapp to manage your email campaigns and subscribers. Using AWS SES for mail delivery.
 
+## Features
+
+**List management:**
+
+* Hosted newletter homepage
+* Embed-able newsletter signup form
+* Ajax friendly API to signup subscribers
+* Confirmation via email for each new subscribers
+* Import subscribers from Mailchimp CSV
+* import subscriebrs from copy/pasting emails and names
+* Unsubscribe/Delete subscribers 
+
+**Email management:**
+
+* Custom `Reply-To:` address
+* Live HTML preview while writing or pasting the email content
+* HTML email preview before sending
+* Send test email before sending to the list
+* Auto-CSS inlining for greated email client support
+* Auto-minifying of HTML email to prevent cut message (gmail impose a length limit to emails)
+* Auto-generation of text email from the HTML (keeping the links and heading hierarchies)
+* Auto-generation/inclusion of an unsubscribe link for each email sent
+
+## No-features:
+
+    > Things Minimail will not provide for now
+    
+* Drag and drop HTML email builder (you’ll need to write or copy/paste your HTML email)
+
 ## Tech stack
 
 * Python 3.5
