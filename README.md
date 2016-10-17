@@ -11,8 +11,8 @@ A simple webapp to manage your email campaigns and subscribers. Using AWS SES fo
 * Ajax friendly API to signup subscribers
 * Confirmation via email for each new subscribers
 * Import subscribers from Mailchimp CSV
-* import subscriebrs from copy/pasting emails and names
-* Unsubscribe/Delete subscribers 
+* import subscribers from copy/pasting emails and names
+* Unsubscribe/delete subscribers 
 
 **Email management:**
 
@@ -20,14 +20,14 @@ A simple webapp to manage your email campaigns and subscribers. Using AWS SES fo
 * Live HTML preview while writing or pasting the email content
 * HTML email preview before sending
 * Send test email before sending to the list
-* Auto-CSS inlining for greated email client support
-* Auto-minifying of HTML email to prevent cut message (gmail impose a length limit to emails)
-* Auto-generation of text email from the HTML (keeping the links and heading hierarchies)
+* Auto-CSS inlining for greated email client support (keeping responsive layout and media queries)
+* Auto-minifying of HTML email to prevent a truncated message (Gmail imposes a length limit to emails)
+* Auto-generation of text email from the HTML (keeping the links target and heading hierarchies)
 * Auto-generation/inclusion of an unsubscribe link for each email sent
 
 ## No-features:
 
-    > Things Minimail will not provide for now
+> Things Minimail will not provide for now
     
 * Drag and drop HTML email builder (you’ll need to write or copy/paste your HTML email)
 
@@ -35,7 +35,7 @@ A simple webapp to manage your email campaigns and subscribers. Using AWS SES fo
 
 * Python 3.5
 * Django 1.10
-* Twitter Bootstrap 3.3.7
+* Twitter Bootstrap 3.3.7 (moving to version 4 once stable)
 
 For Python libraries in use, see `requirements.txt`.
 
