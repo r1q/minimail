@@ -203,6 +203,10 @@ def _inject_unsubscribe_link(subscriber, campaign):
                                              unsubscribe_link)
     text_email = campaign.text_email.replace('*%7CUNSUB%7C*',
                                              unsubscribe_link)
+    html_email = campaign.html_email.replace('*|UNSUB|*',
+                                             unsubscribe_link)
+    text_email = campaign.text_email.replace('*|UNSUB|*',
+                                             unsubscribe_link)
     return html_email, text_email
 
 
