@@ -301,20 +301,20 @@ class ComposeEmailView(View):
         html_email = request.POST.get('html_email')
         html_tree = HTMLParser(html_email, "html5lib")
         # Regularize/Sanitize HTML with BeautifulSoup
-        normalized_html = html_tree.prettify(formatter=_custom_substitute_html_entities)
+        #normalized_html = html_tree.prettify(formatter=_custom_substitute_html_entities)
         # Inline CSS from HTML
-        css_inliner = Premailer(normalized_html,
-                                keep_style_tags=True,
-                                preserve_internal_links=True,
-                                include_star_selectors=True)
-        inlined_html_email = css_inliner.transform()
+#        css_inliner = Premailer(normalized_html,
+#                                keep_style_tags=True,
+#                                preserve_internal_links=True,
+#                                include_star_selectors=True)
+#        inlined_html_email = css_inliner.transform()
         # Minify HTML (gmail cut long emails, char limit)
-        minified_html_email = htmlmin.minify(inlined_html_email)
+#        minified_html_email = htmlmin.minify(inlined_html_email)
         # Use striped tag version of HTML for text
         text_email = _textify_html_email(html_tree.find('body'))
         # Save email HTML and text body
         campaign = Campaign.objects.get(pk=pk)
-        campaign.html_email = minified_html_email
+        campaign.html_email = html_email  # minified_html_email
         campaign.text_email = text_email
         campaign.save()
         return redirect('campaign-review', pk=pk)
