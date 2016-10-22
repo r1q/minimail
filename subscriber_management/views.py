@@ -193,14 +193,12 @@ class SubscriberListImportCSV(LoginRequiredMixin, View):
             new_subscriber.country = timezone.timezone_to_iso_code(new_subscriber.timezone)
             if 'OPTIN_IP' in row and row['OPTIN_IP'] != "":
                 new_subscriber.ip_subscribe = row['OPTIN_IP']
-                print("test", geo.get_country_code(row['OPTIN_IP']))
             if 'CONFIRM_IP' in row and row['CONFIRM_IP'] != "":
                 new_subscriber.ip_validate = row['CONFIRM_IP']
             new_subscriber.validated = True
             new_subscriber.extra = json.dumps(row)
             new_subscriber.save()
         except Exception as e:
-            print(e)
             return False
         else:
             return True
@@ -214,7 +212,6 @@ class SubscriberListImportCSV(LoginRequiredMixin, View):
         save_count = 0
         with open(tmp.name, 'r') as f:
             reader = csv.DictReader(f)
-            print('file names', reader.fieldnames)
             for row in reader:
                 if row['Email Address'] == '':
                     continue
@@ -252,7 +249,6 @@ class SubscriberListImportText(LoginRequiredMixin, View):
             new_subscriber.validated = True
             new_subscriber.save()
         except Exception as e:
-            print(e)
             return False
         else:
             return True
@@ -317,7 +313,6 @@ class SubscriberListSubscribersView(LoginRequiredMixin, ListView):
 class SubscriberListSubscribersBulkView(LoginRequiredMixin, View):
 
     def post(self, request, uuid):
-        print(request.POST)
         if 'user_list' not in request.POST:
             return redirect('subscriber-management-list-subscribers', uuid)
         subs = json.loads(request.POST['user_list'])
@@ -400,7 +395,6 @@ class SubscriberJoin(View):
             if request.is_ajax():
                 return JsonResponse({"error": err})
             else:
-                print(err)
                 messages.error(request, err)
                 return redirect('subscriber-management-join-error', uuid)
         else:
