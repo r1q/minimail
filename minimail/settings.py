@@ -101,8 +101,12 @@ WSGI_APPLICATION = 'minimail.wsgi.application'
 if 'MINIMAIL_ENV' not in os.environ or os.environ['MINIMAIL_ENV'] == 'dev':
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': 'minimail',
+            'USER': 'minimail',
+            'PASSWORD': 'minimail',
+            'HOST': 'localhost',
+            'PORT': '',
         }
     }
     print("Loading development environment.")
