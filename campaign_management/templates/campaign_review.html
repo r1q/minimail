@@ -81,7 +81,7 @@
   <div class='row'>
     <div class='col-lg-2 col-lg-offset-2 col-sm-12'>
 
-      {% if campaign.email_list.count_validated_subscribers %}
+      {% if campaign.email_list.count_validated_subscribers and is_from_email_verified %}
         <a href="{% url 'campaign-list' %}" class='btn btn-default'>Save and exit</a>
       {% endif %}
 
@@ -119,10 +119,18 @@
       <form action='{% url "campaign-send-campaign" campaign.pk %}' method='get' style='display:inline-block'>
         {% if not campaign.email_list.count_validated_subscribers %}
           <p class='alert alert-warning text-left'>
-          Your list <a href="{% url 'subscriber-management-list-subscribers' campaign.email_list.uuid %}" target='_blank'>{{ campaign.email_list.name }}</a> does not have any subscriber
-            yet.
+          Your list <a href="{% url 'subscriber-management-list-subscribers' campaign.email_list.uuid %}" target='_blank'>{{ campaign.email_list.name }}</a> does not have any subscriber yet.
             <br />
             You need at least 1 subscriber to send this email.
+          </p>
+          <a href="{% url 'campaign-list' %}" class='btn btn-default'>Save and send later</a>
+        {% elif not is_from_email_verified %}
+          <p class='alert alert-warning text-left'>
+          Your sender email <strong>{{campaign.email_from_email}}</strong> has not been verified yet.
+            <br />
+            You need to verify it to ensure an optimal email delivery to your subscribers.
+            <br />
+            <a href='mailto:julien@nepsilon.net?subject=Minimail - Please verify this email address'>Contact us</a> to verify your sender email.
           </p>
           <a href="{% url 'campaign-list' %}" class='btn btn-default'>Save and send later</a>
         {% else %}

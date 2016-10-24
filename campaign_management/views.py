@@ -69,9 +69,9 @@ class CampaignReview(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(CampaignReview, self).get_context_data(**kwargs)
-        context['from_emails'] = List.objects.filter(user=self.request.user,
-                                                     from_email_verified=True)\
-                                             .values_list('from_email', flat=True)
+        context['is_from_email_verified'] = List.objects.filter(user=self.request.user,
+                                                                from_email_verified=True)\
+                                                        .exists()
         return context
 
 
