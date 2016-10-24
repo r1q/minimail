@@ -1,15 +1,10 @@
-import uuid
 from django.db import models
 from django.contrib.auth.models import User
-from strgen import StringGenerator
 from localize import timezone
 from django.urls import reverse
 from django.conf import settings
 
-
-def _gen_token():
-    """_gen_token"""
-    return StringGenerator(r'[a-z0-9]{16}').render()
+import uuid as UUID
 
 
 class List(models.Model):
@@ -17,7 +12,7 @@ class List(models.Model):
 
     # Meta
     user = models.ForeignKey(User)
-    uuid = models.UUIDField(default=uuid.uuid4, editable=False)
+    uuid = models.UUIDField(default=UUID.uuid4, editable=False)
     created = models.DateTimeField(auto_now_add=True)
     edited = models.DateTimeField(auto_now=True)
 
@@ -31,8 +26,8 @@ class List(models.Model):
     url = models.URLField(max_length=4000, blank=True)
     image = models.ImageField(upload_to='subscribe_list/images/', null=True,
                               blank=True)
-    token = models.CharField(default=_gen_token, max_length=17,
-                                       blank=True)
+    token = models.CharField(default=UUID.uuid4, max_length=50,
+                             blank=True, editable=False)
 
     # custom templates
     subscribe_template = models.TextField(blank=True)
@@ -60,26 +55,26 @@ class Subscriber(models.Model):
 
     # Meta
     list = models.ForeignKey(List)
-    uuid = models.UUIDField(default=uuid.uuid4, editable=False)
+    uuid = models.UUIDField(default=UUID.uuid4, editable=False)
     created = models.DateTimeField(auto_now_add=True)
     edited = models.DateTimeField(auto_now=True)
-    token_subscribe = models.CharField(default=_gen_token, max_length=17,
-                                       blank=True)
-    token_unsubscribe = models.CharField(default=_gen_token, max_length=17,
-                                         blank=True)
+    token_subscribe = models.CharField(default=UUID.uuid4, max_length=50,
+                                       blank=True, editable=False)
+    token_unsubscribe = models.CharField(default=UUID.uuid4, max_length=50,
+                                         blank=True, editable=False)
     validated = models.BooleanField(default=False, blank=True)
 
-    email = models.EmailField(max_length=50, blank=True)
-    first_name = models.CharField(max_length=50, blank=True)
-    last_name = models.CharField(max_length=50, blank=True)
-    timezone = models.CharField(max_length=50, blank=True)
-    country = models.CharField(max_length=50, blank=True)
-    user_agent = models.TextField(blank=True)
-    accept_language = models.TextField(blank=True)
+    email = models.EmailField(max_length=50)
+    first_name = models.CharField(max_length=50, blank=True, null=True)
+    last_name = models.CharField(max_length=50, blank=True, null=True)
+    timezone = models.CharField(max_length=50, blank=True, null=True)
+    country = models.CharField(max_length=50, blank=True, null=True)
+    user_agent = models.TextField(blank=True, null=True)
+    accept_language = models.TextField(blank=True, null=True)
     ip_subscribe = models.GenericIPAddressField(blank=True, null=True)
     ip_validate = models.GenericIPAddressField(blank=True, null=True)
-    extra = models.TextField(blank=True)
-    notes = models.TextField(blank=True)
+    extra = models.TextField(blank=True, null=True)
+    notes = models.TextField(blank=True, null=True)
 
     class Meta:
         unique_together = ('list', 'email',)
@@ -88,7 +83,10 @@ class Subscriber(models.Model):
         return self.email
 
     def full_name(self):
-        return self.first_name+" "+self.last_name
+        try:
+            return self.first_name+" "+self.last_name
+        except:
+            return ""
 
     def validation_link(self):
         return settings.BASE_URL+reverse('subscriber-management-subscriber-validate', kwargs={'uuid':self.uuid, 'token':self.token_subscribe})

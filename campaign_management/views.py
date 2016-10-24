@@ -221,7 +221,10 @@ def _gen_campaign_emails(campaign):
     subscribers = Subscriber.objects.filter(list=campaign.email_list,
                                             validated=True)
     for subscriber in subscribers:
+        # TODO: Remember at what byte offset we inject the  unsubscribe_link,
+        #       to prefer string O(n) search each time
         html_email, text_email = _inject_unsubscribe_link(subscriber, campaign)
+        # TODO: Inject tracking pixel
         _from = "{} <{}>".format(campaign.email_from_name,
                                  campaign.email_list.from_email)
         email = EmailMultiAlternatives(campaign.email_subject,  # email subject
@@ -243,11 +246,12 @@ def send_one_campaign_to_one_list(request, pk):
     """
 
     try:
-        campaign = Campaign.objects.get(pk=pk)
+        campaign = Campaign.objects.select_related('email_list').get(pk=pk)
         # Start the SMTP connection
         smtp_connection = get_connection()
         smtp_connection.open()
         # Send all emails
+        # TODO: Should be done concurrently
         for email in _gen_campaign_emails(campaign):
             if not email:
                 # TODO: Log fail to generate email

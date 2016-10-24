@@ -26,6 +26,7 @@ class SubscriberForm(ModelForm):
 
     email = forms.EmailField(widget=forms.TextInput(attrs={'class':'form-control'}), required=True)
 
+
 class ListSettings(ModelForm):
     class Meta:
         model = List
@@ -34,6 +35,7 @@ class ListSettings(ModelForm):
 
     name = forms.CharField(required=True)
 
+
 class ListNewsletterHomepage(ModelForm):
     class Meta:
         model = List
@@ -41,3 +43,7 @@ class ListNewsletterHomepage(ModelForm):
         fields = ('image', 'title', 'description', 'url', 'success_template',)
 
     title = forms.CharField(required=True)
+
+
+class ListNewsletterImportCSV(forms.Form):
+    csv_file = forms.FileField()

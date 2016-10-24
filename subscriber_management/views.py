@@ -3,30 +3,33 @@ view.py contains all the logic for subscriber lists and associated
 subscribers.
 """
 
-import csv
-from datetime import datetime
-from tempfile import NamedTemporaryFile
-import pytz
-import json
-
-from localize import geo, timezone
-
 import django.db.utils
 from django.http import JsonResponse
 from django.core.mail import send_mail
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render, redirect
-from django.views.generic import ListView, CreateView, UpdateView
+from django.views.generic import ListView, CreateView
 from django.views import View
 from django.http import Http404
 from django.utils.translation import ugettext as _
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.decorators.csrf import csrf_exempt
+from django.db import connection
+
+import csv
+from datetime import datetime
+import json
+from contextlib import closing
+from io import StringIO
+import pandas
+from localize import geo, timezone
+import uuid
 
 from subscriber_management.models import List, Subscriber
 from subscriber_management.forms import ListForm, SubscriberForm, \
-    ListSettings, ListNewsletterHomepage
+    ListSettings, ListNewsletterHomepage, ListNewsletterImportCSV
+
 
 DATE_FORMAT = '%Y-%m-%d %H:%M:%S'
 
@@ -41,6 +44,7 @@ If you didn't subscribe, you can ignore this email. You won't be subscribed if y
 
 — Sent with Minimail
 """)
+
 
 def _send_validation_email(list_name, subscriber):
     send_mail(
@@ -171,55 +175,67 @@ class SubscriberListImportCSV(LoginRequiredMixin, View):
     Subscribers are automatically considered as 'validated'.
     """
 
-    success_message = _(" subscriber(s) imported")
+    SUCCESS_MESSAGE = _(" subscribers imported")
 
-    def save_user(self, list_item, row):
+    def post(self, request, list_uuid):
         try:
-            new_subscriber = Subscriber()
-            new_subscriber.list = list_item
-            new_subscriber.email = row['Email Address']
-            name_info = row['Name'].split(' ')
-            if len(name_info) == 2:
-                new_subscriber.first_name = name_info[0]
-                new_subscriber.last_name = name_info[1]
-            elif len(name_info) == 1:
-                new_subscriber.first_name = name_info[0]
+            form = ListNewsletterImportCSV(request.POST, request.FILES)
+            if form.is_valid():
+                # Get the list we work with
+                list_item = List.objects.get(uuid=list_uuid)
+                # Get the count before inserting new subscribers
+                before_insert_count = list_item.count_all_subscribers()
+                # Read uploaded CSV file
+                df_emails = pandas.read_csv(request.FILES['csv_file'], usecols=[0], engine='c',
+                                            keep_default_na=False, dtype='str', skipinitialspace=True,
+                                            error_bad_lines=False, dialect='unix')
+                # Clean: remove duplicated and empty rows
+                df_emails = df_emails.drop_duplicates('Email Address')
+                df_emails = df_emails.dropna(how='all')
+                # Remove file from RAM
+                del request.FILES['csv_file']
+                line_count = df_emails.shape[0]
+                # Build dataframe for other attributes
+                df_list = pandas.DataFrame([str(list_item.id)]*line_count)
+                now = datetime.now()
+                df_created = pandas.DataFrame([now]*line_count)
+                df_edited = pandas.DataFrame([now]*line_count)
+                df_validated = pandas.DataFrame([True]*line_count)
+                df_uuid = pandas.DataFrame(['']*line_count).applymap(lambda x: str(uuid.uuid4()))
+                df_ts = pandas.DataFrame(['']*line_count).applymap(lambda x: str(uuid.uuid4()))
+                df_tu = pandas.DataFrame(['']*line_count).applymap(lambda x: str(uuid.uuid4()))
+                # Set sanitized CSV column order
+                col_in_order = [df_list, df_uuid, df_created, df_edited, df_ts, df_tu, df_validated]
+                # Concat it all column-wise
+                df_final_csv = pandas.concat(col_in_order, axis=1, ignore_index=True)
+                df_final_csv = pandas.concat([df_emails, df_final_csv], axis=1, ignore_index=True, join='inner',
+                                             verify_integrity=True)
+                # Last clean all rows with empty value check
+                df_final_csv.dropna(how='all', inplace=True, axis=0)
+                # Output as a CSV into buffer
+                s_buf = StringIO()
+                df_final_csv.to_csv(s_buf, index=False, header=None)
+                s_buf.seek(0)
+                # COPY buffer into subscriber_management_subscriber table
+                with closing(connection.cursor()) as cursor:
+                    cursor.copy_from(
+                                    file=s_buf,
+                                    table='subscriber_management_subscriber',
+                                    sep=',',
+                                    columns=('email', 'list_id', 'uuid', 'created', 'edited', 'token_subscribe',
+                                             'token_unsubscribe', 'validated')
+                                )
+
             else:
-                pass
-            if 'TIMEZONE' in row and row['TIMEZONE'] != "":
-                new_subscriber.timezone = row['TIMEZONE']
-            else:
-                new_subscriber.timezone = "GMT"
-            new_subscriber.country = timezone.timezone_to_iso_code(new_subscriber.timezone)
-            if 'OPTIN_IP' in row and row['OPTIN_IP'] != "":
-                new_subscriber.ip_subscribe = row['OPTIN_IP']
-            if 'CONFIRM_IP' in row and row['CONFIRM_IP'] != "":
-                new_subscriber.ip_validate = row['CONFIRM_IP']
-            new_subscriber.validated = True
-            new_subscriber.extra = json.dumps(row)
-            new_subscriber.save()
+                raise Exception('Form not valid: {}'.format(form.errors))
         except Exception as e:
-            return False
+            messages.error(request, str(e), extra_tags="danger")
         else:
-            return True
-
-    def post(self, request, uuid):
-        list_item = List.objects.get(uuid=uuid)
-        csv_file = request.FILES['csv_file']
-        tmp = NamedTemporaryFile('wb')
-        tmp.write(csv_file.read())
-
-        save_count = 0
-        with open(tmp.name, 'r') as f:
-            reader = csv.DictReader(f)
-            for row in reader:
-                if row['Email Address'] == '':
-                    continue
-                if self.save_user(list_item, row) == True:
-                    save_count += 1
-        tmp.close()
-        messages.success(request, str(save_count) + self.success_message)
-        return redirect('subscriber-management-list-subscribers', uuid)
+            # Get the count after inserting new subscribers
+            saved_count = list_item.count_all_subscribers() - before_insert_count
+            messages.success(request, str(saved_count) + self.SUCCESS_MESSAGE)
+        finally:
+            return redirect('subscriber-management-list-subscribers', list_uuid)
 
 
 class SubscriberListImportText(LoginRequiredMixin, View):
@@ -260,9 +276,7 @@ class SubscriberListImportText(LoginRequiredMixin, View):
         content = request.POST['text_import']
         save_count = 0
         lines_csv = content.split('\n')
-        lines_count = len(lines_csv)
-        if lines_count > 100:
-            lines_count = 100
+        lines_count = min(100, len(lines_csv))
         for row in csv.reader(lines_csv[0:lines_count]):
             if len(row) != 2:
                 continue
@@ -272,6 +286,7 @@ class SubscriberListImportText(LoginRequiredMixin, View):
                 save_count += 1
         messages.success(request, str(save_count) + self.success_message)
         return redirect('subscriber-management-list-subscribers', uuid)
+
 
 class SubscriberListSubscribersView(LoginRequiredMixin, ListView):
 
@@ -406,11 +421,13 @@ class SubscriberJoin(View):
             else:
                 return redirect('subscriber-management-join-success', uuid)
 
+
 class SubscriberJoinSuccess(View):
 
     def get(self, request, uuid):
         list_item = List.objects.get(uuid=uuid)
         return render(request, "subscriber_join_success.html", locals())
+
 
 class SubscriberJoinError(View):
 
