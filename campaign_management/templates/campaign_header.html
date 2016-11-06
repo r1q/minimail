@@ -51,7 +51,7 @@
                    class='form-control'
                    tabindex='3'
                    maxlength='{{form.email_from_name.field.max_length}}'
-                   value='{{form.email_from_name.value|default:user.first_name}}'
+                   value='{{form.email_from_name.value|default:user.full_name}}'
                    />
             <small class='text-danger'><strong>
               {% for error in form.email_from_name.errors %}
