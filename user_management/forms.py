@@ -1,8 +1,8 @@
 from django.forms import ModelForm, forms
-from django.contrib.auth.models import User
 from django import forms
 from user_management.models import MyUser
 from django.utils.translation import ugettext as _
+from django.contrib.auth.password_validation import validate_password
 
 class UserForm(ModelForm):
     class Meta:
@@ -36,3 +36,41 @@ class RegisterForm(forms.Form):
 class LoginForm(forms.Form):
     email = forms.CharField(required=True)
     password = forms.CharField(widget=forms.PasswordInput, required=True)
+
+
+class UpdatePasswordForm(forms.Form):
+    old_password = forms.CharField(required=True, label=_("Current password"))
+    password1 = forms.CharField(required=True, label=_("New password"))
+    password2 = forms.CharField(required=True, label=_("New password confirm"))
+
+    def __init__(self, user, *args, **kwargs):
+        super(UpdatePasswordForm, self).__init__(*args, **kwargs)
+        self.user = user
+
+    def clean_old_password(self):
+        password = self.cleaned_data.get('old_password', None)
+        if not self.user.check_password(password):
+            raise forms.ValidationError(_('Invalid password'))
+
+    def clean_password1(self):
+        password = self.cleaned_data.get('password1', None)
+        validate_password(password)
+        return password
+
+    def clean_password2(self):
+        password = self.cleaned_data.get('password2', None)
+        validate_password(password)
+        return password
+
+    def clean(self):
+        cleaned_data = super(UpdatePasswordForm, self).clean()
+        pwd1 = cleaned_data.get("password1")
+        pwd2 = cleaned_data.get("password2")
+
+        if pwd2 != pwd1:
+            self.add_error('password2', _("Passwords mismatch"))
+            return cleaned_data
+
+        self.user.set_password(pwd1)
+        self.user.save()
+        return cleaned_data

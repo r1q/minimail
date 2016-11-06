@@ -1,13 +1,18 @@
 from django.shortcuts import render, redirect
+from django.contrib.auth import logout
 from django.utils.translation import ugettext as _
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.views import View
 #from django.contrib.auth.models import User
-from user_management.forms import UserForm, RegisterForm, LoginForm
+from user_management.forms import UserForm, RegisterForm, LoginForm, UpdatePasswordForm
 from user_management.models import MyUser
 from django.contrib.auth import authenticate, login
+
+def logout_view(request):
+    logout(request)
+    return redirect('/')
 
 
 class UserUpdateView(View):
@@ -19,14 +24,28 @@ class UserUpdateView(View):
     def get(self, request):
         user = MyUser.objects.get(pk=request.user.id)
         form_user = UserForm(instance=user)
+        form_password = UpdatePasswordForm(user=user)
         return render(request, "user_management/user_update.html", locals())
 
     @method_decorator(login_required)
     def post(self, request):
         user = MyUser.objects.get(pk=request.user.id)
         form_user = UserForm(request.POST, instance=user)
+        form_password = UpdatePasswordForm(user)
         if form_user.is_valid():
             form_user.save()
+        return render(request, "user_management/user_update.html", locals())
+
+class UpdatePasswordView(View):
+
+    @method_decorator(login_required)
+    def post(self, request):
+        user = request.user
+        form_user = UserForm(instance=user)
+        form_password = UpdatePasswordForm(user, request.POST)
+        if form_password.is_valid():
+            messages.success(request, _("Password successfully updated"))
+            return redirect('user_account')
         return render(request, "user_management/user_update.html", locals())
 
 class Register(View):
