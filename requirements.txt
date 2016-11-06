@@ -4,7 +4,6 @@ cssselect==0.9.2
 cssutils==1.0.1
 defusedxml==0.4.1
 Django==1.10
-django-allauth==0.26.1
 flake8==3.0.4
 html5lib==0.999999999
 htmlmin==0.1.10
