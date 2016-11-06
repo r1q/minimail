@@ -42,8 +42,8 @@ INSTALLED_APPS = [
 
     # minimail's apps
     'user_management',
-    'template_management',
     'subscriber_management',
+    'template_management',
     'campaign_management',
 
 ]
