@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from user_management.models import MyUser
 from localize import timezone
 from django.urls import reverse
 from django.conf import settings
@@ -11,7 +11,7 @@ class List(models.Model):
     """List"""
 
     # Meta
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(MyUser)
     uuid = models.UUIDField(default=UUID.uuid4, editable=False)
     created = models.DateTimeField(auto_now_add=True)
     edited = models.DateTimeField(auto_now=True)
