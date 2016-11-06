@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from user_management.models import MyUser
 from django.urls import reverse
 
 from subscriber_management.models import List
@@ -9,7 +9,7 @@ class Campaign(models.Model):
     """Campaign"""
 
     # Relationships
-    author = models.ForeignKey(User)
+    author = models.ForeignKey(MyUser)
     email_list = models.ForeignKey(List)
     # Core info
     name = models.CharField(max_length=100, blank=True)
