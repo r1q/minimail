@@ -36,6 +36,11 @@
 						<input type='hidden' name='template_id' value='{{ template.id }}' />
 						<button>{{ template.name }}</button>
 					</form>
+				{% empty %}
+				<div class='alert alert-warning'>
+					<strong>You didn’t crete any template yet.</strong>
+					<a href='{% url "template-new" %}'>Go create one &raquo;</a>
+				</div>
 				{% endfor %}
 			</div>
 		</div>

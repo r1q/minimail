@@ -116,7 +116,7 @@
 <!--         {% trans 'Schedule'%} -->
 <!--       </a> -->
 
-      <form action='{% url "campaign-send-campaign" campaign.pk %}' method='get' style='display:inline-block'>
+      <form action='{% url "campaign-send-campaign" campaign.pk %}' method='get' style='display:inline-block' id='review-form'>
         {% if not campaign.email_list.count_validated_subscribers %}
           <p class='alert alert-warning text-left'>
           Your list <a href="{% url 'subscriber-management-list-subscribers' campaign.email_list.uuid %}" target='_blank'>{{ campaign.email_list.name }}</a> does not have any subscriber yet.
@@ -146,5 +146,16 @@
 
   </div>
 
+
+{% endblock %}
+
+{% block script %}
+
+	<script>
+			$('#review_form").on('submit', function(ev) {
+				$(this).find('button').disabled = true;
+				$(this).find('button').attr('disabled', 'disabled');
+			});
+	</script>
 
 {% endblock %}

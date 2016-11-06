@@ -38,4 +38,4 @@ class Campaign(models.Model):
         return self.email_subject
 
     def get_absolute_url(self):
-        return reverse('campaign-choose-template', kwargs={'pk': self.pk})
+        return reverse('campaign-choose-tmplt', kwargs={'pk': self.pk})

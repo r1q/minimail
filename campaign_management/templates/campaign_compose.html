@@ -202,6 +202,11 @@
 				$(this).blur()
 			});
 
+			$email_form.on('submit', function(ev) {
+				$(this).find('button').disabled = true;
+				$(this).find('button').attr('disabled', 'disabled');
+			});
+
 		});
 
 	</script>

@@ -165,7 +165,10 @@
 		$('form#email-header').on('keypress', 'input, select', function(ev) {
       return ev.keyCode != 13;
     });
+		$('form#email-header').on('submit', function(ev) {
+      $(this).find('button').disabled = true;
+      $(this).find('button').attr('disabled', 'disabled');
+    });
   </script>
     
 {% endblock %}
-
