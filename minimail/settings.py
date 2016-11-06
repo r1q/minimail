@@ -40,14 +40,6 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'django.contrib.humanize',
 
-    # allauth modules
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
-    'allauth.socialaccount.providers.github',
-    'allauth.socialaccount.providers.twitter',
-    'allauth.socialaccount.providers.facebook',
-
     # minimail's apps
     'user_management',
     'template_management',
@@ -87,10 +79,9 @@ TEMPLATES = [
 AUTHENTICATION_BACKENDS = (
     # Needed to login by username in Django admin, regardless of `allauth`
     'django.contrib.auth.backends.ModelBackend',
-
-    # `allauth` specific authentication methods, such as login by e-mail
-    'allauth.account.auth_backends.AuthenticationBackend',
 )
+
+AUTH_USER_MODEL = 'user_management.MyUser'
 
 WSGI_APPLICATION = 'minimail.wsgi.application'
 
