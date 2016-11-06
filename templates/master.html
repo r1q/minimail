@@ -53,15 +53,6 @@
 
     <script src='{% static "js/vendor/jquery-3.1.0.js" %}'></script>
     <script src='{% static "js/vendor/bootstrap.min.js" %}'></script>
-    <script src='{% static "js/vendor/gravatar.js" %}'></script>
-    <script>
-      jQuery(document).ready(function() {
-        var email = $('#gravatar_picture').data('email')
-        if (!email)
-          return
-        $('#gravatar_picture').attr('src',gravatar(email, {size: 30}))
-      })
-    </script>
     {% block script %}{% endblock %}
 
   </body>
