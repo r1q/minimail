@@ -148,14 +148,3 @@
 
 
 {% endblock %}
-
-{% block script %}
-
-	<script>
-			$('#review_form").on('submit', function(ev) {
-				$(this).find('button').disabled = true;
-				$(this).find('button').attr('disabled', 'disabled');
-			});
-	</script>
-
-{% endblock %}
