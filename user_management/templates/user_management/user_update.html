@@ -9,12 +9,12 @@
 
   <div class='row'>
     <div class='col-lg-6 col-lg-offset-3'>
-      <form method="post">
+      <form method="post" action="{% url 'user_account' %}">
         <legend>Account</legend>
         {% csrf_token %}
         <div class="form-group {% if form_user.full_name.errors %}has-error{% endif %}">
           <label for="{{form_user.full_name.auto_id}}" class="control-label">{{form_user.full_name.label}}</label>
-          <input id="{{form_user.full_name.auto_id}}" name="{form_user.full_name.name}}" class='form-control' autofocus tabindex=1 value ="{{form_user.full_name.value | default_if_none:""}}"/>
+          <input id="{{form_user.full_name.auto_id}}" name="{{form_user.full_name.name}}" class='form-control' autofocus tabindex=1 value ="{{form_user.full_name.value | default_if_none:""}}"/>
           {% for error in form_user.full_name.errors %}
             <span class="error-block">{{error}}</span>
           {% endfor %}

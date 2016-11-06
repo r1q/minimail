@@ -3,6 +3,9 @@ from django.contrib.auth.models import (
     BaseUserManager, AbstractBaseUser
 )
 import hashlib
+from django.conf import settings
+from django.urls import reverse
+
 
 class MyUserManager(BaseUserManager):
     def create_user(self, full_name, email, password=None):
@@ -41,6 +44,8 @@ class MyUser(AbstractBaseUser):
     email = models.EmailField(max_length=255, unique=True)
     full_name = models.CharField(max_length=255, unique=False)
     md5_hash_email = models.CharField(max_length=50, unique=False, blank=True)
+    recover_id = models.CharField(max_length=50, unique=False, blank=True)
+
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
 
@@ -69,3 +74,6 @@ class MyUser(AbstractBaseUser):
     def is_staff(self):
         "Is the user a member of staff?"
         return self.is_admin
+
+    def recovery_link(self):
+        return settings.BASE_URL+reverse('user_recovery', kwargs={'uuid':self.recover_id})

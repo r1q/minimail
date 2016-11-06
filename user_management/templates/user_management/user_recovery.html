@@ -1,0 +1,32 @@
+{% extends "master.html" %}
+{% load i18n %}
+
+{% block content %}
+<div class='container'>
+  <div class='row'>
+    <br />
+    <br />
+    <div class='col-lg-4 col-lg-offset-4'>
+      <form method="post" action="{% url 'user_recovery' uuid %}">
+          {% csrf_token %}
+          <div class="form-group {% if form.password1.errors %}has-error{% endif %}">
+            <label for="{{form.password1.auto_id}}" class="control-label">{{form.password1.label}}</label>
+            <input type="password" id="{{form.password1.auto_id}}" name="{{form.password1.name}}" class='form-control' tabindex=1/>
+            {% for error in form.password.errors %}
+              <span class="error-block">{{error}}</span>
+            {% endfor %}
+          </div>
+          <div class="form-group {% if form.password2.errors %}has-error{% endif %}">
+            <label for="{{form.password2.auto_id}}" class="control-label">{{form.password2.label}}</label>
+            <input type="password" id="{{form.password2.auto_id}}" name="{{form.password2.name}}" class='form-control' tabindex=2/>
+            {% for error in form.password2.errors %}
+              <span class="error-block">{{error}}</span>
+            {% endfor %}
+          </div>
+          <hr />
+          <button class="btn btn-block btn-primary" tabindex=3>{% trans 'Reset password' %}</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

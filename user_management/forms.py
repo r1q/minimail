@@ -3,6 +3,7 @@ from django import forms
 from user_management.models import MyUser
 from django.utils.translation import ugettext as _
 from django.contrib.auth.password_validation import validate_password
+import uuid as UUID
 
 class UserForm(ModelForm):
     class Meta:
@@ -73,4 +74,43 @@ class UpdatePasswordForm(forms.Form):
 
         self.user.set_password(pwd1)
         self.user.save()
+        return cleaned_data
+
+class RecoveryForm(forms.Form):
+    password1 = forms.CharField(required=True, label=_("New password"))
+    password2 = forms.CharField(required=True, label=_("New password confirm"))
+
+    def clean_password1(self):
+        password = self.cleaned_data.get('password1', None)
+        validate_password(password)
+        return password
+
+    def clean_password2(self):
+        password = self.cleaned_data.get('password2', None)
+        validate_password(password)
+        return password
+
+    def clean(self):
+        cleaned_data = super(RecoveryForm, self).clean()
+        pwd1 = cleaned_data.get("password1")
+        pwd2 = cleaned_data.get("password2")
+
+        if pwd2 != pwd1:
+            self.add_error('password2', _("Passwords mismatch"))
+            return cleaned_data
+        return cleaned_data
+
+class ForgottenForm(forms.Form):
+
+    email = forms.CharField(required=True)
+
+    def clean(self):
+        cleaned_data = super(ForgottenForm, self).clean()
+        email = cleaned_data.get("email")
+        try:
+            user = MyUser.objects.get(email=email)
+            user.recover_id = UUID.uuid4()
+            user.save()
+        except Exception as err:
+            self.add_error('email', _("This user doesn't exist"))
         return cleaned_data
