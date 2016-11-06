@@ -4,9 +4,9 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.views import View
-from django.contrib.auth.models import User
-from user_management.forms import UserForm, UserExtendForm, RegisterForm, LoginForm
-from user_management.models import UserExtend
+#from django.contrib.auth.models import User
+from user_management.forms import UserForm, RegisterForm, LoginForm
+from user_management.models import MyUser
 from django.contrib.auth import authenticate, login
 
 
@@ -17,31 +17,16 @@ class UserUpdateView(View):
 
     @method_decorator(login_required)
     def get(self, request):
-        user = User.objects.get(pk=request.user.id)
-        user_extend = None
-        try:
-            user_extend = UserExtend.objects.get(user=user)
-        except:
-            user_extend = UserExtend(user=user)
-            user_extend.save()
+        user = MyUser.objects.get(pk=request.user.id)
         form_user = UserForm(instance=user)
-        form_user_extend = UserExtendForm(instance=user_extend)
         return render(request, "user_management/user_update.html", locals())
 
     @method_decorator(login_required)
     def post(self, request):
-        user = User.objects.get(pk=request.user.id)
-        user_extend = None
-        try:
-            user_extend = UserExtend.objects.get(user=user)
-        except:
-            user_extend = UserExtend(user=user)
-            user_extend.save()
+        user = MyUser.objects.get(pk=request.user.id)
         form_user = UserForm(request.POST, instance=user)
-        form_user_extend = UserExtendForm(request.POST, instance=user_extend)
-        if form_user.is_valid() and form_user_extend.is_valid():
+        if form_user.is_valid():
             form_user.save()
-            form_user_extend.save()
         return render(request, "user_management/user_update.html", locals())
 
 class Register(View):
@@ -54,8 +39,9 @@ class Register(View):
         form = RegisterForm(request.POST)
         if form.is_valid():
             email = form.cleaned_data.get('email')
+            full_name = form.cleaned_data.get('full_name')
             pwd = form.cleaned_data.get('password')
-            User.objects.create_user(email, email, pwd)
+            MyUser.objects.create_user(full_name, email, pwd)
             messages.success(request, _("User successfully registered"))
             return redirect('user_login')
         return render(request, "user_management/user_register.html", locals())

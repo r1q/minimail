@@ -1,19 +1,68 @@
+from django import forms
 from django.contrib import admin
+from django.contrib.auth.models import Group
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from django.contrib.auth.models import User
-from user_management.models import UserExtend
+from django.contrib.auth.forms import ReadOnlyPasswordHashField
 
-# Define an inline admin descriptor for Employee model
-# which acts a bit like a singleton
-class UserExtendInline(admin.StackedInline):
-    model = UserExtend
-    can_delete = False
-    verbose_name_plural = 'extended'
+from user_management.models import MyUser
 
-# Define a new User admin
+
+# class UserCreationForm(forms.ModelForm):
+#     password1 = forms.CharField(label='Password', widget=forms.PasswordInput)
+#     password2 = forms.CharField(label='Password confirmation', widget=forms.PasswordInput)
+#
+#     class Meta:
+#         model = MyUser
+#         fields = ('email',)
+#
+#     def clean_password2(self):
+#         password1 = self.cleaned_data.get("password1")
+#         password2 = self.cleaned_data.get("password2")
+#         if password1 and password2 and password1 != password2:
+#             raise forms.ValidationError("Passwords don't match")
+#         return password2
+#
+#     def save(self, commit=True):
+#         user = super(UserCreationForm, self).save(commit=False)
+#         user.set_password(self.cleaned_data["password1"])
+#         if commit:
+#             user.save()
+#         return user
+
+
+class UserChangeForm(forms.ModelForm):
+    password = ReadOnlyPasswordHashField()
+
+    class Meta:
+        model = MyUser
+        fields = ('email', 'password', 'full_name', 'is_active', 'is_admin')
+
+    def clean_password(self):
+        return self.initial["password"]
+
+
 class UserAdmin(BaseUserAdmin):
-    inlines = (UserExtendInline, )
 
-# Re-register UserAdmin
-admin.site.unregister(User)
-admin.site.register(User, UserAdmin)
+    form = UserChangeForm
+    #add_form = UserCreationForm
+
+    list_display = ('email', 'full_name', 'is_admin')
+    list_filter = ('is_admin',)
+    fieldsets = (
+        (None, {'fields': ('email', 'password')}),
+        ('Personal info', {'fields': ('full_name',)}),
+        ('Permissions', {'fields': ('is_admin',)}),
+    )
+
+    # add_fieldsets = (
+    #     (None, {
+    #         'classes': ('wide',),
+    #         'fields': ('email', 'password1', 'password2')}
+    #     ),
+    # )
+    search_fields = ('email',)
+    ordering = ('email',)
+    filter_horizontal = ()
+
+admin.site.register(MyUser, UserAdmin)
+admin.site.unregister(Group)
