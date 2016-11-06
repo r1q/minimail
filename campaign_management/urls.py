@@ -12,6 +12,10 @@ urlpatterns = [
         views.show_campaign_email_preview,
         name='campaign-email-preview'),
 
+    url(r'^(?P<pk>\d+)/choose-template',
+        views.ComposeChooseTemplateView.as_view(),
+        name='campaign-choose-tmplt'),
+
     url(r'^(?P<pk>\d+)/compose',
         views.ComposeEmailView.as_view(),
         name='campaign-compose-email'),

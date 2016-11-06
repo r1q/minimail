@@ -39,7 +39,7 @@ class TemplateDetail(LoginRequiredMixin, DetailView):
 class TemplateCreate(LoginRequiredMixin, CreateView):
     """TemplateCreate"""
     model = Template
-    fields = ['name', 'html_template', 'text_template']
+    fields = ['name', 'html_template', 'text_template', 'placeholders']
     template_name = 'template_new.html'
 
     def form_valid(self, form):

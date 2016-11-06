@@ -1,6 +1,7 @@
 from django.db import models
 from user_management.models import MyUser
 from django.urls import reverse
+from django.contrib.postgres.fields import JSONField
 
 
 class Template(models.Model):
@@ -12,6 +13,7 @@ class Template(models.Model):
     name = models.CharField(max_length=100)
     html_template = models.TextField()
     text_template = models.TextField(blank=True)
+    placeholders = JSONField(blank=True, max_length=1000, default='{}')
     # Metadata
     created = models.DateTimeField(auto_now_add=True)
     edited = models.DateTimeField(auto_now=True)

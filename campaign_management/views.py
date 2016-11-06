@@ -17,6 +17,8 @@ from premailer import Premailer
 from bs4 import BeautifulSoup as HTMLParser
 from bs4.dammit import EntitySubstitution
 import htmlmin
+import multiprocessing as mp
+import simplejson as json
 
 
 def _custom_substitute_html_entities(text):
@@ -96,7 +98,6 @@ class CampaignCreate(LoginRequiredMixin, CreateView):
         form.instance.author = self.request.user
         from_email = List.objects.get(pk=form.instance.email_list.id).from_email
         form.instance.email_from_email = from_email
-        # TODO: Append HTML snippet including placeholder for unsubscribe mail
         # if not available in the page.
         return super(CampaignCreate, self).form_valid(form)
 
@@ -165,7 +166,7 @@ def send_test_email(request, pk):
                       campaign.email_list.from_email,
                       [recipient],
                       fail_silently=False,
-                      html_message=campaign.html_email)
+                      html_message=campaign.html_email_for_sending)
     except Exception as ex:
         messages.error(request,
                        "Test email not sent: {}".format(ex),
@@ -194,16 +195,16 @@ def show_campaign_email_preview(request, pk):
         resp['Content-Type'] = 'text/plain; charset=UTF-8'
         return resp
     else:
-        return HttpResponse(campaign.html_email)
+        return HttpResponse(campaign.html_email_for_sending)
 
 
 def _inject_unsubscribe_link(subscriber, campaign):
     unsubscribe_link = subscriber.unsubscribe_link()
-    html_email = campaign.html_email.replace('*%7CUNSUB%7C*',
+    html_email = campaign.html_email_for_sending.replace('*%7CUNSUB%7C*',
                                              unsubscribe_link)
     text_email = campaign.text_email.replace('*%7CUNSUB%7C*',
                                              unsubscribe_link)
-    html_email = campaign.html_email.replace('*|UNSUB|*',
+    html_email = campaign.html_email_for_sending.replace('*|UNSUB|*',
                                              unsubscribe_link)
     text_email = campaign.text_email.replace('*|UNSUB|*',
                                              unsubscribe_link)
@@ -299,16 +300,60 @@ def _textify_html_email(html_email_body_root):
         return text_email
 
 
-class ComposeEmailView(View):
+class ComposeChooseTemplateView(View):
 
     def get(self, request, pk):
         campaign = Campaign.objects.get(pk=pk)
-        return render(request, 'campaign_compose.html', locals())
+        # Redirect to compose screen of template already picked
+        if campaign.using_template:
+            return redirect('campaign-compose-email', pk=pk)
+        else:
+            all_templates = Template.objects.filter(author=self.request.user)
+            return render(request, 'campaign_choose_template.html', locals())
 
     def post(self, request, pk):
-        html_email = request.POST.get('html_email')
-        html_tree = HTMLParser(html_email, "html5lib")
+        campaign = Campaign.objects.get(pk=pk)
+        template_id = request.POST.get('template_id')
+        template = Template.objects.get(id=template_id)
+        campaign.using_template = template
+        campaign.save()
+        return redirect('campaign-compose-email', pk=pk)
+
+
+class ComposeEmailView(View):
+
+    def get(self, request, pk):
+        campaign = Campaign.objects.select_related('using_template').get(pk=pk)
+        template = campaign.using_template
+        if not template:
+            return redirect('campaign-choose-tmplt', pk=pk)
+        else:
+            for t_k, t_v in template.placeholders.items():
+                if campaign.placeholders_value and t_k in campaign.placeholders_value:
+                    new_attrs = {'value': campaign.placeholders_value.get(t_k, '')}
+                    template.placeholders[t_k].update(new_attrs)
+            campaign.placeholders_value = json.dumps(campaign.placeholders_value)
+            return render(request, 'campaign_compose.html', locals())
+
+    def post(self, request, pk):
+        # Save edited HTML and placeholders value
+        html_email = request.POST.get('html_email', '')
+        placeholders_value = request.POST.get('placeholders_value', '')
+        campaign = Campaign.objects.get(pk=pk)
+        # Only save if we have something
+        has_changed = False
+        if len(placeholders_value.strip()) > 1:
+            campaign.placeholders_value = json.loads(placeholders_value)
+            has_changed = True
+        if len(html_email.strip()) > 1:
+            campaign.html_email_for_editing = html_email
+            campaign.html_email_for_sending = html_email
+            has_changed = True
+        if has_changed:
+            campaign.save()
         # Regularize/Sanitize HTML with BeautifulSoup
+        html_tree = HTMLParser(html_email, "html5lib")
+        # TODO: Delete any <script> tag
         # normalized_html = html_tree.prettify(formatter=_custom_substitute_html_entities)
         # Inline CSS from HTML
         # css_inliner = Premailer(normalized_html,
@@ -321,8 +366,8 @@ class ComposeEmailView(View):
         # Use striped tag version of HTML for text
         text_email = _textify_html_email(html_tree.find('body'))
         # Save email HTML and text body
-        campaign = Campaign.objects.get(pk=pk)
-        campaign.html_email = html_email #minified_html_email
+        campaign.html_email_for_sending = html_email
         campaign.text_email = text_email
+        campaign.is_composed = True
         campaign.save()
         return redirect('campaign-review', pk=pk)

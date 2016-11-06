@@ -29,24 +29,37 @@
 
   <div id='wrap' style='position: fixed; width: 100%; z-index: 100; right: 0; background: #FFF; top: 0; bottom: 0;'>
     <div class='row'>
-        <form method='post' novalidate>
-          {% csrf_token %}
-          <div style='position: fixed; width: 50%; left: 0; top: 0; bottom: 0;'>
-            <textarea id='id_html_email'
-                      class='form-control'
-                      rows='20'
-                      name='html_email'
-                      placeholder='Write or paste your HTML email here'
-                      required>{{campaign.html_email}}</textarea>
-            <hr />
-            <button class='btn btn-success pull-right'>Next: <strong>Review email</strong> &raquo;</button>
+			<form method='post' novalidate id='email-form'>
+				{% csrf_token %}
+				<div style='position: fixed; width: 50%; width: calc(50% - 5px); left: 5px; top: 0; bottom: 0;'>
+					{% for target, attrs in template.placeholders.items %}
+						<div class='form-group'>
+							<label for='input-{{forloop.counter0}}'>{{attrs.label|default:"Input"}}:</label>
+							<small>(Markdown syntax is ON)
+<!-- 										<a href='https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet'>?</a> -->
+							</small>
+							<textarea
+								{% if forloop.counter0 == 0%} autofocus {% endif %}
+								class='form-control'
+								rows='{{attrs.rows|default:"2"}}'
+								id='input-{{forloop.counter0}}'
+								data-target='{{target}}'
+								data-markdown='on'>{{attrs.value|default:""}}</textarea>
+						</div>
+					{% endfor %}
+					<input id="html_email" type='hidden' name='html_email' value='{{campaign.html_email_for_sending}}' />
+					<input id="placeholders_value" type='hidden' name='placeholders_value' value='{{campaign.placeholders_value}}' />
+
+					<div class='bottom-bar' style='position: fixed; bottom: 0; left: 0; right: 0; width: 100%; padding: 2rem; border-top: 1px solid #e8e8e8; background: #f9f9f9;    height: 75px; max-height: 75px;'>
+						<button class='btn btn-success pull-right'>Next: <strong>Review email</strong> &raquo;</button>
 <!--             <button class='btn btn-default pull-right' style='margin-right:5px'>Save draft</button> -->
-          </div>
-        </form>
+					</div>
+				</div>
+			</form>
 
         <!--  HTML Preview and Text email -->
         <div style='position: fixed; width: 49%; width: calc(50% - 15px);
-          z-index: 100; right: 5px; top: 5px; bottom: 0; text-align: center'>
+          z-index: 100; right: 5px; top: 5px; bottom: 75px; text-align: center'>
 
             <div class="btn-group btn-group-sm" role="group" aria-label="Preview Size">
               <button type="button" data-size='1000x768' class="btn btn-default active btn-resize-preview">Desktop</button>
@@ -79,9 +92,15 @@
 <!--             </div> -->
 <!--           </form> -->
 
-          <iframe id='id_html_email_preview' style='max-width: 100%; border: 0; width: 100%;
-            box-shadow: 0 1px 1px #969696; min-height: 645px; transition: width 0.2s ease-in; height:
-            645px;margin: 7px auto; border-right: 1px solid #eaeaea;border-top: 1px solid #eaeaea;'></iframe>
+          <iframe
+					 id='id_html_email_preview'
+					 style='max-width: 100%; border: 0; width: 100%; box-shadow: 0 1px 1px #969696; transition: width 0.2s ease-in; height: calc(100% - 44px);margin: 7px auto; border-right: 1px solid #eaeaea;border-top: 1px solid #eaeaea; background: #fff;'
+					 {% if campaign.is_composed %}
+					 src='{% url "campaign-email-preview" campaign.id %}'>
+					 {% else %}
+					 src='{% url "template-preview" template.id %}'>
+					 {% endif %}
+					</iframe>
         </div>
 
     </div>
@@ -90,73 +109,100 @@
 {% endblock %}
 
 
-{% block styles %}
-  <link rel="stylesheet" href='{% static "css/codemirror.css" %}' />
-  <link rel="stylesheet" href='{% static "css/base16-light.css" %}' />
-  <style>
-    .CodeMirror, textarea#id_html_email {
-      border: 1px solid #EEE;
-      min-height: 687px;
-      height: 687px;
-      font-family: Menlo, monospace;
-      font-size: 12px;
-    }
-    .CodeMirror-linenumbers {
-      background: #DEDEDE;
-    }
-    .CodeMirror-scroll {
-      max-height: 3200px;
-      max-height: 400vh;
-    }
-    .CodeMirror-empty {
-      color: #999 !important;
-    }
-  </style>
-{% endblock %}
-
-
 {% block script %}
-  <script src='{% static "js/vendor/codemirror.js" %}'></script>
-  <script src='{% static "js/vendor/xml.js" %}'></script>
-  <script src='{% static "js/vendor/htmlmixed.js" %}'></script>
-  <script src='{% static "js/vendor/codemirror.placeholder.js" %}'></script>
-  <script>
-    // Enable the tab navigation
-    /*$('#newTemplateTabs a').click(function (ev) {
-      ev.preventDefault()
-      $(this).tab('show')
-    })*/
-    // Init the HTML editor
-    var html_email_texarea = document.getElementById('id_html_email');
-    var html_editor = CodeMirror.fromTextArea(html_email_texarea, {
-      theme: 'base16-light',
-      lineNumbers: true,
-      mode: "text/html",
-      viewportMargin: Infinity,
-      tabindex: "1",
-      placeholder: 'Write or paste your HTML email here'
-    });
-    // Init the HTML preview
-    var html_delay;
-    html_editor.on("change", function() {
-      clearTimeout(html_delay);
-      html_delay = setTimeout(updateHTMLPreview, 300);
-    });
-    function updateHTMLPreview() {
+	<script src='{% static "js/vendor/highlight.min.js" %}'></script>
+	<script src='{% static "js/vendor/marked.min.js" %}'></script>
+	<script>
+
+		// form2json
+		var form2json = function(sel) {
+			var els = $(sel);
+			var out = {};
+			for(var i= 0; i < els.length; i++) {
+				out[$(els[i]).attr('data-target')] = els[i].value;
+			}
+			return JSON.stringify(out);
+		};
+
+	  // Marked custom renderer and options
+		var customRenderer = new marked.Renderer();
+		customRenderer.link = function(href, title, text) {
+			return "<a href='" + href + "' target='_blank' title='" + title + "'>" + text + "</a>";
+		};
+		customRenderer.paragraph = function(text) {
+			return '<p>'+text+'</p>';
+		};
+		var marked_opts = {renderer: customRenderer,
+											 gfm: true,
+											 smartypants: true,
+											 breaks: true,
+											 highlight: function (code, lang) {
+												 return hljs.highlightAuto(code).value;
+											 }};
+
+
+		var form2preview = function(ev) {
+
+			if (!ev || !ev.currentTarget) {
+				return;
+			}
+			else {
+				var curr_el = ev.currentTarget;
+			}
+
+			var input = output = this.value || "";
+
       var previewFrame = document.getElementById('id_html_email_preview');
       var preview =  previewFrame.contentDocument || previewFrame.contentWindow.document;
-      preview.open();
-      preview.write(html_editor.getValue());
-      preview.close();
-    }
-    setTimeout(updateHTMLPreview, 300);
-    // Resize HTML Preview buttons
-    $('.btn-resize-preview').on('click', function (ev) {
-      $('.btn-resize-preview').toggleClass('active');
-      var size = $(this).data('size').split('x');
-      $('#id_html_email_preview').css('width', size[0]+'px')
-      $(this).blur()
-    });
 
-  </script>
+			var target_el = preview.querySelector(curr_el.getAttribute('data-target'));
+			if (!target_el) {
+				alert("Sorry, unable to update the email preview at the moment.")
+				return;
+			}
+
+			if (curr_el.getAttribute('data-markdown') === 'on') {
+				output = marked(input, marked_opts);
+			}
+
+			target_el.innerHTML = output;
+
+			// Keep html email result in "#html_email"
+      var email_keeper = document.getElementById('html_email');
+			email_keeper.value = serializer.serializeToString(preview);
+
+			// Save placeholders value
+      var ph_keeper = document.getElementById('placeholders_value');
+			ph_keeper.value = form2json('form#email-form textarea[data-target]');
+
+		};
+
+		// On DOM ready
+		$(function() {
+
+			// Global serializer used for reading iframe HTML content
+			serializer = new XMLSerializer();
+
+			// Cache compose email form element
+			var $email_form = $('form#email-form');
+
+			// Prevent return key form submission
+			$email_form.on('keypress', 'input, select', function(ev) {
+				return ev.keyCode != 13;
+			});
+
+			// Listening on form input elements and inject in preview frame
+			$email_form.on('input', 'textarea', form2preview);
+
+			// Resize HTML Preview buttons
+			$('.btn-resize-preview').on('click', function (ev) {
+				$('.btn-resize-preview').toggleClass('active');
+				var size = $(this).data('size').split('x');
+				$('#id_html_email_preview').css('width', size[0]+'px')
+				$(this).blur()
+			});
+
+		});
+
+	</script>
 {% endblock %}

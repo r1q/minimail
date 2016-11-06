@@ -41,6 +41,8 @@
               <a href="#html-email" tabindex='4'>HTML Email</a></li>
             <li role="presentation">
               <a href="#text-email" tabindex='3'>Text Email</a></li>
+            <li role="presentation">
+              <a href="#placeholders" tabindex='3'>Placeholders</a></li>
           </ul>
           <div class="tab-content">
             <div id="html-email" class="tab-pane active" role='tabpanel'>
@@ -54,6 +56,9 @@
             </div>
             <div id='text-email' class='tab-pane' role='tabpanel'>
               <textarea id="{{form.text_template.auto_id}}" name="{{form.text_template.name}}" class='form-control' rows='15'></textarea>
+            </div>
+            <div id='placeholders' class='tab-pane' role='tabpanel'>
+              <textarea id="{{form.placeholders.auto_id}}" name="{{form.placeholders.name}}" class='form-control' rows='15'></textarea>
             </div>
           </div>
 

@@ -11,11 +11,19 @@
 
     <!-- Collect the nav links, forms, and other content for toggling -->
     {% if user.is_authenticated %}
-      <a href="/campaigns/new" class="btn btn-default navbar-btn pull-left">{% trans "Compose email" %}</a>
+      <a href="/campaigns/new" class="btn btn-default navbar-btn pull-left" style='margin-right: .5rem;'>
+        {% trans "Compose email" %}
+      </a>
       <ul class="nav navbar-nav">
-        <li><a href="/campaigns">{% trans "Emails" %}</a></li>
-        <li><a href="/subscribers">{% trans "Subscribers" %}</a></li>
-        <li><a href="/templates">{% trans "Templates" %}</a></li>
+        <li class='{% if 'campaign' in request.resolver_match.url_name %}active{% endif %}'>
+          <a href="/campaigns">{% trans "Emails" %}</a>
+        </li>
+        <li class='{% if 'subscriber' in request.resolver_match.url_name %}active{% endif %}'>
+          <a href="/subscribers">{% trans "Subscribers" %}</a>
+        </li>
+        <li class='{% if 'template' in request.resolver_match.url_name %}active{% endif %}'>
+          <a href="/templates">{% trans "Templates" %}</a>
+        </li>
       </ul>
 
       <ul class="nav navbar-nav pull-right">

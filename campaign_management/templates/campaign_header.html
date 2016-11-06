@@ -37,7 +37,7 @@
     </div>
 
     <div class='row'>
-      <form method='post'>
+      <form method='post' id='email-header'>
         <div class='col-lg-6 col-lg-offset-3'>
 
           {% csrf_token %}
@@ -158,3 +158,14 @@
   </div>
 
 {% endblock %}
+
+{% block script %}
+  <script>
+    // Prevent return key form submission
+		$('form#email-header').on('keypress', 'input, select', function(ev) {
+      return ev.keyCode != 13;
+    });
+  </script>
+    
+{% endblock %}
+
