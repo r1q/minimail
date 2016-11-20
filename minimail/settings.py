@@ -27,6 +27,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["minimail.fullweb.io"]
 
+MAX_UPLOAD_SIZE = "5242880"
+
 
 # Application definition
 
