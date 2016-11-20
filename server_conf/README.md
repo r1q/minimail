@@ -1,6 +1,6 @@
 ## Nginx
 
-Version: `1.11.3`
+Version: `1.11.6`
 
 Log files:
 
@@ -14,7 +14,6 @@ Log files:
 * `minimail.pixou.ses.delivery.axx.log`: SES email delivery
 * `minimail.pixou.ses.bounce.axx.log`: SES email bounce
 * `minimail.pixou.ses.complaint.axx.log`: SES email complaint
-
 
 Compiling:
 
