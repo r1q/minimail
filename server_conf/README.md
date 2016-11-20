@@ -2,7 +2,7 @@
 
 Version: `1.11.6`
 
-Log files:
+### Log files:
 
 * `minimail.axx.log`: Every app request (excluding static files)
 * `minimail.err.log`: Any errors
@@ -15,7 +15,12 @@ Log files:
 * `minimail.pixou.ses.bounce.axx.log`: SES email bounce
 * `minimail.pixou.ses.complaint.axx.log`: SES email complaint
 
-Compiling:
+### Download
+
+* http://nginx.org/download/nginx-1.11.6.tar.gz `1.11.6`
+* https://github.com/openresty/set-misc-nginx-module/archive/v0.31.tar.gz `0.31`
+
+### Compiling:
 
 ```bash
 ./configure
@@ -27,5 +32,6 @@ Compiling:
     --with-http_ssl_module \
     --with-http_v2_module \
     --with-stream \
-    --with-stream_ssl_module
+    --with-stream_ssl_module \
+    --add-module=../set-misc-nginx-module-0.31
  ```
