@@ -1,3 +1,4 @@
+from __future__ import absolute_import, unicode_literals
 from django.views.generic import ListView, DetailView, CreateView, UpdateView,\
                                  DeleteView
 from django.urls import reverse_lazy
@@ -5,13 +6,14 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
-from django.core.mail import send_mail, get_connection, EmailMultiAlternatives
+from django.core.mail import send_mail
 from django.http.response import HttpResponse
 from django.views import View
 
 from campaign_management.models import Campaign
 from subscriber_management.models import List, Subscriber
 from template_management.models import Template
+from campaign_management.tasks import _send_one_newsletter_to_one_list
 
 from premailer import Premailer
 from bs4 import BeautifulSoup as HTMLParser
@@ -198,46 +200,6 @@ def show_campaign_email_preview(request, pk):
         return HttpResponse(campaign.html_email_for_sending)
 
 
-def _inject_unsubscribe_link(subscriber, campaign):
-    unsubscribe_link = subscriber.unsubscribe_link()
-    html_email = campaign.html_email_for_sending.replace('*%7CUNSUB%7C*',
-                                             unsubscribe_link)
-    text_email = campaign.text_email.replace('*%7CUNSUB%7C*',
-                                             unsubscribe_link)
-    html_email = campaign.html_email_for_sending.replace('*|UNSUB|*',
-                                             unsubscribe_link)
-    text_email = campaign.text_email.replace('*|UNSUB|*',
-                                             unsubscribe_link)
-    return html_email, text_email
-
-
-def _gen_campaign_emails(campaign):
-    """_make_newsletter_emails
-
-    :param campaign:
-    """
-    if not campaign:
-        return tuple()
-    # If we got a campaign
-    subscribers = Subscriber.objects.filter(list=campaign.email_list,
-                                            validated=True)
-    for subscriber in subscribers:
-        # TODO: Remember at what byte offset we inject the  unsubscribe_link,
-        #       to prefer string O(n) search each time
-        html_email, text_email = _inject_unsubscribe_link(subscriber, campaign)
-        # TODO: Inject tracking pixel
-        _from = "{} <{}>".format(campaign.email_from_name,
-                                 campaign.email_list.from_email)
-        email = EmailMultiAlternatives(campaign.email_subject,  # email subject
-                                       text_email,  # body text version
-                                       _from,  # from sender
-                                       [subscriber.email],  # recipient
-                                       reply_to=[campaign.email_reply_to_email])
-        email.attach_alternative(html_email, "text/html")
-        # Avoid keepting a list of Object in RAM
-        yield email
-
-
 @login_required
 def send_one_campaign_to_one_list(request, pk):
     """send_one_newsletter_to_one_list
@@ -247,27 +209,26 @@ def send_one_campaign_to_one_list(request, pk):
     """
 
     try:
-        campaign = Campaign.objects.select_related('email_list').get(pk=pk)
-        # Start the SMTP connection
-        smtp_connection = get_connection()
-        smtp_connection.open()
-        # Send all emails
-        # TODO: Should be done concurrently
-        for email in _gen_campaign_emails(campaign):
-            if not email:
-                # TODO: Log fail to generate email
-                continue
-            else:
-                email.send()
-        # Close connection
-        smtp_connection.close()
+        # Get the campain for this pk ID, ensure user own it and
+        # that it has a composed email
+        campaign = Campaign.objects.select_related('email_list')\
+                                   .get(pk=pk, author=request.user,
+                                        is_composed=True)
+        # Call Celery async task to send emails
+        _send_one_newsletter_to_one_list.delay(campaign.id, campaign.email_list.id)
+    except Campaign.DoesNotExist:
+        #TODO: Log this
+        messages.error(request,
+                       "This campaign does not exists or is empty.",
+                       extra_tags='danger')
     except Exception as ex:
+        #TODO: Log this
         messages.error(request,
                        "Emails not sent: {}".format(ex),
                        extra_tags='danger')
     else:
         messages.success(request,
-                         "Emails successfully sent to the list {}"
+                         "Good job! Your emails are now being sent to the list {}"
                          .format(campaign.email_list.name))
         # Update campaign status
         campaign.is_sent = True

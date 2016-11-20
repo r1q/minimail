@@ -116,7 +116,6 @@
 <!--         {% trans 'Schedule'%} -->
 <!--       </a> -->
 
-      <form action='{% url "campaign-send-campaign" campaign.pk %}' method='get' style='display:inline-block' id='review-form'>
         {% if not campaign.email_list.count_validated_subscribers %}
           <p class='alert alert-warning text-left'>
           Your list <a href="{% url 'subscriber-management-list-subscribers' campaign.email_list.uuid %}" target='_blank'>{{ campaign.email_list.name }}</a> does not have any subscriber yet.
@@ -134,12 +133,14 @@
           </p>
           <a href="{% url 'campaign-list' %}" class='btn btn-default'>Save and send later</a>
         {% else %}
-        <button class='btn btn-danger'>
-            {% trans 'Send now to'%}
-            {{ campaign.email_list.count_validated_subscribers|intcomma }} {% trans 'subscriber' %}{{campaign.email_list.count_validated_subscribers|pluralize}}
-          </button>
+				<form action='{% url "campaign-send-campaign" campaign.pk %}' method='get' style='display:inline-block' id='review-form'>
+					{% csrf_token %}
+					<button class='btn btn-danger'>
+							{% trans 'Send now to'%}
+							{{ campaign.email_list.count_validated_subscribers|intcomma }} {% trans 'subscriber' %}{{campaign.email_list.count_validated_subscribers|pluralize}}
+						</button>
+					</form>
         {% endif %}
-      </form>
 
     </div>
   </div>
