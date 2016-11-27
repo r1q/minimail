@@ -164,25 +164,6 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = "" # Goes in local_settings.py
 EMAIL_HOST_PASSPORT = "" # Goes in local_settings.py
 
-ACCOUNT_EMAIL_VERIFICATION = "none"
-ACCOUNT_AUTHENTICATED_LOGIN_REDIRECTS = True
-ACCOUNT_LOGOUT_ON_GET = True
-ACCOUNT_LOGOUT_REDIRECT_URL = "/"
-LOGIN_REDIRECT_URL = "/"
-LOGIN_URL = "/user/account/login"
-
-ACCOUNT_USER_MODEL_USERNAME_FIELD = 'username'
-ACCOUNT_USERNAME_REQUIRED = False
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_AUTHENTICATION_METHOD = 'email'
-SOCIALACCOUNT_QUERY_EMAIL = True
-
-SOCIALACCOUNT_PROVIDERS = {
-    'github': {
-        'SCOPE': ['user:email']
-    }
-}
-
 BASE_URL = 'https://minimail.fullweb.io'
 
 try:
