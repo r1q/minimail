@@ -133,12 +133,12 @@
           </p>
           <a href="{% url 'campaign-list' %}" class='btn btn-default'>Save and send later</a>
         {% else %}
-				<form action='{% url "campaign-send-campaign" campaign.pk %}' method='get' style='display:inline-block' id='review-form'>
-					{% csrf_token %}
-					<button class='btn btn-danger' tabindex='9'>
+					<a href='#' class='btn btn-danger' tabindex='9'
+						 data-toggle='modal'
+						 data-target='#campaign-confirm-send'>
 							{% trans 'Send now to'%}
 							{{ campaign.email_list.count_validated_subscribers|intcomma }} {% trans 'subscriber' %}{{campaign.email_list.count_validated_subscribers|pluralize}}
-						</button>
+					</a>
 					</form>
         {% endif %}
 
@@ -146,6 +146,33 @@
   </div>
 
   </div>
+
+
+<div id='campaign-confirm-send' class="modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+			<form method='get' action='{% url "campaign-send-campaign" campaign.pk %}' >
+        {% csrf_token %}
+        <div class="modal-body text-center">
+          <h4 class="modal-title">{% trans 'Are you sure?' %}</h4>
+					<br />
+					<p>
+						You're about to send your email to {{ campaign.email_list.count_validated_subscribers|intcomma }} {% trans 'subscribers' %}
+					</p>
+					<br />
+        </div>
+        <div class="modal-footer">
+          <a href='javascript:void(0)' type="button" tabindex=3 class="btn btn-default" data-dismiss="modal">
+						{% trans 'No, don’t send now' %}
+					</a>
+          <button type="submit" class="btn btn-danger" tabindex=2>
+						{% trans 'Yes, send now' %} 
+					</button>
+        </div>
+      </form>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div>
 
 
 {% endblock %}
