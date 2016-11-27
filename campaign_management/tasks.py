@@ -5,6 +5,8 @@ from subscriber_management.models import List, Subscriber
 from campaign_management.models import Campaign
 
 import time
+from bs4 import BeautifulSoup as HTMLParser
+import base64
 
 
 def _inject_unsubscribe_link(subscriber, campaign):
@@ -28,6 +30,29 @@ def _inject_tracking_pixel(subscriber, email_list, campaign):
     return html_email
 
 
+def _convert_links_for_tracking(subscriber, email_list, campaign):
+    try:
+        html_email = campaign.html_email_for_sending
+        link_tmpl = "http://minimail.fullweb.io/pixou/open/?list={}&campaign={}&subscriber={}&uri={}"
+        html_tree = HTMLParser(html_email, "html5lib")
+        all_links = html_tree.find_all('a')
+        for link in all_links:
+            if not link or not link.href or not link.href.startswith('http'):
+                continue
+            try:
+                b64_link = base64.b64encode(link.href.encode('utf8'))
+                link.href.replace_with(link_tmpl.format(email_list.uuid, campaign.uuid,
+                                                        subscriber.uuid, b64_link))
+            except Exception as ex:
+                print(ex)
+                continue
+        html_email = html_tree.prettify()
+    except Exception as ex:
+        print(ex)
+    finally:
+        return html_email
+
+
 def _gen_campaign_emails(campaign_id, list_id):
     """_gen_campaign_emails
 
@@ -38,9 +63,6 @@ def _gen_campaign_emails(campaign_id, list_id):
         campaign = Campaign.objects.get(pk=campaign_id)
         email_list = List.objects.get(id=list_id)
         subscribers = Subscriber.objects.filter(list__id=list_id, validated=True)
-    except Exception as ex:
-        return tuple() # empty iterable
-    else:
         # Build email headers common to all subscribers
         email_headers = {}
         email_headers['X-Mailer'] = "Minimail Mailer"
@@ -49,11 +71,16 @@ def _gen_campaign_emails(campaign_id, list_id):
         # Format sender field
         _from = "{} <{}>".format(campaign.email_from_name,
                                  campaign.email_list.from_email)
+        # Convert all links to track clicks
+        campaign.html_email_for_sending = _convert_links_for_tracking(campaign.html_email_for_sending)
+    except Exception as ex:
+        return tuple() # empty iterable
 
     for subscriber in subscribers:
         try:
-            # TODO: Remember at what byte offset we inject the  unsubscribe_link,
-            #       to prefer string O(n) search each time
+            # TODO: Remember at what byte offset we inject the unsubscribe_link,
+            #       to prevent O(n) search each time
+            # ----
             # Add custom unsubscribe link for this subscriber
             html_email, text_email, unsubscribe_link = _inject_unsubscribe_link(subscriber,
                                                                                 campaign)
@@ -85,7 +112,6 @@ def _send_one_newsletter_to_one_list(campaign_id, list_id):
     smtp_connection = get_connection()
     smtp_connection.open()
     # Send all emails
-    # TODO: Should be done concurrently
     for email in _gen_campaign_emails(campaign_id, list_id):
         try:
             email.send()
