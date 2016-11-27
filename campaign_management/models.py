@@ -6,6 +6,8 @@ from django.contrib.postgres.fields import JSONField
 from subscriber_management.models import List
 from template_management.models import Template
 
+import uuid as UUID
+
 
 class Campaign(models.Model):
     """Campaign"""
@@ -31,6 +33,7 @@ class Campaign(models.Model):
     is_draft = models.BooleanField(default=True)
     is_composed = models.BooleanField(default=False)
     # Metadata
+    uuid = models.UUIDField(default=UUID.uuid4, editable=False)
     created = models.DateTimeField(auto_now_add=True)
     edited = models.DateTimeField(auto_now=True)
 
