@@ -12,6 +12,16 @@
     <link rel="stylesheet" href="{% static "css/bootstrap.min.css" %}">
     <link rel="canonical" href="http://minimail.fullweb.io">
     {% block styles %}{% endblock %}
+		<style>
+			.alert {
+				position: fixed;
+				z-index: 100;
+				right: 50%;
+				top: 50px;
+				transform: translateX(50%);
+				box-shadow: 0 1px 1px #84ac81;
+			}
+		</style>
   </head>
 
   <body>
