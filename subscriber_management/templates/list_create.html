@@ -41,7 +41,7 @@
                  type="text"
                  required
                  class='form-control'
-                 tabindex='3' />
+                 tabindex='2' />
           <small class='text-danger'><strong>
             {% for error in form.title.errors %}
               {{ error }}
@@ -57,7 +57,7 @@
                  type="email"
                  required
                  class='form-control'
-                 tabindex='4' />
+                 tabindex='3' />
           <small class='text-danger'><strong>
             {% for error in form.from_email.errors %}
               {{ error }}
@@ -68,7 +68,7 @@
             receive your emails.
           </small>
         </div>
-        <button class="btn btn-primary">{% trans 'Create this list' %}</button>
+        <button class="btn btn-primary" tabindex='4'>{% trans 'Create this list' %}</button>
       </form>
     </div>
   </div>
