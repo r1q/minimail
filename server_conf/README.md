@@ -18,12 +18,13 @@ Version: `1.11.6`
 ### Download
 
 * http://nginx.org/download/nginx-1.11.6.tar.gz `1.11.6`
+* https://github.com/simpl/ngx_devel_kit/archive/v0.3.0.tar.gz `0.3.0`
 * https://github.com/openresty/set-misc-nginx-module/archive/v0.31.tar.gz `0.31`
 
 ### Compiling:
 
 ```bash
-./configure
+./configure \
     --with-file-aio \
     --with-threads \
     --with-http_realip_module \
@@ -33,5 +34,6 @@ Version: `1.11.6`
     --with-http_v2_module \
     --with-stream \
     --with-stream_ssl_module \
+    --add-module=../ngx_devel_kit-0.3.0 \
     --add-module=../set-misc-nginx-module-0.31
  ```
