@@ -294,6 +294,8 @@ class ComposeEmailView(View):
                     new_attrs = {'value': campaign.placeholders_value.get(t_k, '')}
                     template.placeholders[t_k].update(new_attrs)
             campaign.placeholders_value = json.dumps(campaign.placeholders_value)
+            # Trick to populate the template form hidden input
+            campaign.html_email_for_sending = template.html_template
             return render(request, 'campaign_compose.html', locals())
 
     def post(self, request, pk):
