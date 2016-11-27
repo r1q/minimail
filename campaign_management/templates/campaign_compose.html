@@ -39,7 +39,8 @@
 <!-- 										<a href='https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet'>?</a> -->
 							</small>
 							<textarea
-								{% if forloop.counter0 == 0%} autofocus {% endif %}
+								{% if forloop.counter0 == 0 %} autofocus {% endif %}
+								tabindex='{{ forloop.counter }}'
 								class='form-control'
 								rows='{{attrs.rows|default:"2"}}'
 								id='input-{{forloop.counter0}}'
@@ -51,7 +52,7 @@
 					<input id="placeholders_value" type='hidden' name='placeholders_value' value='{{campaign.placeholders_value}}' />
 
 					<div class='bottom-bar' style='position: fixed; bottom: 0; left: 0; right: 0; width: 100%; padding: 2rem; border-top: 1px solid #e8e8e8; background: #f9f9f9;    height: 75px; max-height: 75px;'>
-						<button class='btn btn-success pull-right'>Next: <strong>Review email</strong> &raquo;</button>
+						<button class='btn btn-success pull-right' tabindex='{{template.placeholders|length}}'>Next: <strong>Review email</strong> &raquo;</button>
 <!--             <button class='btn btn-default pull-right' style='margin-right:5px'>Save draft</button> -->
 					</div>
 				</div>
@@ -94,6 +95,7 @@
 
           <iframe
 					 id='id_html_email_preview'
+					 tabindex="-1"
 					 style='max-width: 100%; border: 0; width: 100%; box-shadow: 0 1px 1px #969696; transition: width 0.2s ease-in; height: calc(100% - 44px);margin: 7px auto; border-right: 1px solid #eaeaea;border-top: 1px solid #eaeaea; background: #fff;'
 					 {% if campaign.is_composed %}
 					 src='{% url "campaign-email-preview" campaign.id %}'>

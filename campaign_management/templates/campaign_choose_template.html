@@ -34,7 +34,7 @@
 					<form method='post' action='{% url 'campaign-choose-tmplt' campaign.id %}'>
 						{% csrf_token %}
 						<input type='hidden' name='template_id' value='{{ template.id }}' />
-						<button>{{ template.name }}</button>
+						<button tabindex='{{ forloop.counter }}'>{{ template.name }}</button>
 					</form>
 				{% empty %}
 				<div class='alert alert-warning'>

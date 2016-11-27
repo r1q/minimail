@@ -6,19 +6,19 @@
       <form method='POST' action="{% url 'subscriber-management-list-import-mailchimp' list_item.uuid %}" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <button type="button" class="close" data-dismiss="modal" tabindex='-1' aria-label="Close"><span aria-hidden="true">&times;</span></button>
           <h4 class="modal-title">{% trans 'Import Subscribers from Mailchimp CSV' %}</h4>
         </div>
         <div class="modal-body">
           <div class="form-group">
-            <small class='help-block'>See <a href='https://www.quora.com/Can-you-export-your-subscribers-from-MailChimp/answer/Lorenzo-Orlando-Caum' target='_blank'>here</a> for how to export your subscriber list from Mailchimp.</small>
+            <small class='help-block'>See <a href='https://www.quora.com/Can-you-export-your-subscribers-from-MailChimp/answer/Lorenzo-Orlando-Caum' tabindex='-1' target='_blank'>here</a> for how to export your subscriber list from Mailchimp.</small>
             <label for="file_import" class="control-label">{% trans 'CSV file' %}:</label>
-            <input id="file_import" name="csv_file" type="file" tabindex='0' />
+            <input id="file_import" name="csv_file" type="file" tabindex='1' />
           </div>
         </div>
         <div class="modal-footer">
-          <a href='javascript:void(0)' type="button" class="btn btn-default" data-dismiss="modal">{% trans 'Cancel' %}</a>
-          <button type="submit" class="btn btn-primary">{% trans 'Import Subscribers' %}</button>
+          <a href='javascript:void(0)' type="button" tabindex=3 class="btn btn-default" data-dismiss="modal">{% trans 'Cancel' %}</a>
+          <button type="submit" class="btn btn-primary" tabindex=2>{% trans 'Import Subscribers' %}</button>
         </div>
       </form>
     </div><!-- /.modal-content -->
@@ -31,19 +31,19 @@
       <form method='POST' action="{% url 'subscriber-management-list-import-text' list_item.uuid %}" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <button type="button" class="close" data-dismiss="modal" tabindex='-1' aria-label="Close"><span aria-hidden="true">&times;</span></button>
           <h4 class="modal-title">Import Subscribers</h4>
         </div>
         <div class="modal-body">
           <div class="form-group">
             <label for="text_import" class="control-label">{% trans 'Paste or write your subscribers info, one per line' %}:</label>
             <small class='help-block'>Maximum 100 subscribers</small>
-            <textarea id="text_import" class='form-control'  rows=10 name="text_import" tabindex='0' placeholder="john.doe@email.com,John Doe"></textarea>
+						<textarea id="text_import" class='form-control' rows=10 name="text_import" tabindex='1' placeholder="john.doe@email.com,John Doe"></textarea>
           </div>
         </div>
         <div class="modal-footer">
-          <a href='javascript:void(0)' type="button" class="btn btn-default" data-dismiss="modal">{% trans 'Cancel' %}</a>
-          <button type="submit" class="btn btn-primary">{% trans 'Import Subscribers' %}</button>
+          <a href='javascript:void(0)' type="button" class="btn btn-default" tabindex='3' data-dismiss="modal">{% trans 'Cancel' %}</a>
+          <button tabindex='2' type="submit" class="btn btn-primary">{% trans 'Import Subscribers' %}</button>
         </div>
       </form>
     </div><!-- /.modal-content -->
