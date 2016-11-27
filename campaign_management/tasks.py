@@ -80,13 +80,13 @@ def _gen_campaign_emails(campaign_id, list_id):
             # TODO: Remember at what byte offset we inject the unsubscribe_link,
             #       to prevent O(n) search each time
             # ----
-            # Add custom unsubscribe link for this subscriber
-            html_email, text_email, unsubscribe_link = _inject_unsubscribe_link(subscriber,
-                                                                                campaign)
             # Add custom tracking open pixel for this subscriber
             html_email = _inject_tracking_pixel(subscriber, email_list, campaign)
             # Convert all links to track clicks
             html_email = _convert_links_for_tracking(subscriber, email_list, campaign)
+            # Add custom unsubscribe link for this subscriber
+            html_email, text_email, unsubscribe_link = _inject_unsubscribe_link(subscriber,
+                                                                                campaign)
             # Build current email headers
             curr_email_headers = {}
             curr_email_headers['List-Unsubscribe'] = "<{}>".format(unsubscribe_link)
