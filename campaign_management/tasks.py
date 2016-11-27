@@ -33,20 +33,20 @@ def _inject_tracking_pixel(subscriber, email_list, campaign):
 def _convert_links_for_tracking(subscriber, email_list, campaign):
     try:
         html_email = campaign.html_email_for_sending
-        link_tmpl = "http://minimail.fullweb.io/pixou/open/?list={}&campaign={}&subscriber={}&uri={}"
+        link_tmpl = "http://minimail.fullweb.io/pixou/click/?list={}&campaign={}&subscriber={}&uri={}"
         html_tree = HTMLParser(html_email, "html5lib")
-        all_links = html_tree.find_all('a')
+        all_links = html_tree.findAll('a')
         for link in all_links:
-            if not link or not link.href or not link.href.startswith('http'):
+            if not link or not link.get('href') or not link.get('href', '').startswith('http'):
                 continue
             try:
-                b64_link = base64.b64encode(link.href.encode('utf8'))
-                link.href.replace_with(link_tmpl.format(email_list.uuid, campaign.uuid,
-                                                        subscriber.uuid, b64_link))
+                ori_href=  link.get('href').encode('utf8')
+                b64_link = base64.b64encode(ori_href).decode('utf8')
+                link['href'] = link_tmpl.format(email_list.uuid, campaign.uuid,
+                                                subscriber.uuid, b64_link)
             except Exception as ex:
-                print(ex)
                 continue
-        html_email = html_tree.prettify()
+        html_email = html_tree.prettify(formatter=None)
     except Exception as ex:
         print(ex)
     finally:
@@ -71,9 +71,8 @@ def _gen_campaign_emails(campaign_id, list_id):
         # Format sender field
         _from = "{} <{}>".format(campaign.email_from_name,
                                  campaign.email_list.from_email)
-        # Convert all links to track clicks
-        campaign.html_email_for_sending = _convert_links_for_tracking(campaign.html_email_for_sending)
     except Exception as ex:
+        print(ex)
         return tuple() # empty iterable
 
     for subscriber in subscribers:
@@ -86,6 +85,8 @@ def _gen_campaign_emails(campaign_id, list_id):
                                                                                 campaign)
             # Add custom tracking open pixel for this subscriber
             html_email = _inject_tracking_pixel(subscriber, email_list, campaign)
+            # Convert all links to track clicks
+            html_email = _convert_links_for_tracking(subscriber, email_list, campaign)
             # Build current email headers
             curr_email_headers = {}
             curr_email_headers['List-Unsubscribe'] = "<{}>".format(unsubscribe_link)

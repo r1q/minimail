@@ -23,16 +23,6 @@ import multiprocessing as mp
 import simplejson as json
 
 
-def _custom_substitute_html_entities(text):
-    """
-        Substitute all special characters to their HTML entities,
-        with the exception for template tags.
-    """
-    if text.strip().startswith('*|') and text.strip().endswith('|*'):
-        return text
-    else:
-        return EntitySubstitution.substitute_html(text)
-
 
 class CampaignList(LoginRequiredMixin, ListView):
     """CampaignList"""
