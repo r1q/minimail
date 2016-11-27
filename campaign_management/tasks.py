@@ -44,7 +44,7 @@ def _gen_campaign_emails(campaign_id, list_id):
         # Build email headers common to all subscribers
         email_headers = {}
         email_headers['X-Mailer'] = "Minimail Mailer"
-        email_headers['List-ID'] = "MINIMAIL-{}".format(email_list.uuid)
+        email_headers['List-Id'] = "MINIMAIL-{}".format(email_list.uuid)
         email_headers['X-Campaign-Id'] = "MINIMAIL-{}".format(campaign.uuid)
         # Format sender field
         _from = "{} <{}>".format(campaign.email_from_name,
