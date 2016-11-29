@@ -47,7 +47,7 @@ INSTALLED_APPS = [
     'subscriber_management',
     'template_management',
     'campaign_management',
-
+    'pixou', # auto generated model
 ]
 
 MIDDLEWARE = [
