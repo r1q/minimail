@@ -24,6 +24,9 @@
         <li class='{% if 'template' in request.resolver_match.url_name %}active{% endif %}'>
           <a href="/templates">{% trans "Templates" %}</a>
         </li>
+        <li class='{% if 'template' in request.resolver_match.url_name %}active{% endif %}'>
+          <a href="/analytics">{% trans "Analytics" %}</a>
+        </li>
       </ul>
 
       <ul class="nav navbar-nav pull-right">

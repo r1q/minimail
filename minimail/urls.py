@@ -17,8 +17,6 @@ from django.conf.urls import url, include
 from django.views.generic import TemplateView
 from django.contrib import admin
 
-from user_management import views
-
 
 urlpatterns = [
     url(r'^$', TemplateView.as_view(template_name='index.html')),
@@ -27,4 +25,5 @@ urlpatterns = [
     url(r'^subscribers/', include('subscriber_management.urls')),
     url(r'^campaigns/', include('campaign_management.urls')),
     url(r'^user/', include('user_management.urls')),
+    url(r'^analytics/', include('analytics_management.urls')),
 ]

@@ -1,0 +1,42 @@
+{% extends "master.html" %}
+{% load i18n %}
+{% load humanize %}
+
+
+{% block title %}
+  Analytics - {{list_object.name}}
+{% endblock %}
+
+
+{% block content %}
+
+  <div class='container'>
+    <div class='row'>
+      <div class='col-lg-6 col-sm-6'>
+        <h3>
+          {% trans "Analytics" %} - {{list_object.name}}
+        </h3>
+      </div>
+    </div>
+
+    <hr />
+
+    {% for item in  object_list %}
+      <div class="list-group">
+        <a href="{% url 'analytics-management-campaign' list_object.uuid item.uuid %}" class="list-group-item">
+          <h4 class='list-group-item-heading'>
+            {{ item.name }} - {{ item.title }}
+          </h4>
+        </a>
+      </div>
+    {% empty %}
+      <div class='alert alert-warning'>
+        No data yet.
+      </div>
+    {% endfor %}
+  </div>
+{% endblock %}
+
+
+{% block script %}
+{% endblock %}

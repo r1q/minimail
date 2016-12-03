@@ -1,4 +1,3 @@
-Loading development environment.
 # This is an auto-generated Django model module.
 # You'll have to do the following manually to clean this up:
 #   * Rearrange models' order
@@ -30,6 +29,7 @@ class PixouClickRate(models.Model):
 
     class Meta:
         managed = False
+        abstract = True
         db_table = 'pixou_click_rate'
 
 
@@ -43,6 +43,7 @@ class PixouOpenDate(models.Model):
 
     class Meta:
         managed = False
+        abstract = True
         db_table = 'pixou_open_date'
 
 
@@ -55,6 +56,7 @@ class PixouOpenRate(models.Model):
 
     class Meta:
         managed = False
+        abstract = True
         db_table = 'pixou_open_rate'
 
 
@@ -68,4 +70,5 @@ class PixouSesRate(models.Model):
 
     class Meta:
         managed = False
+        abstract = True
         db_table = 'pixou_ses_rate'
