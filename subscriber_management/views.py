@@ -29,6 +29,7 @@ import uuid
 from subscriber_management.models import List, Subscriber
 from subscriber_management.forms import ListForm, SubscriberForm, \
     ListSettings, ListNewsletterHomepage, ListNewsletterImportCSV
+from campaign_management.models import Campaign
 
 
 DATE_FORMAT = '%Y-%m-%d %H:%M:%S'
@@ -453,36 +454,28 @@ class SubscriberDeleteView(LoginRequiredMixin, View):
 
 
 class SubscriberUnsubscribeView(View):
-
     """
-    SubscriberUnsubscribeView allows a subscriber to unsubscribe from a list.
-    All it informations will be deleted.
+    SubscriberUnsubscribeView unsubscribes a subscriber from a list.
+    All it informations will be deleted, the unsubscribe_count of the
+    related campaign, if any, will be incremented by 1.
     """
-
-    @csrf_exempt
-    def dispatch(self, *args, **kwargs):
-        return super(SubscriberUnsubscribeView, self).dispatch(*args, **kwargs)
 
     def get(self, request, uuid, token):
         try:
-            subscriber = Subscriber.objects.get(uuid=uuid, token_unsubscribe=token)
-        except Exception as e:
-            raise Http404()
-        else:
-            list = subscriber.list
-            return render(request, "subscriber_unsubscribe.html", locals())
-        raise Http404()
-
-    def post(self, request, uuid, token):
-        try:
+            # Remove subscriber
             subscriber = Subscriber.objects.get(uuid=uuid, token_unsubscribe=token)
             list = subscriber.list
             subscriber.delete()
+            # Increase related campaign's unsubscribe count, if any
+            campaign_uuid = self.GET.get('c')
+            if campaign_uuid:
+                campaign = Campaign.objects.get(uuid=campaign_uuid)
+                campaign.unsubscribe_count += 1
+                campaign.save()
         except Exception as e:
             raise Http404()
         else:
             return render(request, "subscriber_unsubscribe_success.html", locals())
-        raise Http404()
 
 
 class SubscriberValidatedView(View):

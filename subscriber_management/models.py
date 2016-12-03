@@ -3,8 +3,71 @@ from user_management.models import MyUser
 from localize import timezone
 from django.urls import reverse
 from django.conf import settings
+from django.contrib.postgres.fields import JSONField
+from django.utils.text import slugify
 
 import uuid as UUID
+
+
+LANG_CHOICES = (\
+('en', 'English'),
+('fr', 'Français'),
+('zh', '中文'),
+('es', 'Español'),
+('ja', '日本語'),
+('ar', 'العربية'),
+('az', 'Azərbaycanca'),
+('bg', 'Български'),
+('nan', 'Bân-lâm-gú / Hō-ló-oē'),
+('be', 'Беларуская (Акадэмічная)'),
+('ca', 'Català'),
+('cs', 'Čeština'),
+('da', 'Dansk'),
+('de', 'Deutsch'),
+('et', 'Eesti'),
+('el', 'Ελληνικά'),
+('eo', 'Esperanto'),
+('eu', 'Euskara'),
+('fa', 'فارسی'),
+('gl', 'Galego'),
+('ko', '한국어'),
+('hy', 'Հայերեն'),
+('hi', 'हिन्दी'),
+('hr', 'Hrvatski'),
+('id', 'Bahasa Indonesia'),
+('it', 'Italiano'),
+('he', 'עברית'),
+('ka', 'ქართული'),
+('la', 'Latina'),
+('lt', 'Lietuvių'),
+('hu', 'Magyar'),
+('ms', 'Bahasa Melayu'),
+('min', 'Bahaso Minangkabau'),
+('nl', 'Nederlands'),
+('no', 'Norsk (Bokmål)'),
+('nn', 'Norsk (Nynorsk)'),
+('ce', 'Нохчийн'),
+('uz', 'Oʻzbekcha / Ўзбекча'),
+('pl', 'Polski'),
+('pt', 'Português'),
+('kk', 'Қазақша / Qazaqşa / قازاقشا'),
+('ro', 'Română'),
+('ru', 'Русский'),
+('ceb', 'Sinugboanong Binisaya'),
+('sk', 'Slovenčina'),
+('sl', 'Slovenščina'),
+('sr', 'Српски / Srpski'),
+('sh', 'Srpskohrvatski / Српскохрватски'),
+('fi', 'Suomi'),
+('sv', 'Svenska'),
+('th', 'ภาษาไทย'),
+('tr', 'Türkçe'),
+('uk', 'Українська'),
+('ur', 'اردو'),
+('vi', 'Tiếng Việt'),
+('vo', 'Volapük'),
+('war', 'Winaray'),
+)
 
 
 class List(models.Model):
@@ -15,7 +78,15 @@ class List(models.Model):
     uuid = models.UUIDField(default=UUID.uuid4, editable=False)
     created = models.DateTimeField(auto_now_add=True)
     edited = models.DateTimeField(auto_now=True)
-
+    language = models.CharField(choices=LANG_CHOICES, blank=True,
+                                max_length=50)
+    # UTM settings
+    is_utm_activated = models.BooleanField(default=True)
+    utm_medium = models.CharField(blank=True, max_length=50, default='email')
+    utm_source = models.CharField(blank=True, max_length=50)
+    utm_campaign = models.CharField(blank=True, max_length=100)
+    utm_content = models.CharField(blank=True, max_length=100)
+    utm_term = models.CharField(blank=True, max_length=100)
     # Internal usage
     name = models.CharField(max_length=125, blank=True)
     # Visible to subscribers
@@ -32,6 +103,10 @@ class List(models.Model):
     # custom templates
     subscribe_template = models.TextField(blank=True)
     success_template = models.TextField(blank=True)
+
+    def save(self, *args, **kwargs):
+        self.utm_source = slugify(self.title)
+        super(Subject, self).save(*args, **kwargs)
 
     def __str__(self):
         return self.name
@@ -53,9 +128,9 @@ class List(models.Model):
 class Subscriber(models.Model):
     """Subscriber"""
 
-    # Meta
     list = models.ForeignKey(List)
     uuid = models.UUIDField(default=UUID.uuid4, editable=False)
+    # Meta info
     created = models.DateTimeField(auto_now_add=True)
     edited = models.DateTimeField(auto_now=True)
     token_subscribe = models.CharField(default=UUID.uuid4, max_length=50,
@@ -64,6 +139,7 @@ class Subscriber(models.Model):
                                          blank=True, editable=False)
     validated = models.BooleanField(default=False, blank=True)
 
+    # Core info
     email = models.EmailField(max_length=50)
     first_name = models.CharField(max_length=50, blank=True, null=True)
     last_name = models.CharField(max_length=50, blank=True, null=True)
@@ -73,7 +149,7 @@ class Subscriber(models.Model):
     accept_language = models.TextField(blank=True, null=True)
     ip_subscribe = models.GenericIPAddressField(blank=True, null=True)
     ip_validate = models.GenericIPAddressField(blank=True, null=True)
-    extra = models.TextField(blank=True, null=True)
+    extra = JSONField(blank=True, null=True)
     notes = models.TextField(blank=True, null=True)
 
     class Meta:
@@ -89,10 +165,14 @@ class Subscriber(models.Model):
             return ""
 
     def validation_link(self):
-        return settings.BASE_URL+reverse('subscriber-management-subscriber-validate', kwargs={'uuid':self.uuid, 'token':self.token_subscribe})
+        return settings.BASE_URL+reverse('subscriber-management-subscriber-validate',
+                                         kwargs={'uuid':self.uuid,
+                                                 'token':self.token_subscribe})
 
     def unsubscribe_link(self):
-        return settings.BASE_URL+reverse('subscriber-management-subscriber-unsubscribe', kwargs={'uuid':self.uuid, 'token':self.token_unsubscribe})
+        return settings.BASE_URL+reverse('subscriber-management-subscriber-unsubscribe',
+                                         kwargs={'uuid':self.uuid,
+                                                 'token':self.token_unsubscribe})
 
     def human_tz(self):
         return timezone.human_timezone(self.timezone)

@@ -1,21 +1,28 @@
 from django.core.mail import get_connection, EmailMultiAlternatives
+from django.utils.text import slugify
 from celery import shared_task, group
 
 from subscriber_management.models import List, Subscriber
 from campaign_management.models import Campaign
 
 import time
-from bs4 import BeautifulSoup as HTMLParser
 import base64
+from urllib.parse import parse_qs, urlparse
+from bs4 import BeautifulSoup as HTMLParser
 
 
 def _inject_unsubscribe_link(subscriber, campaign, html_email_for_sending,
                              text_email_for_sending):
+    # Build unsubscribe link
     unsubscribe_link = subscriber.unsubscribe_link()
+    # Append current campaign uuid
+    unsubscribe_link += "?c={}".format(campaign.uuid)
+    # Inject the unsubscribe link into the HTML email
     html_email_for_sending = html_email_for_sending.replace('*%7CUNSUB%7C*',
                                                             unsubscribe_link)
     html_email_for_sending = html_email_for_sending.replace('*|UNSUB|*',
                                                             unsubscribe_link)
+    # Inject the unsubscribe link into the text email
     text_email_for_sending = text_email_for_sending.replace('*%7CUNSUB%7C*',
                                                             unsubscribe_link)
     text_email_for_sending = text_email_for_sending.replace('*|UNSUB|*',
@@ -50,18 +57,32 @@ def _convert_links_for_tracking(subscriber, email_list, campaign, html_email_for
     :param campaign:
     """
     try:
-        link_tmpl = "http://minimail.fullweb.io/pixou/click/?list={}&campaign={}&subscriber={}&uri={}"
         html_tree = HTMLParser(html_email_for_sending, "html5lib")
         all_links = html_tree.findAll('a')
         for link in all_links:
             if not link or not link.get('href') or not link.get('href', '').startswith('http'):
                 continue
             try:
-                # Build link
                 ori_href = link.get('href').encode('utf8')
-                b64_link = base64.b64encode(ori_href).decode('utf8')
+                parsed_ori_href = urlparse(ori_href)
+                # Append UTM codes to original URL
+                qs = parse_qs(parsed_ori_href.query)
+                qs['utm_medium'] = email_list.utm_medium or "email"
+                qs['utm_source'] = email_list.utm_source or slugify(email_list.title)
+                qs['utm_campaign'] = slugify(email_list.email_subject)
+                # Recontruct URL
+                url_to_track = "{}://{}{}?".format(parsed_ori_href.scheme, parsed_ori_href.netloc,
+                                                  parsed_ori_href.path)
+                for k, v in qs.items:
+                    if type(v) is list:
+                        v = ",".join(v)
+                    url_to_track += "{}={}&".format(k, v)
+                url_to_track += parsed_ori_href.fragment
+                # Wrap link with tracking
+                b64_link = base64.b64encode(url_to_track).decode('utf8')
+                link_tmpl = "http://minimail.fullweb.io/pixou/click/?list={}&campaign={}&subscriber={}&uri={}"
                 new_link = link_tmpl.format(email_list.uuid, campaign.uuid,
-                                                subscriber.uuid, b64_link)
+                                            subscriber.uuid, b64_link)
                 # Update HTML email
                 link['href'] = new_link
             except Exception as ex:

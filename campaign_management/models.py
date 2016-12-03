@@ -32,6 +32,7 @@ class Campaign(models.Model):
     recipient_count = models.PositiveIntegerField(blank=True, null=True)
     is_draft = models.BooleanField(default=True)
     is_composed = models.BooleanField(default=False)
+    unsubscribe_count = models.PositiveIntegerField(default=0)
     # Metadata
     uuid = models.UUIDField(default=UUID.uuid4, editable=False)
     created = models.DateTimeField(auto_now_add=True)
