@@ -15,7 +15,7 @@ class OpenRate(PixouOpenRate):
         ses_stats = _get_ses_stats(self.list, self.campaign)
         if ses_stats.delivery == 0:
             return 0
-        return int(self.uniq / ses_stats.delivery)*100
+        return int((float(self.uniq) / float(ses_stats.delivery)) * 100)
 
 class ClickRate(PixouClickRate):
     pass
