@@ -3,6 +3,7 @@ from subscriber_management.models import Subscriber, List
 
 class SubscriberAdmin(admin.ModelAdmin):
     list_display = ('email', 'list', 'validated',)
+    readonly_fields = ('token_unsubscribe', 'token_subscribe',)
     search_fields = ('email',)
 
 class ListAdmin(admin.ModelAdmin):

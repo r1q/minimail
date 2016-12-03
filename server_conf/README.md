@@ -25,6 +25,10 @@ Version: `1.11.6`
 
 ```bash
 ./configure \
+    --pid-path=/var/run/nginx.pid \
+    --http-log-path=/var/log/nginx/access.log \
+    --error-log-path=/var/log/nginx/error.log \
+    --conf-path=/etc/nginx/nginx.conf \
     --with-file-aio \
     --with-threads \
     --with-http_realip_module \
