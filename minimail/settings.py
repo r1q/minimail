@@ -29,6 +29,7 @@ ALLOWED_HOSTS = ["minimail.fullweb.io"]
 
 MAX_UPLOAD_SIZE = "5242880"
 
+ANALYTICS_KEY = ""
 
 # Application definition
 
