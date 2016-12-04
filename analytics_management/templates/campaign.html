@@ -19,21 +19,21 @@
       </div>
     </div>
     <hr />
-    <h4>{% trans "Open rate" %}: <small>{{ open_rate_object.avg }}%</small></h4>
+    <h4>{% trans "Open rate" %}:</h4>
     <ul>
-        <li><string>{% trans "Unique" %}:</strong> {{ open_rate_object.uniq }}</li>
-        <li><string>{% trans "Total" %}:</strong> {{ open_rate_object.total }}</li>
+        <li><string>{% trans "Unique" %}:</strong> {{ open_rate_object.unique_count }}</li>
+        <li><string>{% trans "Total" %}:</strong> {{ open_rate_object.total_count }}</li>
     </ul>
     <h4>{% trans "Click rate" %}:</h4>
     <ul>
-        <li><string>{% trans "Unique" %}:</strong> {{ click_rate_object.uniq }}</li>
-        <li><string>{% trans "Total" %}:</strong> {{ click_rate_object.total }}</li>
+        <li><string>{% trans "Unique" %}:</strong> {{ click_rate_object.unique_count }}</li>
+        <li><string>{% trans "Total" %}:</strong> {{ click_rate_object.total_count }}</li>
     </ul>
     <h4>{% trans "SES rate" %}:</h4>
     <ul>
-        <li><string>{% trans "Delivery" %}:</strong> {{ ses_rate_object.delivery }}</li>
-        <li><string>{% trans "Bounce" %}:</strong> {{ ses_rate_object.bounce }}</li>
-        <li><string>{% trans "Complaint" %}:</strong> {{ ses_rate_object.complaint }}</li>
+        <li><string>{% trans "Delivery" %}:</strong> {{ ses_rate_object.delivery_count }}</li>
+        <li><string>{% trans "Bounce" %}:</strong> {{ ses_rate_object.bounce_count }}</li>
+        <li><string>{% trans "Complaint" %}:</strong> {{ ses_rate_object.complaint_count }}</li>
     </ul>
   </div>
 {% endblock %}

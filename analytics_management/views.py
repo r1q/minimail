@@ -32,10 +32,13 @@ class ListView(LoginRequiredMixin, View):
 class CampaignView(LoginRequiredMixin, View):
 
     def get(sefl, request, list_uuid, campaign_uuid):
-        campaign_object = Campaign.objects.get(
+        campaign = Campaign.objects.get(
             uuid=campaign_uuid,
             email_list__uuid=list_uuid,
         )
+        open_rate_object = OpenRate.objects.filter(list=campaign.email_list, campaign=campaign).first()
+        click_rate_object = ClickRate.objects.filter(list=campaign.email_list, campaign=campaign).first()
+        ses_rate_object = SesRate.objects.filter(list=campaign.email_list, campaign=campaign).first()
         return render(request, "campaign.html", locals())
 
 def _gen_analytics_uuid(*args):
