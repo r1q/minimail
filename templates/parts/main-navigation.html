@@ -15,16 +15,16 @@
         {% trans "Compose email" %}
       </a>
       <ul class="nav navbar-nav">
-        <li class='{% if 'campaign' in request.resolver_match.url_name %}active{% endif %}'>
+        <li class='{% if 'campaign' in request.resolver_match.url_name|slice:":10" %}active{% endif %}'>
           <a href="/campaigns">{% trans "Emails" %}</a>
         </li>
-        <li class='{% if 'subscriber' in request.resolver_match.url_name %}active{% endif %}'>
+        <li class='{% if 'subscriber' in request.resolver_match.url_name|slice:":10" %}active{% endif %}'>
           <a href="/subscribers">{% trans "Subscribers" %}</a>
         </li>
-        <li class='{% if 'template' in request.resolver_match.url_name %}active{% endif %}'>
+        <li class='{% if 'template' in request.resolver_match.url_name|slice:":10" %}active{% endif %}'>
           <a href="/templates">{% trans "Templates" %}</a>
         </li>
-        <li class='{% if 'template' in request.resolver_match.url_name %}active{% endif %}'>
+        <li class='{% if 'analytics' in request.resolver_match.url_name|slice:":10" %}active{% endif %}'>
           <a href="/analytics">{% trans "Analytics" %}</a>
         </li>
       </ul>

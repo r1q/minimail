@@ -9,6 +9,7 @@ from django.shortcuts import redirect, render
 from django.core.mail import send_mail
 from django.http.response import HttpResponse
 from django.views import View
+from django.utils import timezone
 
 from campaign_management.models import Campaign
 from subscriber_management.models import List, Subscriber
@@ -21,7 +22,6 @@ from bs4.dammit import EntitySubstitution
 import htmlmin
 import multiprocessing as mp
 import simplejson as json
-
 
 
 class CampaignList(LoginRequiredMixin, ListView):
@@ -223,6 +223,7 @@ def send_one_campaign_to_one_list(request, pk):
         # Update campaign status
         campaign.is_sent = True
         campaign.is_draft = False
+        campaign.sent = timezone.now()
         campaign.recipient_count = campaign.email_list.count_validated_subscribers()
         campaign.save()
     finally:
@@ -279,7 +280,7 @@ class ComposeEmailView(View):
         if not template:
             return redirect('campaign-choose-tmplt', pk=pk)
         else:
-            for t_k, t_v in template.placeholders.items():
+            for t_k, t_v in json.loads(template.placeholders).items():
                 if campaign.placeholders_value and t_k in campaign.placeholders_value:
                     new_attrs = {'value': campaign.placeholders_value.get(t_k, '')}
                     template.placeholders[t_k].update(new_attrs)
