@@ -84,9 +84,6 @@ class List(models.Model):
     is_utm_activated = models.BooleanField(default=True)
     utm_medium = models.CharField(blank=True, max_length=50, default='email')
     utm_source = models.CharField(blank=True, max_length=50)
-    utm_campaign = models.CharField(blank=True, max_length=100)
-    utm_content = models.CharField(blank=True, max_length=100)
-    utm_term = models.CharField(blank=True, max_length=100)
     # Internal usage
     name = models.CharField(max_length=125, blank=True)
     # Visible to subscribers
@@ -106,7 +103,7 @@ class List(models.Model):
 
     def save(self, *args, **kwargs):
         self.utm_source = slugify(self.title)
-        super(Subject, self).save(*args, **kwargs)
+        super(List, self).save(*args, **kwargs)
 
     def __str__(self):
         return self.name

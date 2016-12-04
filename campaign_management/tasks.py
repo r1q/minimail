@@ -9,6 +9,7 @@ import time
 import base64
 from urllib.parse import parse_qs, urlparse
 from bs4 import BeautifulSoup as HTMLParser
+import traceback
 
 
 def _inject_unsubscribe_link(subscriber, campaign, html_email_for_sending,
@@ -63,29 +64,44 @@ def _convert_links_for_tracking(subscriber, email_list, campaign, html_email_for
             if not link or not link.get('href') or not link.get('href', '').startswith('http'):
                 continue
             try:
+                #TODO: Fix corner case where URL is a click-to-share
+                # UTM is added to the SNS share URL, not to the actual
+                # shared link.
                 ori_href = link.get('href').encode('utf8')
                 parsed_ori_href = urlparse(ori_href)
                 # Append UTM codes to original URL
                 qs = parse_qs(parsed_ori_href.query)
+                qs = {k.decode('utf8'): b"".join(v).decode('utf8') for k, v in qs.items()}
                 qs['utm_medium'] = email_list.utm_medium or "email"
                 qs['utm_source'] = email_list.utm_source or slugify(email_list.title)
-                qs['utm_campaign'] = slugify(email_list.email_subject)
-                # Recontruct URL
-                url_to_track = "{}://{}{}?".format(parsed_ori_href.scheme, parsed_ori_href.netloc,
-                                                  parsed_ori_href.path)
-                for k, v in qs.items:
+                qs['utm_campaign'] = campaign.utm_campaign or slugify(campaign.email_subject)
+                qs['utm_content'] = campaign.utm_content or ""
+                qs['utm_term'] = campaign.utm_term or ""
+                # Recontruct URL, first up to path
+                url_to_track = "{}://{}{}?".format(parsed_ori_href.scheme.decode('utf8'),
+                                                   parsed_ori_href.netloc.decode('utf8'),
+                                                   parsed_ori_href.path.decode('utf8'))
+                # Append querystring
+                for k, v in qs.items():
+                    if not v or v == "":
+                        continue
                     if type(v) is list:
-                        v = ",".join(v)
-                    url_to_track += "{}={}&".format(k, v)
-                url_to_track += parsed_ori_href.fragment
+                        v = b",".join(v)
+                    url_to_track += "{}={}&".format(k, v.strip())
+                if url_to_track.endswith('&'):
+                    url_to_track = url_to_track[:-1]
+                # Append fragment
+                url_to_track += parsed_ori_href.fragment.decode('utf8')
                 # Wrap link with tracking
-                b64_link = base64.b64encode(url_to_track).decode('utf8')
+                b64_link = base64.b64encode(url_to_track.encode('utf8')).decode('utf8')
                 link_tmpl = "http://minimail.fullweb.io/pixou/click/?list={}&campaign={}&subscriber={}&uri={}"
                 new_link = link_tmpl.format(email_list.uuid, campaign.uuid,
                                             subscriber.uuid, b64_link)
                 # Update HTML email
                 link['href'] = new_link
             except Exception as ex:
+                traceback.print_exc()
+                print('error wrapping link', ex)
                 continue
         html_email_for_sending = html_tree.prettify(formatter=None)
     except Exception as ex:
@@ -128,9 +144,8 @@ def _gen_campaign_emails(campaign_id, list_id):
             html_email_for_sending = _inject_tracking_pixel(subscriber, email_list, campaign,
                                                             html_email_for_sending)
             # Convert all links to track clicks
-            html_email_for_sending, text_email_for_sending = _convert_links_for_tracking(subscriber,
-                                                                                         email_list, campaign,
-                                                                                         html_email_for_sending)
+            html_email_for_sending = _convert_links_for_tracking(subscriber, email_list, campaign,
+                                                                 html_email_for_sending)
             # Add custom unsubscribe link for this subscriber
             html_email_for_sending, text_email_for_sending, unsubscribe_link = _inject_unsubscribe_link(subscriber,
                                                                                                         campaign,
@@ -164,10 +179,13 @@ def _send_one_newsletter_to_one_list(campaign_id, list_id):
     # Send all emails
     for email in _gen_campaign_emails(campaign_id, list_id):
         try:
+            if not email:
+                print('email not sent', email)
+                continue
             email.send()
         except Exception as ex:
             # TODO: Log fail to generate email
-            print(email.to, ex)
+            print(email, ex)
             continue
     # Close connection
     smtp_connection.close()

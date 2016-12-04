@@ -37,6 +37,12 @@ class Campaign(models.Model):
     uuid = models.UUIDField(default=UUID.uuid4, editable=False)
     created = models.DateTimeField(auto_now_add=True)
     edited = models.DateTimeField(auto_now=True)
+    sent = models.DateTimeField(editable=False, null=True, blank=True)
+    # Tracking relative to campaign
+    utm_campaign = models.CharField(blank=True, max_length=140)
+    utm_content = models.CharField(blank=True, max_length=140)
+    utm_term = models.CharField(blank=True, max_length=100)
+
 
     def __str__(self):
         return self.email_subject
