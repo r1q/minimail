@@ -4,7 +4,7 @@
 
 
 {% block title %}
-  Analytics - {{campaign_object.email_list.name}} - {{campaign_object.title}}
+  Analytics - {{campaign.email_list.name}} - {{campaign.email_subject}}
 {% endblock %}
 
 
@@ -14,7 +14,7 @@
     <div class='row'>
       <div class='col-lg-6 col-sm-6'>
         <h3>
-          {% trans "Analytics" %} - {{campaign.email_list.name}} - {{campaign.title}}
+          {% trans "Analytics" %} - {{campaign.email_list.name}} - {{campaign.email_subject}}
         </h3>
       </div>
     </div>
