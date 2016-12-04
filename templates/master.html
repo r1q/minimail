@@ -13,7 +13,7 @@
     <link rel="canonical" href="http://minimail.fullweb.io">
     {% block styles %}{% endblock %}
 		<style>
-			.alert {
+			.notif {
 				position: fixed;
 				z-index: 100;
 				right: 50%;
@@ -40,7 +40,7 @@
           <div class='row'>
             <div class='col-lg-6 col-lg-offset-3'>
               {% for message in messages %}
-                <p class="alert alert-dismissable {% if message.tags %}alert-{{ message.tags }}"{% endif %}>
+                <p class="notif alert alert-dismissable {% if message.tags %}alert-{{ message.tags }}"{% endif %}>
                   <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
                   {{ message }}
                 </p>

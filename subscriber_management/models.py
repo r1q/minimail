@@ -102,7 +102,9 @@ class List(models.Model):
     success_template = models.TextField(blank=True)
 
     def save(self, *args, **kwargs):
-        self.utm_source = slugify(self.title)
+        # Set utm_source when we first created the list
+        if self.pk is None:
+            self.utm_source = slugify(self.title)
         super(List, self).save(*args, **kwargs)
 
     def __str__(self):
