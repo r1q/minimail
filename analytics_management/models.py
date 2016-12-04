@@ -1,24 +1,33 @@
 from django.db import models
-from analytics_management.models_pixou import \
-    PixouOpenRate, PixouClickRate, PixouSesRate
+from subscriber_management.models import List
+from campaign_management.models import Campaign
 
-def _get_ses_stats(list_uuid:str, campaign_uuid:str):
-    return SesRate.objects.using('pixou').get(
-        list=list_uuid,
-        campaign=campaign_uuid,
-    )
+class OpenRate(models.Model):
+    id = models.CharField(primary_key=True, max_length=125)
+    list = models.ForeignKey(List)
+    campaign = models.ForeignKey(Campaign)
+    unique_count = models.IntegerField(blank=True)
+    total_count = models.IntegerField(blank=True)
 
-# Create your models here.
-class OpenRate(PixouOpenRate):
+class OpenRateHourly(models.Model):
+    id = models.CharField(primary_key=True, max_length=125)
+    list = models.ForeignKey(List)
+    campaign = models.ForeignKey(Campaign)
+    date = models.DateTimeField(blank=True, null=True)
+    unique_count = models.IntegerField(blank=True)
+    total_count = models.IntegerField(blank=True)
 
-    def avg(self):
-        ses_stats = _get_ses_stats(self.list, self.campaign)
-        if ses_stats.delivery == 0:
-            return 0
-        return int((float(self.uniq) / float(ses_stats.delivery)) * 100)
+class ClickRate(models.Model):
+    id = models.CharField(primary_key=True, max_length=125)
+    list = models.ForeignKey(List)
+    campaign = models.ForeignKey(Campaign)
+    unique_count = models.IntegerField(blank=True)
+    total_count = models.IntegerField(blank=True)
 
-class ClickRate(PixouClickRate):
-    pass
-
-class SesRate(PixouSesRate):
-    pass
+class SesRate(models.Model):
+    id = models.CharField(primary_key=True, max_length=125)
+    list = models.ForeignKey(List)
+    campaign = models.ForeignKey(Campaign)
+    delivery_count = models.IntegerField(blank=True)
+    bounce_count = models.IntegerField(blank=True)
+    complaint_count = models.IntegerField(blank=True)
