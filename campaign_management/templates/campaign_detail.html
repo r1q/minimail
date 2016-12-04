@@ -88,6 +88,11 @@
               </ul>
               <hr />
               <ul class='list-unstyled'>
+								{% if campaign.is_sent %}
+                <li>
+                  <small class='text-muted'>{% trans "sent:" %} {{ campaign.sent}}</small>
+								</li>
+								{% endif %}
                 <li>
                   <small class='text-muted'>{% trans "created:" %} {{ campaign.created }}</small>
                 </li>
