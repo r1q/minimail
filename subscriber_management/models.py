@@ -79,7 +79,7 @@ class List(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     edited = models.DateTimeField(auto_now=True)
     language = models.CharField(choices=LANG_CHOICES, blank=True,
-                                max_length=50)
+                                max_length=50, default='en')
     # UTM settings
     is_utm_activated = models.BooleanField(default=True)
     utm_medium = models.CharField(blank=True, max_length=50, default='email')
@@ -102,7 +102,9 @@ class List(models.Model):
     success_template = models.TextField(blank=True)
 
     def save(self, *args, **kwargs):
-        self.utm_source = slugify(self.title)
+        # Set utm_source when we first created the list
+        if self.pk is None:
+            self.utm_source = slugify(self.title)
         super(List, self).save(*args, **kwargs)
 
     def __str__(self):

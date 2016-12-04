@@ -28,7 +28,7 @@ import uuid
 
 from subscriber_management.models import List, Subscriber
 from subscriber_management.forms import ListForm, SubscriberForm, \
-    ListSettings, ListNewsletterHomepage, ListNewsletterImportCSV
+    ListSettingsForm, ListNewsletterHomepage, ListNewsletterImportCSV
 from campaign_management.models import Campaign
 
 
@@ -103,21 +103,22 @@ class SubscriberListSettingsView(LoginRequiredMixin, View):
     SubscriberListSettingsView updates an existing list for subscribers.
     """
 
-    success_message = _(" was successfully updated")
-
     def get(self, request, uuid):
-        list_item = List.objects.get(uuid=uuid)
-        form_object = ListSettings(instance=list_item)
+        list_item = List.objects.get(uuid=uuid, user=self.request.user)
+        form_object = ListSettingsForm(instance=list_item)
         return render(request, "list_settings.html", locals())
 
     def post(self, request, uuid):
-        list_item = List.objects.get(uuid=uuid)
-        form_object = ListSettings(request.POST, instance=list_item)
+        list_item = List.objects.get(uuid=uuid, user=self.request.user)
+        form_object = ListSettingsForm(request.POST, instance=list_item)
         if form_object.is_valid():
-            messages.success(self.request, form_object.instance.name + self.success_message)
+            messages.success(self.request,
+                             _("List settings successfully updated"))
             form_object.save()
             return redirect('subscriber-management-list-settings', uuid)
-        return render(request, "list_settings.html", locals())
+        else:
+            return render(request, "list_settings.html", locals())
+
 
 class SubscriberListNewsletterHomepageView(LoginRequiredMixin, View):
 

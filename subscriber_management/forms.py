@@ -27,13 +27,15 @@ class SubscriberForm(ModelForm):
     email = forms.EmailField(widget=forms.TextInput(attrs={'class':'form-control'}), required=True)
 
 
-class ListSettings(ModelForm):
+class ListSettingsForm(ModelForm):
     class Meta:
         model = List
-        localized_fields = ('name',)
-        fields = ('name',)
+        localized_fields = ('name', 'utm_source', 'utm_medium', 'language')
+        fields = ('name', 'utm_source', 'utm_medium', 'language')
 
     name = forms.CharField(required=True)
+    utm_medium = forms.CharField(required=False)
+    utm_source = forms.CharField(required=False)
 
 
 class ListNewsletterHomepage(ModelForm):
