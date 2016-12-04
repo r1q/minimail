@@ -30,8 +30,8 @@ class SubscriberForm(ModelForm):
 class ListSettingsForm(ModelForm):
     class Meta:
         model = List
-        localized_fields = ('name', 'utm_source', 'utm_medium')
-        fields = ('name', 'utm_source', 'utm_medium')
+        localized_fields = ('name', 'utm_source', 'utm_medium', 'language')
+        fields = ('name', 'utm_source', 'utm_medium', 'language')
 
     name = forms.CharField(required=True)
     utm_medium = forms.CharField(required=False)

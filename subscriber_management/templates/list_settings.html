@@ -19,59 +19,80 @@
     </div>
     <div class='row'>
       <div class='col-lg-6 col-lg-offset-3'>
-        <br>
-				<h4>UTM Settings <small><a href='https://blog.bufferapp.com/utm-guide' target='_blank'>what is this?</a></small></h4>
+
         <form method="post" class="">
-            {% csrf_token %}
-						<input type='hidden' id="{{form_object.name.auto_id}}" name="{{form_object.name.name}}" value ="{{form_object.name.value|default_if_none:""}}" />
-            <div class="form-group">
-              <label for="{{form_object.utm_medium.auto_id}}" class="control-label">UTM medium</label>
-              <input id="{{form_object.utm_medium.auto_id}}" name="{{form_object.utm_medium.name}}" class='form-control' tabindex='0' value ="{{form_object.utm_medium.value | default_if_none:""}}"/>
-              {% for error in form_object.utm_medium.errors %}
-                <span class="error-block">{{error}}</span>
-              {% endfor %}
-              <small class='help-block'>
-								The <code>utm_medium</code> indicates how is the traffic coming
-								to the destination page. Ex: <code>email</code>
-              </small>
-            </div>
-            <div class="form-group">
-              <label for="{{form_object.utm_source.auto_id}}" class="control-label">UTM source</label>
-              <input id="{{form_object.utm_source.auto_id}}" name="{{form_object.utm_source.name}}" class='form-control' tabindex='0' value ="{{form_object.utm_source.value | default_if_none:""}}" />
-              {% for error in form_object.utm_source.errors %}
-                <span class="error-block">{{error}}</span>
-              {% endfor %}
-              <small class='help-block'>
-								The <code>utm_source</code> indicates where the traffic is coming from. Ex: <code>{{ form_object.utm_source.value|default:"newsletter" }}</code> (your newsletter title)
-              </small>
-            </div>
-          <button type="submit" class="btn btn-success">{% trans 'Update UTM settings' %}</button>
+					{% csrf_token %}
+					<br>
+					<h4>UTM Settings <small><a href='https://blog.bufferapp.com/utm-guide' target='_blank'>what is this?</a></small></h4>
+							<div class="form-group">
+								<label for="{{form_object.utm_medium.auto_id}}" class="control-label">UTM medium</label>
+								<input id="{{form_object.utm_medium.auto_id}}" name="{{form_object.utm_medium.name}}" class='form-control' tabindex='0' value ="{{form_object.utm_medium.value | default_if_none:""}}"/>
+								{% for error in form_object.utm_medium.errors %}
+									<span class="error-block">{{error}}</span>
+								{% endfor %}
+								<small class='help-block'>
+									The <code>utm_medium</code> indicates how is the traffic coming
+									to the destination page. Ex: <code>email</code>
+								</small>
+							</div>
+							<div class="form-group">
+								<label for="{{form_object.utm_source.auto_id}}" class="control-label">UTM source</label>
+								<input id="{{form_object.utm_source.auto_id}}" name="{{form_object.utm_source.name}}" class='form-control' tabindex='0' value ="{{form_object.utm_source.value | default_if_none:""}}" />
+								{% for error in form_object.utm_source.errors %}
+									<span class="error-block">{{error}}</span>
+								{% endfor %}
+								<small class='help-block'>
+									The <code>utm_source</code> indicates where the traffic is coming from. Ex: <code>{{ form_object.utm_source.value|default:"newsletter" }}</code> (your newsletter title)
+								</small>
+							</div>
+						<button type="submit" class="btn btn-success">{% trans 'Update UTM settings' %}</button>
+						<br />
+						<br />
+						<div class='alert alert-info'>
+							The other UTM settings, <code>utm_campaign</code> and <code>utm_content</code> are relative to the email you send.
+							You can set them when preparing your email, at the review step.
+						</div>
 					<br />
-					<br />
-					<div class='alert alert-info small'>
-						The other UTM settings, <code>utm_campaign</code> and <code>utm_content</code> are relative to the email you send.
-						You can set them when preparing your email, at the review step.
+					<hr>
+					<h4>List Name</h4>
+					<div class="form-group {% if form_object.name.errors %}has-error{% endif %}">
+						<label for="{{form_object.name.auto_id}}" class="control-label">{% trans 'Rename this list' %}</label>
+						<input id="{{form_object.name.auto_id}}" name="{{form_object.name.name}}" class='form-control' tabindex='0' value ="{{form_object.name.value | default_if_none:""}}" required />
+						{% for error in form_object.name.errors %}
+							<span class="error-block">{{error}}</span>
+						{% endfor %}
+						<small class='text-muted'>
+							This name is only visible to you. Go to your <a href='{% url 'subscriber-management-list-newsletter-homepage' list_item.uuid  %}'>newsletter homepage</a> for public settings.
+						</small>
 					</div>
+						<button type="submit" class="btn btn-success">{% trans 'Rename list' %}</button>
+					<br />
+					<br />
+					<hr>
+					<h4>List Language</h4>
+					{% csrf_token %}
+					<div class="form-group {% if form_object.language.errors %}has-error{% endif %}">
+						<label for="{{form_object.language.auto_id}}" class="control-label">{% trans 'Select your list language' %}</label>
+						<select id="{{form_object.language.auto_id}}" name="{{form_object.language.name}}" class='form-control' tabindex='4'>
+						{% for short_lang, lang in form_object.language.field.choices %}
+							{% if forloop.counter0 == 6 %}
+							<option disabled></option>
+							{% elif forloop.counter0 > 0 %}
+							<option value="{{short_lang}}" {% if short_lang == list_item.language %}selected{% endif %}> {{lang}} </option>
+							{% endif %}
+						{% endfor %}
+						</select>
+						{% for error in form_object.language.errors %}
+							<span class="error-block">{{error}}</span>
+							<br />
+						{% endfor %}
+						<small class='text-muted'>
+							This is the language you use to write your emails.
+						</small>
+					</div>
+					<button type="submit" class="btn btn-success">{% trans 'Update language' %}</button>
         </form>
-        <br />
-        <hr>
-				<h4>List Name</h4>
-        <form method="post" class="">
-            {% csrf_token %}
-						<input type='hidden' name="{{form_object.utm_source.name}}" value ="{{form_object.utm_source.value|default_if_none:""}}" />
-						<input type='hidden' name="{{form_object.utm_medium.name}}" value ="{{form_object.utm_medium.value|default_if_none:""}}" />
-            <div class="form-group {% if form_object.name.errors %}has-error{% endif %}">
-              <label for="{{form_object.name.auto_id}}" class="control-label">{% trans 'Rename this list' %}</label>
-              <input id="{{form_object.name.auto_id}}" name="{{form_object.name.name}}" class='form-control' tabindex='0' value ="{{form_object.name.value | default_if_none:""}}" required />
-              {% for error in form_object.name.errors %}
-                <span class="error-block">{{error}}</span>
-              {% endfor %}
-              <small class='text-muted'>
-                This name is only visible to you. Go to your <a href='{% url 'subscriber-management-list-newsletter-homepage' list_item.uuid  %}'>newsletter homepage</a> for public settings.
-              </small>
-            </div>
-          <button type="submit" class="btn btn-success">{% trans 'Rename list' %}</button>
-        </form>
+
         <br />
         <hr>
 				<h4>Sender Email</h4>

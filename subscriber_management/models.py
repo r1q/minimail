@@ -79,7 +79,7 @@ class List(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     edited = models.DateTimeField(auto_now=True)
     language = models.CharField(choices=LANG_CHOICES, blank=True,
-                                max_length=50)
+                                max_length=50, default='en')
     # UTM settings
     is_utm_activated = models.BooleanField(default=True)
     utm_medium = models.CharField(blank=True, max_length=50, default='email')
