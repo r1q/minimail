@@ -157,6 +157,8 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = "" # Goes in local_settings.py
 EMAIL_HOST_PASSPORT = "" # Goes in local_settings.py
 
+LOGIN_URL = "/user/account/login"
+
 BASE_URL = 'https://minimail.fullweb.io'
 
 try:
