@@ -9,27 +9,27 @@
 
 {% block content %}
 
+	<br />
+
   <div class='container'>
     <div class='row'>
-      <div class='col-lg-6 col-sm-6'>
-        <h2>
-          <a href='{% url 'template-list' %}'>{% trans "Templates" %}</a>
-          / {{ template.name }}
-        </h2>
+      <div class='col-lg-10 col-lg-offset-1 col-sm-12'>
+        <h3>
+          <a href='{% url 'template-list' %}'>{% trans "All Templates" %}</a>
+          &rsaquo; {{ template.name }}
+        </h3>
       </div>
     </div>
 
-    <hr />
+		<br />
 
     <div class='row'>
 
-        <div class='col-lg-8 col-sm-6'>
-          <div class='panel panel-default'>
-            <div class='preview' style='position: relative; min-height: 600px; height:auto; background: #f9f9f9; overflow: hidden;'>
-              <iframe style='border: 0; position: absolute; top: 0; bottom: 0; left: 0; right: 0; z-index: 10; transform: scale(0.90); transform-origin: 0 0; height: 112%; width: 112%;' src='/templates/{{template.id}}/preview'> </iframe>
-              <div class='cover' style='position: absolute; top: 0; bottom: 0; left: 0; right: 0; z-index: 100;'></div>
-            </div>
-          </div>
+        <div class='col-lg-7 col-lg-offset-1 col-sm-6'>
+					<div class='preview' style='position: relative; min-height: 600px; height:auto; background: #fff; overflow: hidden; box-shadow: 0 1px 3px #9a9a9a'>
+						<iframe style='border: 0; position: absolute; top: 0; bottom: 0; left: 0; right: 0; z-index: 10; transform: scale(0.90); transform-origin: 0 0; height: 112%; width: 112%;' src='/templates/{{template.id}}/preview'> </iframe>
+						<div class='cover' style='position: absolute; top: 0; bottom: 0; left: 0; right: 0; z-index: 100;'></div>
+					</div>
         </div>
 
         <div class='col-lg-4 col-sm-6'>
@@ -37,7 +37,7 @@
             <div class='container-fluid'>
               <ul class='list-unstyled'>
                 <li>
-                  <a class='text-primary' href='#'>{% trans 'Create a campaign with this template' %}</a>
+                  <a class='text-primary' href='#'>{% trans 'Send an email with this template' %}</a>
                 </li>
                 <li>
                   <a class='text-primary' href="{% url 'template-preview' template.id %}" target='_blank'>{% trans 'Open template preview' %}</a>
