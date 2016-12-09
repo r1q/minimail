@@ -280,7 +280,7 @@ class ComposeEmailView(View):
         if not template:
             return redirect('campaign-choose-tmplt', pk=pk)
         else:
-            for t_k, t_v in json.loads(template.placeholders).items():
+            for t_k, t_v in template.placeholders.items():
                 if campaign.placeholders_value and t_k in campaign.placeholders_value:
                     new_attrs = {'value': campaign.placeholders_value.get(t_k, '')}
                     template.placeholders[t_k].update(new_attrs)

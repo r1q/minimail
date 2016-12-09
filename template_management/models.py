@@ -15,7 +15,7 @@ class Template(models.Model):
     name = models.CharField(max_length=100)
     html_template = models.TextField()
     text_template = models.TextField(blank=True)
-    placeholders = JSONField(max_length=1000, blank=True, null=True)
+    placeholders = JSONField(max_length=1000, blank=True, default={}, null=True)
     # Metadata
     created = models.DateTimeField(auto_now_add=True)
     edited = models.DateTimeField(auto_now=True)

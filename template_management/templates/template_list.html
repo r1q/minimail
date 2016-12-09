@@ -44,20 +44,23 @@
 
 				{% empty %}
 
-					<div class='col-lg-10 col-lg-offset-1'>
+				  <br />
+					<div class='col-lg-12'>
 						<div class='alert alert-warning'>
-							{% trans 'No template available for now.' %}
-							<a href="{% url 'template-new' %}">Go create one &raquo;</a>
+							{% trans 'You don’t have any template.' %}
+							<a href="{% url 'template-new' %}">Add one now &raquo;</a>
 						</div>
 					</div>
 
 				{% endfor %}
 
+				{% if object_list %}
 					<aside class='col-lg-12 text-center text-muted' style='margin-top:4rem'>
 						&mdash;
 						<br />
 						{{ object_list|length }} templates
 					</aside>
+				{% endif %}
 
 				</div>
 			</div>

@@ -47,6 +47,7 @@ class TemplateCreate(LoginRequiredMixin, CreateView):
         return super(TemplateCreate, self).form_valid(form)
 
     def form_invalid(self, form):
+        print(form.errors)
         return super(TemplateCreate, self).form_invalid(form)
 
 
