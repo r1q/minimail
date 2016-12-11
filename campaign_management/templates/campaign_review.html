@@ -11,54 +11,47 @@
 
 {% block content %}
 
-  <div class='container'>
+	<br />
+
+	<div class='row'>
+		<div class='col-lg-4 col-lg-offset-4 col-sm-12'>
+			<h3>
+				{% trans "Compose Email" %}
+				&rsaquo;&nbsp;{% trans "Review &amp; Send" %}
+			</h3>
+		</div>
+	</div>
+
+	<br />
+
 
   <div class='row'>
-    <div class='col-lg-12'>
-        <ol class='breadcrumb'>
-          <li>
-            <a href='{% url 'campaign-list' %}'>{% trans "Emails" %}</a>
-          </li>
-          <li>
-            <a href='{% url 'campaign-detail' campaign.id %}'>
-              {{campaign.email_subject}}
-            </a>
-          </li>
-          <li class='active'>{% trans 'Email review' %}</li>
-      </h3>
-    </div>
-  </div>
+    <div class='col-lg-4 col-lg-offset-4'>
 
-  <hr />
-
-  <div class='row'>
-    <div class='col-lg-8 col-lg-offset-2'>
-
-      <div class="panel panel-default">
-        <ul class="list-group">
-          <li class="list-group-item">
+			<ul class='list-unstyled'>
+          <li class="">
             <strong>From:</strong>
             {{ campaign.email_from_name}} &lt;{{campaign.email_from_email}}&gt;
-            <a href='{% url "campaign-update" campaign.id %}' tabindex='1'><small>edit</small></a>
+            <a href='{% url "campaign-update" campaign.id %}?focus=from_name' tabindex='1'><small>edit</small></a>
           </li>
-          <li class="list-group-item">
+          <li class="">
             <strong>Reply To:</strong>
             {{campaign.email_reply_to_email}}
-            <a href='{% url "campaign-update" campaign.id %}' tabindex='2'><small>edit</small></a>
+            <a href='{% url "campaign-update" campaign.id %}?focus=reply-to' tabindex='2'><small>edit</small></a>
           </li>
-          <li class="list-group-item">
+          <li class="">
             <strong>To recipient list:</strong>
             {{ campaign.email_list }} &mdash;
             {{campaign.email_list.count_validated_subscribers|intcomma}}
             {% trans 'subscriber' %}{{campaign.email_list.count_validated_subscribers|pluralize}}
-            <a href='{% url "campaign-update" campaign.id %}' tabindex='3'><small>edit</small></a>
+            <a href='{% url "campaign-update" campaign.id %}?focus=recipient' tabindex='3'><small>edit</small></a>
           </li>
-          <li class="list-group-item">
+          <li class="">
             <strong>Subject:</strong>
             {{ campaign.email_subject}}
-            <a href='{% url "campaign-update" campaign.id %}' tabindex='4'><small>edit</small></a>
+            <a href='{% url "campaign-update" campaign.id %}?focus=subject' tabindex='4'><small>edit</small></a>
           </li>
-          <li class="list-group-item text-center">
+					<li style='margin-top:2rem'>
             <strong>HTML email</strong>
             <small>
               <a href='{% url "campaign-compose-email" campaign.id %}' tabindex='5'>edit</a>
@@ -67,85 +60,87 @@
                 view email <i class='glyphicon glyphicon-new-window' style='font-size:10px'></i>
               </a>
             </small>
-            <div class='preview' style='position: relative; min-height: 600px; height:auto; overflow: hidden;margin-top:2rem;box-shadow: 0 1px 1px #969696; border-top: 1px solid #eaeaea;margin-bottom:2rem'>
+							<div class='preview' style='position: relative; min-height: 600px; background: #fff; overflow: hidden; box-shadow: 0 1px 3px #9a9a9a'>
               <iframe tabindex='-1' style='border: 0; position: absolute; top: 0; bottom: 0; left: 0; right: 0; z-index: 10; transform: scale(0.90); transform-origin: 0 0; height: 112%; width: 112%;'  src='{% url "campaign-email-preview" campaign.id %}'> </iframe>
               <div class='cover' style='position: absolute; top: 0; bottom: 0; left: 0; right: 0; z-index: 100;'></div>
             </div>
           </li>
         </ul>
-      </div>
 
     </div>
   </div>
 
   <div class='row'>
-    <div class='col-lg-2 col-lg-offset-2 col-sm-12'>
 
-      {% if campaign.email_list.count_validated_subscribers and is_from_email_verified %}
-        <a href="{% url 'campaign-list' %}" class='btn btn-default' tabindex='7'>Save and exit</a>
-      {% endif %}
+    <div class='col-lg-4 col-lg-offset-4 col-sm-12'>
 
-    </div>
-
-    <div class='col-lg-5 col-lg-offset-1 col-sm-12'>
+      <hr />
 
       <form action='{% url "campaign-send-test-email" campaign.pk %}' method='post'>
         {% csrf_token %}
-        <div class="form-group">
-          <div class="input-group">
-            <span class="input-group-addon" id="sizing-addon1">
-              Send a test email to
-            </span>
-            <input type="text" name="email" class="form-control" placeholder="your email..." value="{{user.email}}" maxlength=150 tabindex='7' />
-            <span class="input-group-btn">
-              <button type="submit" class="btn btn-default" tabindex='8'>Send</button>
-            </span>
-          </div>
-        </div>
+				<div class="input-group input-group-sm">
+					<span class="input-group-addon" id="sizing-addon1">
+						Send a test email to
+					</span>
+					<input type="text" name="email" class="form-control" placeholder="your email..." value="{{user.email}}" maxlength=150 tabindex='7' />
+					<span class="input-group-btn">
+						<button type="submit" class="btn btn-default" tabindex='8'>Send</button>
+					</span>
+				</div>
       </form>
 
     </div>
   </div>
 
   <div class='row'>
-    <div class='col-lg-8 col-lg-offset-2 text-right'>
+    <div class='col-lg-4 col-lg-offset-4'>
 
-      <hr />
+		<hr />
 
-<!--       <a href='javascript:void(0)' class='btn btn-primary' disabled> -->
-<!--         {% trans 'Schedule'%} -->
-<!--       </a> -->
+		{% if not campaign.email_list.count_validated_subscribers %}
+			<p class='alert alert-warning text-left'>
+			Your list <a href="{% url 'subscriber-management-list-subscribers' campaign.email_list.uuid %}" target='_blank'>{{ campaign.email_list.name }}</a> does not have any subscriber yet.
+				<br />
+				You need at least 1 subscriber to send this email.
+			</p>
+			<a href="{% url 'campaign-list' %}" class='btn btn-default' tabindex='9'>Save and send later</a>
 
-        {% if not campaign.email_list.count_validated_subscribers %}
-          <p class='alert alert-warning text-left'>
-          Your list <a href="{% url 'subscriber-management-list-subscribers' campaign.email_list.uuid %}" target='_blank'>{{ campaign.email_list.name }}</a> does not have any subscriber yet.
-            <br />
-            You need at least 1 subscriber to send this email.
-          </p>
-          <a href="{% url 'campaign-list' %}" class='btn btn-default' tabindex='9'>Save and send later</a>
-        {% elif not is_from_email_verified %}
-          <p class='alert alert-warning text-left'>
-          Your sender email <strong>{{campaign.email_from_email}}</strong> has not been verified yet.
-            <br />
-            You need to verify it to ensure an optimal email delivery to your subscribers.
-            <br />
-            <a href='mailto:julien@nepsilon.net?subject=Minimail - Please verify this email address' tabindex='9'>Contact us</a> to verify your sender email.
-          </p>
-          <a href="{% url 'campaign-list' %}" class='btn btn-default'>Save and send later</a>
-        {% else %}
+		{% elif not is_from_email_verified %}
+
+			<p class='alert alert-warning text-left'>
+			Your sender email <strong>{{campaign.email_from_email}}</strong> has not been verified yet.
+				<br />
+				You need to verify it to ensure an optimal email delivery to your subscribers.
+				<br />
+				<a href='mailto:julien@nepsilon.net?subject=Minimail - Please verify this email address' tabindex='9'>Contact us</a> to verify your sender email.
+			</p>
+			<a href="{% url 'campaign-list' %}" class='btn btn-default'>Save and send later</a>
+
+		{% else %}
+
+			<div class='row'>
+				<div class='col-lg-6'>
+					{% if campaign.email_list.count_validated_subscribers and is_from_email_verified %}
+						<a href="{% url 'campaign-list' %}" class='btn btn-default' tabindex='7'>Save and send later</a>
+					{% endif %}
+				</div>
+				<div class='col-lg-6 text-right'>
 					<a href='#' class='btn btn-danger' tabindex='9'
 						 data-toggle='modal'
 						 data-target='#campaign-confirm-send'>
 							{% trans 'Send now to'%}
 							{{ campaign.email_list.count_validated_subscribers|intcomma }} {% trans 'subscriber' %}{{campaign.email_list.count_validated_subscribers|pluralize}}
 					</a>
-					</form>
-        {% endif %}
+				</div>
+			</div>
+
+		{% endif %}
 
     </div>
   </div>
 
-  </div>
+	<br />
+	<br />
 
 
 <div id='campaign-confirm-send' class="modal" tabindex="-1" role="dialog">

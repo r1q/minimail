@@ -9,38 +9,52 @@
 
 {% block content %}
 
-  <div class='container'>
-    <div class='row'>
-      <div class='col-lg-12'>
-        <ol class='breadcrumb'>
-          <li>
-            <a href='{% url 'campaign-list' %}'>{% trans "Emails" %}</a>
-          </li>
-          <li>
-            <a href='{% url 'campaign-detail' campaign.id %}'>{{campaign.email_subject}}</a>
-          </li>
-          <li class='active'>{% trans 'Select a template' %}</li>
-        </ol>
-      </div>
-    </div>
-  </div>
+	<br />
+
+	<div class='row'>
+		<div class='col-lg-4 col-lg-offset-4 col-sm-12'>
+			<h3>
+				{% trans "Compose Email" %}
+				&rsaquo;&nbsp;{% trans "Select Template" %}
+			</h3>
+		</div>
+	</div>
+
+	<br />
 
   <div class='container'>
 		<div class='row'>
 			<div class='col-lg-12'>
-				<h3>Select a template</h3>
-				<br />
 				{% for template in all_templates %}
-					<form method='post' action='{% url 'campaign-choose-tmplt' campaign.id %}'>
-						{% csrf_token %}
-						<input type='hidden' name='template_id' value='{{ template.id }}' />
-						<button tabindex='{{ forloop.counter }}'>{{ template.name }}</button>
-					</form>
+
+					<div class='col-lg-3 col-sm-6'>
+						<form method='post' action='{% url 'campaign-choose-tmplt' campaign.id %}' id='form-{{template.id}}'>
+							<div class='preview' style='position: relative; min-height: 300px; background: #fff; overflow: hidden; box-shadow: 0 1px 3px #9a9a9a'>
+								{% csrf_token %}
+								<input type='hidden' name='template_id' value='{{ template.id }}' />
+								<iframe style='border: 0; position: absolute; top: 0; bottom: 0; left: 0; right: 0; z-index: 10; transform: scale(0.50); transform-origin: 0 0; height: 200%; width: 200%;' width='100%' height='300px' src="{% url 'template-preview' template.id %}">
+								</iframe>
+								<a href='javascript:document.getElementById("form-{{template.id}}").submit()'
+								  class='cover' style='position: absolute; top: 0; bottom: 0; left: 0; right: 0; z-index: 100;'></a>
+							</div>
+							<div class='container-fluid' style='margin-bottom: 2rem'>
+								<h4 class='text-center'>
+									<a href='javascript:this.submit()'>{{ template.name }}</a>
+								</h4>
+							</div>
+						</form>
+					</div>
+
 				{% empty %}
-				<div class='alert alert-warning'>
-					<strong>You didn’t crete any template yet.</strong>
-					<a href='{% url "template-new" %}'>Go create one &raquo;</a>
-				</div>
+
+				  <br />
+					<div class='col-lg-12'>
+						<div class='alert alert-warning'>
+							{% trans 'You don’t have any template.' %}
+							<a href="{% url 'template-new' %}">Add one now &raquo;</a>
+						</div>
+					</div>
+
 				{% endfor %}
 			</div>
 		</div>
