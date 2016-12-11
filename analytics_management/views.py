@@ -42,7 +42,10 @@ class CampaignView(LoginRequiredMixin, View):
         return render(request, "campaign.html", locals())
 
 def _gen_analytics_uuid(*args):
-    return hashlib.sha1(":".join(args).encode("utf-8")).hexdigest()
+    items = list()
+    for arg in args:
+        items.append(str(arg))
+    return hashlib.sha1(":".join(items).encode("utf-8")).hexdigest()
 
 @method_decorator(csrf_exempt, name='dispatch')
 class ApiOpenRateView(View):
@@ -74,6 +77,46 @@ class ApiOpenRateView(View):
             open_rate_obj.save()
         except ObjectDoesNotExist:
             raise Http404
+        except ValueError as er:
+            print(er)
+            return HttpResponse(status=400)
+        else:
+            return HttpResponse(status=204)
+
+@method_decorator(csrf_exempt, name='dispatch')
+class ApiOpenDateView(View):
+
+    def post(self, request, list_uuid, campaign_uuid):
+        if request.META.get('HTTP_X_ANALYTICS_KEY', '') != settings.ANALYTICS_KEY:
+            return HttpResponse(status=403)
+        campaign_object = None
+
+        try:
+            campaign_object = Campaign.objects.get(
+                uuid=campaign_uuid,
+                email_list__uuid=list_uuid,
+            )
+            json_data = json.loads(request.body.decode('utf-8'))
+            _id = _gen_analytics_uuid(list_uuid, campaign_uuid, json_data.date)
+            defaults = dict()
+            defaults["id"] = _id
+            defaults["list"] = campaign_object.email_list
+            defaults["campaign"] = campaign_object
+            defaults["date"] = dateutil.parser.parse(json_data.date)
+            defaults["total_count"] = 0
+            defaults["unique_count"] = 0
+            open_date_obj, created = OpenRateHourly.objects.get_or_create(
+                id=_id,
+                defaults=defaults
+            )
+            open_date_obj.total_count = int(json_data.get('total', 0))
+            open_date_obj.unique_count = int(json_data.get('unique', 0))
+            open_date_obj.save()
+        except ObjectDoesNotExist:
+            raise Http404
+        except ValueError as er:
+            print(er)
+            return HttpResponse(status=400)
         else:
             return HttpResponse(status=204)
 
@@ -107,6 +150,9 @@ class ApiClickRateView(View):
             open_rate_obj.save()
         except ObjectDoesNotExist:
             raise Http404
+        except ValueError as er:
+            print(er)
+            return HttpResponse(status=400)
         else:
             return HttpResponse(status=204)
 
@@ -142,5 +188,8 @@ class ApiSesRateView(View):
             open_rate_obj.save()
         except ObjectDoesNotExist:
             raise Http404
+        except ValueError as er:
+            print(er)
+            return HttpResponse(status=400)
         else:
             return HttpResponse(status=204)
