@@ -15,34 +15,23 @@ import traceback
 def _inject_unsubscribe_link(unsubscribe_link, campaign_uuid,
                              html_email_for_sending,
                              text_email_for_sending):
+    """_inject_unsubscribe_link
+
+    :param unsubscribe_link:
+    :param campaign_uuid:
+    :param html_email_for_sending:
+    :param text_email_for_sending:
+    """
+    # TODO: Need to set all email tempatle tags into a dict and reference them from there
     try:
         # Append current campaign uuid to unsubscribe_link
         unsubscribe_link += "?c={}".format(campaign_uuid)
-        # Get byte offset where we should inject the unsubscribe_link,
-        # faster to scan from the end as the link is very likely to be at the
-        # very bottom of the email.
-        UNSUBSCRIBE_LINK_START_OFFSET_HTML = html_email_for_sending.rindex('*|UNSUB|*')
-        UNSUBSCRIBE_LINK_START_OFFSET_TEXT = text_email_for_sending.rindex('*|UNSUB|*')
-        # Get the end offset of the unsubscribe link in HTML email
-        # TODO: Need to set all email tempatle tags into a dict and reference them from there
-        UNSUBSCRIBE_LINK_STOP_OFFSET_HTML = UNSUBSCRIBE_LINK_START_OFFSET_HTML + len("*|UNSUB|*")
-        # Inject the unsubscribe link into the HTML email
-        html_email_for_sending = html_email_for_sending[:UNSUBSCRIBE_LINK_START_OFFSET_HTML] +\
-                                 unsubscribe_link +\
-                                 html_email_for_sending[UNSUBSCRIBE_LINK_STOP_OFFSET_HTML:]
-        # Get the end offset of the unsubscribe link in text email
-        # TODO: Need to set all email tempatle tags into a dict and reference them from there
-        UNSUBSCRIBE_LINK_STOP_OFFSET_TEXT = UNSUBSCRIBE_LINK_START_OFFSET_TEXT + len("*|UNSUB|*")
-        # Inject the unsubscribe link into the text email
-        text_email_for_sending = text_email_for_sending[:UNSUBSCRIBE_LINK_START_OFFSET_TEXT] +\
-                                 unsubscribe_link +\
-                                 text_email_for_sending[UNSUBSCRIBE_LINK_STOP_OFFSET_TEXT:]
-    except ValueError as ex:
-        if not '*|UNSUB|*' in html_email_for_sending:
-            print("No unsubscribe link placeholder tag found in HTML email")
-        if not '*|UNSUB|*' in text_email_for_sending:
-            print("No unsubscribe link placeholder tag found in text email")
-        print(ex)
+        # HTML email
+        html_email_for_sending = html_email_for_sending.replace('*|UNSUB|*',
+                                                                unsubscribe_link)
+        # Text email
+        text_email_for_sending = text_email_for_sending.replace('*|UNSUB|*',
+                                                                unsubscribe_link)
     finally:
         return html_email_for_sending, text_email_for_sending, unsubscribe_link
 
@@ -164,16 +153,17 @@ def _gen_campaign_emails(campaign_id, list_id):
     for subscriber in subscribers:
         try:
             # Add custom unsubscribe link for this subscriber
-            curr_html_email_for_sending, curr_text_email_for_sending,
+            curr_html_email_for_sending, curr_text_email_for_sending,\
             curr_unsubscribe_link = _inject_unsubscribe_link(subscriber.unsubscribe_link(),
                                                              campaign.uuid,
                                                              html_email_for_sending,
                                                              text_email_for_sending)
             # Inject subscriber UUID for link and open tracking
-            curr_html_email_for_sending = _inject_subscriber_uuid(subscriber.uuid, html_email_for_sending)
+            curr_html_email_for_sending = _inject_subscriber_uuid(subscriber.uuid,
+                                                                  curr_html_email_for_sending)
             # Build current email headers
             curr_email_headers = {}
-            curr_email_headers['List-Unsubscribe'] = "<{}>".format(unsubscribe_link)
+            curr_email_headers['List-Unsubscribe'] = "<{}>".format(curr_unsubscribe_link)
             curr_email_headers['X-Recipient-ID'] = "{}".format(subscriber.uuid)
             curr_email_headers.update(email_headers)
             # Create email message object
