@@ -108,6 +108,7 @@ class CampaignUpdate(LoginRequiredMixin, UpdateView):
         # Call the base implementation first to get a context
         context = super(CampaignUpdate, self).get_context_data(**kwargs)
         context['lists'] = List.objects.filter(user=self.request.user)
+        context['focus'] = self.request.GET.get('focus')
         return context
 
     def form_valid(self, form):
