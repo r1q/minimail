@@ -308,7 +308,7 @@ class ComposeEmailView(View):
         # Regularize/Sanitize HTML with BeautifulSoup
         html_tree = HTMLParser(html_email, "html5lib")
         # TODO: Delete any <script> tag
-        #normalized_html = html_tree.prettify(formatter=None)
+        normalized_html = html_tree.prettify(formatter=None)
         # Inline CSS from HTML
         #css_inliner = Premailer(normalized_html,
         #                        keep_style_tags=True,
@@ -320,7 +320,7 @@ class ComposeEmailView(View):
         # Use striped tag version of HTML for text
         text_email = _textify_html_email(html_tree.find('body'))
         # Save email HTML and text body
-        campaign.html_email_for_sending = html_email  # inlined_html_email
+        campaign.html_email_for_sending = normalized_html
         campaign.text_email = text_email
         campaign.is_composed = True
         campaign.save()

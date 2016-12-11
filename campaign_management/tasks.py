@@ -12,50 +12,63 @@ from bs4 import BeautifulSoup as HTMLParser
 import traceback
 
 
-def _inject_unsubscribe_link(subscriber, campaign, html_email_for_sending,
+def _inject_unsubscribe_link(unsubscribe_link, campaign_uuid,
+                             html_email_for_sending,
                              text_email_for_sending):
-    # Build unsubscribe link
-    unsubscribe_link = subscriber.unsubscribe_link()
-    # Append current campaign uuid
-    unsubscribe_link += "?c={}".format(campaign.uuid)
-    # Inject the unsubscribe link into the HTML email
-    html_email_for_sending = html_email_for_sending.replace('*%7CUNSUB%7C*',
-                                                            unsubscribe_link)
-    html_email_for_sending = html_email_for_sending.replace('*|UNSUB|*',
-                                                            unsubscribe_link)
-    # Inject the unsubscribe link into the text email
-    text_email_for_sending = text_email_for_sending.replace('*%7CUNSUB%7C*',
-                                                            unsubscribe_link)
-    text_email_for_sending = text_email_for_sending.replace('*|UNSUB|*',
-                                                            unsubscribe_link)
-    return html_email_for_sending, text_email_for_sending, unsubscribe_link
+    try:
+        # Append current campaign uuid to unsubscribe_link
+        unsubscribe_link += "?c={}".format(campaign_uuid)
+        # Get byte offset where we should inject the unsubscribe_link,
+        # faster to scan from the end as the link is very likely to be at the
+        # very bottom of the email.
+        UNSUBSCRIBE_LINK_START_OFFSET_HTML = html_email_for_sending.rindex('*|UNSUB|*')
+        UNSUBSCRIBE_LINK_START_OFFSET_TEXT = text_email_for_sending.rindex('*|UNSUB|*')
+        # Get the end offset of the unsubscribe link in HTML email
+        # TODO: Need to set all email tempatle tags into a dict and reference them from there
+        UNSUBSCRIBE_LINK_STOP_OFFSET_HTML = UNSUBSCRIBE_LINK_START_OFFSET_HTML + len("*|UNSUB|*")
+        # Inject the unsubscribe link into the HTML email
+        html_email_for_sending = html_email_for_sending[:UNSUBSCRIBE_LINK_START_OFFSET_HTML] +\
+                                 unsubscribe_link +\
+                                 html_email_for_sending[UNSUBSCRIBE_LINK_STOP_OFFSET_HTML:]
+        # Get the end offset of the unsubscribe link in text email
+        # TODO: Need to set all email tempatle tags into a dict and reference them from there
+        UNSUBSCRIBE_LINK_STOP_OFFSET_TEXT = UNSUBSCRIBE_LINK_START_OFFSET_TEXT + len("*|UNSUB|*")
+        # Inject the unsubscribe link into the text email
+        text_email_for_sending = text_email_for_sending[:UNSUBSCRIBE_LINK_START_OFFSET_TEXT] +\
+                                 unsubscribe_link +\
+                                 text_email_for_sending[UNSUBSCRIBE_LINK_STOP_OFFSET_TEXT:]
+    except ValueError as ex:
+        if not '*|UNSUB|*' in html_email_for_sending:
+            print("No unsubscribe link placeholder tag found in HTML email")
+        if not '*|UNSUB|*' in text_email_for_sending:
+            print("No unsubscribe link placeholder tag found in text email")
+        print(ex)
+    finally:
+        return html_email_for_sending, text_email_for_sending, unsubscribe_link
 
 
-def _inject_tracking_pixel(subscriber, email_list, campaign,
-                           html_email_for_sending):
+def _inject_tracking_pixel(email_list_uuid, campaign_uuid, html_email_for_sending):
     """_inject_tracking_pixel
 
-    Update campaign.html_email_for_sending inplace including the pixel
-    to track open events.
-
-    :param subscriber:
-    :param email_list:
-    :param campaign:
+    :param email_list_uuid:
+    :param campaign_uuid:
+    :param html_email_for_sending:
     """
-    pixel_url = "http://minimail.fullweb.io/pixou/open/?list={}&campaign={}&subscriber={}"\
-                .format(email_list.uuid, campaign.uuid, subscriber.uuid)
-    tracking_snippet = '<img src="{}" height=1 width=1 /></body'.format(pixel_url)
+    pixel_url = "http://minimail.fullweb.io/pixou/open/?list={}&campaign={}&subscriber=*|SUBSCRIBER_UUID|*"\
+                .format(email_list_uuid, campaign_uuid)
+    tracking_snippet = '<img src="{}" height=1 width=1 />'.format(pixel_url)
     # Prepend closing </body> tag with <img> to tracking pixel
-    html_email_for_sending = html_email_for_sending.replace('</body', tracking_snippet)
+    html_email_for_sending = html_email_for_sending.replace('</body>',
+                                                            '</body>'+tracking_snippet)
     return html_email_for_sending
 
 
-def _convert_links_for_tracking(subscriber, email_list, campaign, html_email_for_sending):
+def _convert_links_for_tracking(email_list, campaign, html_email_for_sending):
     """_convert_links_for_tracking
 
-    :param subscriber:
     :param email_list:
     :param campaign:
+    :param html_email_for_sending:
     """
     try:
         html_tree = HTMLParser(html_email_for_sending, "html5lib")
@@ -94,9 +107,9 @@ def _convert_links_for_tracking(subscriber, email_list, campaign, html_email_for
                 url_to_track += parsed_ori_href.fragment.decode('utf8')
                 # Wrap link with tracking
                 b64_link = base64.b64encode(url_to_track.encode('utf8')).decode('utf8')
-                link_tmpl = "http://minimail.fullweb.io/pixou/click/?list={}&campaign={}&subscriber={}&uri={}"
-                new_link = link_tmpl.format(email_list.uuid, campaign.uuid,
-                                            subscriber.uuid, b64_link)
+                # Subscriber info is added at later stage, in the subscribers loop
+                link_tmpl = "http://minimail.fullweb.io/pixou/click/?list={}&campaign={}&subscriber=*|SUBSCRIBER_UUID|*&uri={}"
+                new_link = link_tmpl.format(email_list.uuid, campaign.uuid, b64_link)
                 # Update HTML email
                 link['href'] = new_link
             except Exception as ex:
@@ -110,12 +123,17 @@ def _convert_links_for_tracking(subscriber, email_list, campaign, html_email_for
         return html_email_for_sending
 
 
+def _inject_subscriber_uuid(subscriber_uuid, html_email_for_sending):
+    return  html_email_for_sending.replace('*|SUBSCRIBER_UUID|*', str(subscriber_uuid))
+
+
 def _gen_campaign_emails(campaign_id, list_id):
     """_gen_campaign_emails
 
     :param campaign_id:
     :param list_id:
     """
+    # Process in this block email info common to all this list subscribers
     try:
         campaign = Campaign.objects.get(pk=campaign_id)
         email_list = List.objects.get(id=list_id)
@@ -131,26 +149,27 @@ def _gen_campaign_emails(campaign_id, list_id):
         # Format sender field
         _from = "{} <{}>".format(campaign.email_from_name,
                                  campaign.email_list.from_email)
+        # Inject tracking pixel snippet
+        html_email_for_sending = _inject_tracking_pixel(email_list.uuid,
+                                                        campaign.uuid,
+                                                        html_email_for_sending)
+        # Append the UTM settings and wrap into redirection URL
+        html_email_for_sending = _convert_links_for_tracking(email_list, campaign,
+                                                             html_email_for_sending)
     except Exception as ex:
         print(ex)
         return tuple() # empty iterable
 
+    # Process in this block email info specific to each subscriber
     for subscriber in subscribers:
         try:
-            # TODO: Remember at what byte offset we inject the unsubscribe_link,
-            #       to prevent O(n) search each time
-            # ----
-            # Add custom tracking open pixel for this subscriber
-            html_email_for_sending = _inject_tracking_pixel(subscriber, email_list, campaign,
-                                                            html_email_for_sending)
-            # Convert all links to track clicks
-            html_email_for_sending = _convert_links_for_tracking(subscriber, email_list, campaign,
-                                                                 html_email_for_sending)
             # Add custom unsubscribe link for this subscriber
-            html_email_for_sending, text_email_for_sending, unsubscribe_link = _inject_unsubscribe_link(subscriber,
-                                                                                                        campaign,
+            html_email_for_sending, text_email_for_sending, unsubscribe_link = _inject_unsubscribe_link(subscriber.unsubscribe_link(),
+                                                                                                        campaign.uuid,
                                                                                                         html_email_for_sending,
                                                                                                         text_email_for_sending)
+            # Inject subscriber UUID for link and open tracking
+            html_email_for_sending = _inject_subscriber_uuid(subscriber.uuid, html_email_for_sending)
             # Build current email headers
             curr_email_headers = {}
             curr_email_headers['List-Unsubscribe'] = "<{}>".format(unsubscribe_link)
