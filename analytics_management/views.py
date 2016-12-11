@@ -222,11 +222,12 @@ class ApiClickRateView(View):
                 email_list__uuid=list_uuid,
             )
             json_data = json.loads(request.body.decode('utf-8'))
-            _id = _gen_analytics_uuid(list_uuid, campaign_uuid)
+            _id = _gen_analytics_uuid(list_uuid, campaign_uuid, json_data.get('uri', ''))
             defaults = dict()
             defaults["id"] = _id
             defaults["list"] = campaign_object.email_list
             defaults["campaign"] = campaign_object
+            defaults["uri"] = json_data.get('uri', '')
             defaults["total_count"] = 0
             defaults["unique_count"] = 0
             open_rate_obj, created = ClickRate.objects.get_or_create(

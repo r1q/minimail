@@ -21,6 +21,7 @@ class ClickRate(models.Model):
     id = models.CharField(primary_key=True, max_length=125)
     list = models.ForeignKey(List)
     campaign = models.ForeignKey(Campaign)
+    uri = models.TextField(blank=True)
     unique_count = models.IntegerField(blank=True)
     total_count = models.IntegerField(blank=True)
 
