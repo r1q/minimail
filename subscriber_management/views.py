@@ -51,8 +51,7 @@ def _send_validation_email(list_name, subscriber):
     send_mail(
         "{}: {}".format(list_name, _('Please Confirm Subscription')), # Subject
         VALIDATION_EMAIL.format(list_name, subscriber.validation_link()), # Text email
-        # TODO: Replace that with user's verified From: email
-        'hi@fullweb.io', # From: email
+        '{} <>'.format(list_name, 'hi@fullweb.io'), # From: email
         [subscriber.email], # To:
         fail_silently=False,
     )
