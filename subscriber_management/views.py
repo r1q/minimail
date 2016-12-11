@@ -51,7 +51,7 @@ def _send_validation_email(list_name, subscriber):
     send_mail(
         "{}: {}".format(list_name, _('Please Confirm Subscription')), # Subject
         VALIDATION_EMAIL.format(list_name, subscriber.validation_link()), # Text email
-        '{} <>'.format(list_name, 'hi@fullweb.io'), # From: email
+        '{} <{}>'.format(list_name, 'hi@fullweb.io'), # From: email
         [subscriber.email], # To:
         fail_silently=False,
     )
@@ -395,7 +395,8 @@ class SubscriberJoin(View):
                 form.instance.accept_language = request.META.get('HTTP_ACCEPT_LANGUAGE', '')
                 try:
                     _send_validation_email(list_item.title, form.instance)
-                except Exception:
+                except Exception as err:
+                    print(err)
                     raise Exception(_("Error while sending confirmation email"))
                 else:
                     form.save()
