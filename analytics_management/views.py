@@ -44,7 +44,7 @@ class CampaignView(LoginRequiredMixin, View):
             email_list__uuid=list_uuid,
         )
         open_rate_object = OpenRate.objects.filter(list=campaign.email_list, campaign=campaign).first()
-        click_rate_object = ClickRate.objects.filter(list=campaign.email_list, campaign=campaign).first()
+        click_rate_object = ClickRate.objects.filter(list=campaign.email_list, campaign=campaign).all()
         ses_rate_object = SesRate.objects.filter(list=campaign.email_list, campaign=campaign).first()
         return render(request, "campaign.html", locals())
 

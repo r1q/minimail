@@ -2,6 +2,7 @@
 {% load i18n %}
 {% load humanize %}
 {% load staticfiles %}
+{% load filters_extra %}
 
 
 {% block title %}
@@ -22,22 +23,60 @@
     <hr />
     <canvas id="myChart" width="4" height="2"></canvas>
     <h4>{% trans "Open rate" %}:</h4>
-    <ul>
-        <li><string>{% trans "Unique" %}:</strong> {{ open_rate_object.unique_count }}</li>
-        <li><string>{% trans "Total" %}:</strong> {{ open_rate_object.total_count }}</li>
-    </ul>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th></th>
+                <th>{% trans "unique" %}</th>
+                <th>{% trans "total" %}</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{% trans "Open statistics" %}</td>
+                <td>{{open_rate_object.unique_count}}</td>
+                <td>{{open_rate_object.total_count}}</td>
+            </tr>
+        </tbody>
+    </table>
     <h4>{% trans "Click rate" %}:</h4>
-    <ul>
-        <li><string>{% trans "Unique" %}:</strong> {{ click_rate_object.unique_count }}</li>
-        <li><string>{% trans "Total" %}:</strong> {{ click_rate_object.total_count }}</li>
-    </ul>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>URI</th>
+                <th>{% trans "unique" %}</th>
+                <th>{% trans "total" %}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in click_rate_object %}
+            <tr>
+                <td>{{item.uri|decodeURI}}</td>
+                <td>{{item.unique_count}}</td>
+                <td>{{item.total_count}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
     <h4>{% trans "SES rate" %}:</h4>
-    <ul>
-        <li><string>{% trans "Delivery" %}:</strong> {{ ses_rate_object.delivery_count }}</li>
-        <li><string>{% trans "Bounce" %}:</strong> {{ ses_rate_object.bounce_count }}</li>
-        <li><string>{% trans "Complaint" %}:</strong> {{ ses_rate_object.complaint_count }}</li>
-    </ul>
-
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th></th>
+                <th>{% trans "delivery" %}</th>
+                <th>{% trans "bounce" %}</th>
+                <th>{% trans "complaint" %}</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{% trans "SES statistics" %}</td>
+                <td>{{ ses_rate_object.delivery_count }}</td>
+                <td>{{ ses_rate_object.bounce_count }}</td>
+                <td>{{ ses_rate_object.complaint_count }}</td>
+            </tr>
+        </tbody>
+    </table>
   </div>
 {% endblock %}
 
