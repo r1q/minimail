@@ -105,8 +105,7 @@ class CampaignApiDateView(LoginRequiredMixin, View):
                     )
                     timeSerie["total_count"] = ZERO_IF_NONE(out["total_count"])
                     timeSerie["unique_count"] = ZERO_IF_NONE(out["unique_count"])
-
-            if merger == "day":
+            elif merger == "day":
                 timeSeries = CampaignApiDateView.initDayPayload(pStart.date, pEnd.date)
                 for timeSerie in timeSeries:
                     out = OpenRateHourly.objects.filter(
