@@ -35,9 +35,19 @@
         <li><string>{% trans "Bounce" %}:</strong> {{ ses_rate_object.bounce_count }}</li>
         <li><string>{% trans "Complaint" %}:</strong> {{ ses_rate_object.complaint_count }}</li>
     </ul>
+
   </div>
 {% endblock %}
 
 
 {% block script %}
+<script>
+  $.get(
+      "{% url 'analytics-management-api-open-date-by-merger' campaign.email_list.uuid campaign.uuid 'hour' %}",
+      "",
+      function(data) {
+          console.log(data)
+      }
+  )
+</script>
 {% endblock %}
