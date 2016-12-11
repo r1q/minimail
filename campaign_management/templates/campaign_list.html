@@ -72,11 +72,14 @@
 
           {% empty %}
 
-					  <br >
-            <div class='alert alert-warning'>
-              No email composed yet.
-              <a href="{% url 'campaign-new' %}">Go compose one &raquo;</a>
-            </div>
+						<div class='row' style='margin-bottom:3rem'>
+							<div class='col-lg-8 col-lg-offset-2'>
+								<div class='alert alert-warning'>
+									No email composed yet.
+									<a href="{% url 'campaign-new' %}">Go compose one &raquo;</a>
+								</div>
+							</div>
+						</div>
 
           {% endfor %}
 
