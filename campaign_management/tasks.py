@@ -164,12 +164,13 @@ def _gen_campaign_emails(campaign_id, list_id):
     for subscriber in subscribers:
         try:
             # Add custom unsubscribe link for this subscriber
-            html_email_for_sending, text_email_for_sending, unsubscribe_link = _inject_unsubscribe_link(subscriber.unsubscribe_link(),
-                                                                                                        campaign.uuid,
-                                                                                                        html_email_for_sending,
-                                                                                                        text_email_for_sending)
+            curr_html_email_for_sending, curr_text_email_for_sending,
+            curr_unsubscribe_link = _inject_unsubscribe_link(subscriber.unsubscribe_link(),
+                                                             campaign.uuid,
+                                                             html_email_for_sending,
+                                                             text_email_for_sending)
             # Inject subscriber UUID for link and open tracking
-            html_email_for_sending = _inject_subscriber_uuid(subscriber.uuid, html_email_for_sending)
+            curr_html_email_for_sending = _inject_subscriber_uuid(subscriber.uuid, html_email_for_sending)
             # Build current email headers
             curr_email_headers = {}
             curr_email_headers['List-Unsubscribe'] = "<{}>".format(unsubscribe_link)
@@ -177,12 +178,12 @@ def _gen_campaign_emails(campaign_id, list_id):
             curr_email_headers.update(email_headers)
             # Create email message object
             email = EmailMultiAlternatives(campaign.email_subject,  # email subject
-                                           text_email_for_sending,  # body text version
+                                           curr_text_email_for_sending,  # body text version
                                            _from,  # from sender
                                            [subscriber.email],  # recipient
                                            reply_to=[campaign.email_reply_to_email],
                                            headers=curr_email_headers)
-            email.attach_alternative(html_email_for_sending, "text/html")  # adding html email
+            email.attach_alternative(curr_html_email_for_sending, "text/html")  # adding html email
         except Exception as ex:
             print(ex)
             email = False
