@@ -394,8 +394,12 @@ class SubscriberJoin(View):
                 form.instance.timezone = geo.get_timezone(form.instance.ip)
                 form.instance.user_agent = request.META.get('HTTP_USER_AGENT', '')
                 form.instance.accept_language = request.META.get('HTTP_ACCEPT_LANGUAGE', '')
-                form.save()
-                _send_validation_email(list_item.title, form.instance)
+                try:
+                    _send_validation_email(list_item.title, form.instance)
+                except Exception:
+                    raise Exception(_("Error while sending confirmation email"))
+                else:
+                    form.save()
             else:
                 if request.is_ajax():
                     return JsonResponse({"error": _('invalid form')})
