@@ -5,8 +5,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import View
 from subscriber_management.models import List
 from campaign_management.models import Campaign
-from analytics_management.models import OpenRate, ClickRate, SesRate
-from django.http import HttpResponse, Http404
+from analytics_management.models import OpenRate, ClickRate, SesRate, OpenRateHourly
+from django.http import HttpResponse, Http404, JsonResponse
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
@@ -14,7 +14,12 @@ from django.core.exceptions import ObjectDoesNotExist
 import json
 import hashlib
 import sys, os
+from datetime import timedelta
+import dateutil
+from django.db.models import F, FloatField, Sum
 
+ALLOWED_MERGE = ["hour", "day"]
+ZERO_IF_NONE = lambda x: 0 if x == None else x
 
 class HomeView(LoginRequiredMixin, View):
 
@@ -22,12 +27,14 @@ class HomeView(LoginRequiredMixin, View):
         object_list = List.objects.filter(user=request.user)
         return render(request, "home.html", locals())
 
+
 class ListView(LoginRequiredMixin, View):
 
     def get(sefl, request, uuid):
         list_object = List.objects.get(uuid=uuid)
         object_list = Campaign.objects.filter(email_list__uuid=uuid)
         return render(request, "list.html", locals())
+
 
 class CampaignView(LoginRequiredMixin, View):
 
@@ -41,11 +48,91 @@ class CampaignView(LoginRequiredMixin, View):
         ses_rate_object = SesRate.objects.filter(list=campaign.email_list, campaign=campaign).first()
         return render(request, "campaign.html", locals())
 
+
+class CampaignApiDateView(LoginRequiredMixin, View):
+
+    @staticmethod
+    def initHourPayload(startTime, endTime):
+        cursorTime = startTime
+        out = list()
+        while cursorTime <= endTime or len(out) < 24:
+            tmp = dict()
+            tmp["date"] = cursorTime
+            tmp["total_count"] = 0
+            tmp["unique_count"] = 0
+            out.append(tmp)
+            cursorTime = cursorTime + timedelta(hours=1)
+        return out
+
+    @staticmethod
+    def initDayPayload(startTime, endTime):
+        startTime = startTime.replace(hour=0, minute=0)
+        endTime = endTime.replace(hour=0, minute=0)
+        cursorTime = startTime
+        out = list()
+        while cursorTime <= endTime or len(out) < 7:
+            tmp = dict()
+            tmp["date"] = cursorTime
+            tmp["total_count"] = 0
+            tmp["unique_count"] = 0
+            out.append(tmp)
+            cursorTime = cursorTime + timedelta(hours=1)
+        return out
+
+    def get(self, request, list_uuid, campaign_uuid, merger):
+        if merger not in ALLOWED_MERGE:
+            return JsonResponse({"error": _("merge type error.")}, status=400, safe=False)
+
+        try:
+            campaign = Campaign.objects.get(
+                uuid=campaign_uuid,
+                email_list__uuid=list_uuid,
+            )
+            pStart = OpenRateHourly.objects.filter(list=campaign.email_list, campaign=campaign).order_by('date').first()
+            pEnd = OpenRateHourly.objects.filter(list=campaign.email_list, campaign=campaign).order_by('date').last()
+            timeSeries = list()
+            if merger == "hour":
+                timeSeries = CampaignApiDateView.initHourPayload(pStart.date, pEnd.date)
+                for timeSerie in timeSeries:
+                    out = OpenRateHourly.objects.filter(
+                        list=campaign.email_list,
+                        campaign=campaign,
+                        date__gte=timeSerie["date"],
+                        date__lt=timeSerie["date"]+timedelta(hours=1),
+                    ).order_by('date').aggregate(
+                        total_count=Sum('total_count'),
+                        unique_count=Sum('unique_count'),
+                    )
+                    timeSerie["total_count"] = ZERO_IF_NONE(out["total_count"])
+                    timeSerie["unique_count"] = ZERO_IF_NONE(out["unique_count"])
+
+            if merger == "day":
+                timeSeries = CampaignApiDateView.initDayPayload(pStart.date, pEnd.date)
+                for timeSerie in timeSeries:
+                    out = OpenRateHourly.objects.filter(
+                        list=campaign.email_list,
+                        campaign=campaign,
+                        date__gte=timeSerie["date"],
+                        date__lt=timeSerie["date"]+timedelta(days=1),
+                    ).order_by('date').aggregate(
+                        total_count=Sum('total_count'),
+                        unique_count=Sum('unique_count'),
+                    )
+                    timeSerie["total_count"] = ZERO_IF_NONE(out["total_count"])
+                    timeSerie["unique_count"] = ZERO_IF_NONE(out["unique_count"])
+
+        except ValueError as err:
+            return JsonResponse({"error": _(err)},  safe=False, status=500)
+        else:
+            return JsonResponse(timeSeries,  safe=False)
+
+
 def _gen_analytics_uuid(*args):
     items = list()
     for arg in args:
         items.append(str(arg))
     return hashlib.sha1(":".join(items).encode("utf-8")).hexdigest()
+
 
 @method_decorator(csrf_exempt, name='dispatch')
 class ApiOpenRateView(View):
@@ -83,6 +170,7 @@ class ApiOpenRateView(View):
         else:
             return HttpResponse(status=204)
 
+
 @method_decorator(csrf_exempt, name='dispatch')
 class ApiOpenDateView(View):
 
@@ -97,12 +185,12 @@ class ApiOpenDateView(View):
                 email_list__uuid=list_uuid,
             )
             json_data = json.loads(request.body.decode('utf-8'))
-            _id = _gen_analytics_uuid(list_uuid, campaign_uuid, json_data.date)
+            _id = _gen_analytics_uuid(list_uuid, campaign_uuid, json_data.get('date'))
             defaults = dict()
             defaults["id"] = _id
             defaults["list"] = campaign_object.email_list
             defaults["campaign"] = campaign_object
-            defaults["date"] = dateutil.parser.parse(json_data.date)
+            defaults["date"] = dateutil.parser.parse(json_data.get('date'))
             defaults["total_count"] = 0
             defaults["unique_count"] = 0
             open_date_obj, created = OpenRateHourly.objects.get_or_create(
