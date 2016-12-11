@@ -47,7 +47,7 @@
 
 								<div class='col-lg-2'>
 									<div class='preview' style='position: relative; min-height: 200px; height:auto; background: #fff; overflow: hidden; box-shadow: 0 1px 3px #9a9a9a'>
-										<iframe style='border: 0; position: absolute; top: 0; bottom: 0; left: 0; right: 0; z-index: 10; transform: scale(0.40); transform-origin: 0 0; height: 250%; width: 250%;' src='/templates/{{campaign.using_template.id}}/preview'></iframe>
+										<iframe onload='this.style.opacity=1' style='opacity: 0; transition: opacity .185s ease-out;border: 0; position: absolute; top: 0; bottom: 0; left: 0; right: 0; z-index: 10; transform: scale(0.40); transform-origin: 0 0; height: 250%; width: 250%;' src='/templates/{{campaign.using_template.id}}/preview'></iframe>
 										<div class='cover' style='position: absolute; top: 0; bottom: 0; left: 0; right: 0; z-index: 100;'></div>
 									</div>
 								</div>

@@ -219,7 +219,7 @@ def send_one_campaign_to_one_list(request, pk):
                        extra_tags='danger')
     else:
         messages.success(request,
-                         "Good job! Your emails are now being sent to the list {}"
+                         "Good job! Your email are now being sent to the list {}"
                          .format(campaign.email_list.name))
         # Update campaign status
         campaign.is_sent = True
