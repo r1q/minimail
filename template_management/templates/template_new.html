@@ -18,7 +18,12 @@
       <div class='col-lg-10 col-lg-offset-1 col-sm-12'>
         <h3>
           <a href='{% url 'template-list' %}'>{% trans "All Templates" %}</a>
-          &rsaquo;&nbsp;{% trans 'New Template' %}
+            {% if form.instance.pk %}
+              &rsaquo;&nbsp;<a href='{% url 'template-detail' template.id %}'>{{template.name}}</a>
+              &rsaquo;&nbsp;{% trans 'Edit' %}
+            {% else %}
+              &rsaquo;&nbsp;{% trans 'New Template' %}
+            {% endif %}
         </h3>
       </div>
     </div>
@@ -56,7 +61,7 @@
 
           <ul id="newTemplateTabs" class="nav nav-tabs" role="tablist">
             <li role="presentation" class="active">
-							<a href="#html-email" tabindex='1' class='{% if form.html_template.errors %}text-danger{% endif %}'>
+							<a href="#html-email" tabindex='7' class='{% if form.html_template.errors %}text-danger{% endif %}'>
 								HTML Email
 								{% if form.html_template.errors %}
 									&nbsp;<i class='glyphicon glyphicon-warning-sign text-danger'></i>
@@ -64,7 +69,7 @@
 							</a>
 						</li>
             <li role="presentation">
-              <a href="#text-email" tabindex='2'>
+              <a href="#text-email" tabindex='4'>
 								Text Email
 								{% if form.text_template.errors %}
 									&nbsp;<i class='glyphicon glyphicon-warning-sign text-danger'></i>
@@ -72,7 +77,7 @@
 							</a>
 						</li>
             <li role="presentation">
-              <a href="#placeholders" tabindex='3'>
+              <a href="#placeholders" tabindex='5'>
 								Placeholders
 								{% if form.placeholders.errors %}
 									&nbsp;<i class='glyphicon glyphicon-warning-sign text-danger'></i>
@@ -87,7 +92,9 @@
               <textarea tabindex='1'
 								        id="{{form.html_template.auto_id}}"
 												name="{{form.html_template.name}}"
-						class='form-control' >{{form.html_template.value|default_if_none:""}}</textarea>
+                        rows='20'
+                        style='font-family: Menlo, monospace; font-size:13px; background: #f5f5f5;'
+                        class='form-control' >{{form.html_template.value}}</textarea>
 							<small class='text-danger'><strong>
 								{% for error in form.html_template.errors %}
 									{{ error }}
@@ -99,6 +106,7 @@
               <textarea id="{{form.text_template.auto_id}}"
 								        name="{{form.text_template.name}}"
 												class='form-control'
+                        tabindex='2'
 								        rows='15'>{{form.text_template.value|default_if_none:""}}</textarea>
 							<small class='text-danger'><strong>
 								{% for error in form.text_template.errors %}
@@ -111,7 +119,8 @@
               <textarea id="{{form.placeholders.auto_id}}"
 												name="{{form.placeholders.name}}"
 												class='form-control'
-				                rows='15'>{{form.placeholders.value|default_if_none:""}}</textarea>
+                        tabindex='3'
+                        rows='15'>{{form.placeholders.value|default:"{}"}}</textarea>
 							<small class='text-danger'><strong>
 								{% for error in form.placeholders.errors %}
 									{{ error }}
@@ -122,7 +131,13 @@
           </div>
           <br />
           <br />
-          <button class='btn btn-success center-block' tabindex='5'>Save this new template</button>
+          <button class='btn btn-success center-block' tabindex='6'>
+            {% if form.instance.pk %}
+              {% trans 'Save these changes' %}
+            {% else %}
+              {% trans 'Save this new template' %}
+            {% endif %}
+          </button>
 
         </form>
 
@@ -172,6 +187,8 @@
 			lineWrapping: true,
 			tabindex: '-1'
     });
-    html_editor.setValue('\n\n\n\n\n\n\n\n')
+    {% if not form.instance.pk %}
+      html_editor.setValue('\n\n\n\n\n\n\n\n')
+    {% endif %}
   </script>
 {% endblock %}

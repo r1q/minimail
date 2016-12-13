@@ -47,15 +47,14 @@ class TemplateCreate(LoginRequiredMixin, CreateView):
         return super(TemplateCreate, self).form_valid(form)
 
     def form_invalid(self, form):
-        print(form.errors)
         return super(TemplateCreate, self).form_invalid(form)
 
 
 class TemplateUpdate(LoginRequiredMixin, UpdateView):
     """TemplateUpdate"""
     model = Template
-    fields = ['name', 'html_template', 'text_template']
-    template_name = 'template_edit.html'
+    fields = ['name', 'html_template', 'text_template', 'placeholders']
+    template_name = 'template_new.html'
 
     def form_valid(self, form):
         form.instance.author = self.request.user
