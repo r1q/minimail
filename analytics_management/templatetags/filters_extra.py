@@ -9,4 +9,4 @@ def decodeURI(value):
         return base64.standard_b64decode(value).encode("utf-8")
     except Exception as err:
         print(err)
-        return "<invalid URI> "+value+ " " + str(msg).encode("utf-8")
+        return "<invalid URI> "+value+ " " + str(err).encode("utf-8")
