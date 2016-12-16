@@ -19,6 +19,14 @@ class OpenRateHourly(models.Model):
     unique_count = models.IntegerField(blank=True)
     total_count = models.IntegerField(blank=True)
 
+class OpenCountry(models.Model):
+    id = models.CharField(primary_key=True, max_length=125)
+    list = models.ForeignKey(List)
+    campaign = models.ForeignKey(Campaign)
+    country = models.CharField(max_length=50,blank=True)
+    unique_count = models.IntegerField(blank=True)
+    total_count = models.IntegerField(blank=True)
+
 
 class ClickRate(models.Model):
     id = models.CharField(primary_key=True, max_length=125)

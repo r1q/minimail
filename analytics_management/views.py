@@ -169,6 +169,43 @@ class ApiOpenRateView(View):
         else:
             return HttpResponse(status=204)
 
+@method_decorator(csrf_exempt, name='dispatch')
+class ApiOpenCountryView(View):
+
+    def post(self, request, list_uuid, campaign_uuid):
+        if request.META.get('HTTP_X_ANALYTICS_KEY', '') != settings.ANALYTICS_KEY:
+            return HttpResponse(status=403)
+        campaign_object = None
+
+        try:
+            campaign_object = Campaign.objects.get(
+                uuid=campaign_uuid,
+                email_list__uuid=list_uuid,
+            )
+            json_data = json.loads(request.body.decode('utf-8'))
+            country = json_data.get('country', '')
+            _id = _gen_analytics_uuid(list_uuid, campaign_uuid, country)
+            defaults = dict()
+            defaults["id"] = _id
+            defaults["list"] = campaign_object.email_list
+            defaults["campaign"] = campaign_object
+            defaults["country"] = country
+            defaults["total_count"] = 0
+            defaults["unique_count"] = 0
+            open_rate_obj, created = OpenCountry.objects.get_or_create(
+                id=_id,
+                defaults=defaults
+            )
+            open_rate_obj.total_count = int(json_data.get('total', 0))
+            open_rate_obj.unique_count = int(json_data.get('unique', 0))
+            open_rate_obj.save()
+        except ObjectDoesNotExist:
+            raise Http404
+        except ValueError as er:
+            print(er)
+            return HttpResponse(status=400)
+        else:
+            return HttpResponse(status=204)
 
 @method_decorator(csrf_exempt, name='dispatch')
 class ApiOpenDateView(View):
