@@ -8,6 +8,31 @@
   {% trans 'All Emails' %}
 {% endblock %}
 
+
+{% block styles %}
+	<style>
+	  .stat-block {
+			display: inline-block;
+			min-width: 75px;
+			max-width: 125px;
+	    margin-right: 2rem;
+			text-align: left;
+		}
+			.stat-label {
+				width: 100%;
+				font-weight: 300;
+				display: block;
+				text-transform: lowercase;
+				font-variant: small-caps;
+			}
+			.stat-count {
+				display: block;
+				width: 100%;
+			}
+	</style>
+{% endblock %}
+
+
 {% block content %}
 
 	<br />
@@ -17,8 +42,10 @@
     <div class='row'>
       <div class='col-lg-9 col-lg-offset-2 col-sm-12'>
         <h3>
-          {% trans "All Emails" %} &nbsp;&nbsp;<a class='btn btn-default'
-						href='{% url "campaign-new" %}'>{% trans 'Compose email' %}</a>
+          {% trans "All Emails" %}
+					&nbsp;&nbsp;<a class='btn btn-default' href='{% url "campaign-new" %}'>
+						{% trans 'Compose email' %}
+					</a>
         </h3>
       </div>
     </div>
@@ -34,38 +61,60 @@
 									{% if campaign.is_sent %}
 										<span class='alert-success'>&thinsp;SENT&thinsp;</span>
 										<br />
-										<small class='text-muted'>Sent: {{campaign.sent|date:"H:m D d M Y"}}</small>
+										<small class='text-muted'>sent: {{campaign.sent|date:"H:m D d M Y"}}</small>
 									{% else %}
 										<span class='alert-warning'>&thinsp;DRAFT&thinsp;</span>
 										<br />
-										<small class='text-muted'>Edited: {{campaign.edited|timesince}} ago</small>
+										<small class='text-muted'>edited: {{campaign.edited|timesince}} ago</small>
 									{% endif %}
 								</small>
 								</div>
 
-							<a href="{% url 'campaign-detail' campaign.id %}" style='color: #333'>
 
 								<div class='col-lg-2'>
-									<div class='preview' style='position: relative; min-height: 200px; height:auto; background: #fff; overflow: hidden; box-shadow: 0 1px 3px #9a9a9a'>
-										<iframe onload='this.style.opacity=1' style='opacity: 0; transition: opacity .185s ease-out;border: 0; position: absolute; top: 0; bottom: 0; left: 0; right: 0; z-index: 10; transform: scale(0.40); transform-origin: 0 0; height: 250%; width: 250%;' src='/templates/{{campaign.using_template.id}}/preview'></iframe>
-										<div class='cover' style='position: absolute; top: 0; bottom: 0; left: 0; right: 0; z-index: 100;'></div>
-									</div>
+									<a href="{% url 'campaign-detail' campaign.id %}" style='color: #333'>
+										<div class='preview' style='position: relative; min-height: 200px; height:auto; background: #fff; overflow: hidden; box-shadow: 0 1px 3px #9a9a9a'>
+											<iframe onload='this.style.opacity=1' style='opacity: 0;
+												transition: opacity .185s ease-out;border: 0; position:
+												absolute; top: 0; bottom: 0; left: 0; right: 0; z-index:
+												10; transform: scale(0.40); transform-origin: 0 0;
+												height: 250%; width: 250%;' src='{% url "campaign-email-preview" campaign.id  %}'></iframe>
+											<div class='cover' style='position: absolute; top: 0; bottom: 0; left: 0; right: 0; z-index: 100;'></div>
+										</div>
+									</a>
 								</div>
 
 								<div class='col-lg-6'>
 									<h4 style='margin-top: 0;font-weight:700'>
-										{{ campaign.email_subject }}
+										<a href="{% url 'campaign-detail' campaign.id %}" style='color: #333'>
+											{{ campaign.email_subject }}
+										</a>
 									</h4>
-								</div>
-
-								<div class='col-lg-6'>
 									<p>
 										<strong>From:</strong> {{ campaign.email_from_name }} &lt;{{ campaign.email_from_email }}&gt;
 										<br />
-										<strong>To recipients:</strong> {{ campaign.email_list }} &mdash; {{ campaign.email_list.count_validated_subscribers|intcomma }} subscriber{{ campaign.email_list.count_validated_subscribers|pluralize }}
+										<strong>To list:</strong> {{ campaign.email_list }}
 										<br />
 										<strong>Reply-To:</strong> {{ campaign.email_reply_to_email}}
 									</p>
+									<div style='position:relative'>
+										<span class='stat-block'>
+											<span class='stat-count'>3,422</span>
+											<span class='stat-label'>Sent</span>
+										</span>
+										<span class='stat-block'>
+											<span class='stat-count' >54.7%</span>
+											<span class='stat-label' >Opens</span>
+										</span>
+										<span class='stat-block'>
+											<span class='stat-count'>35.3%</span>
+											<span class='stat-label'>Clicks</span>
+										</span>
+										<span class='stat-block'>
+											<span class='stat-count'>4</span>
+											<span class='stat-label'>Unsubscribes</span>
+										</span>
+									</div>
 								</div>
 							</a>
 						</div>
