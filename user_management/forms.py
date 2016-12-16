@@ -3,7 +3,7 @@ from django import forms
 from user_management.models import MyUser
 from django.utils.translation import ugettext as _
 from django.contrib.auth.password_validation import validate_password
-import uuid as UUID
+import uuid as UUI
 
 class UserForm(ModelForm):
     class Meta:
@@ -109,8 +109,6 @@ class ForgottenForm(forms.Form):
         email = cleaned_data.get("email")
         try:
             user = MyUser.objects.get(email=email)
-            user.recover_id = UUID.uuid4()
-            user.save()
         except Exception as err:
             self.add_error('email', _("This user doesn't exist"))
         return cleaned_data

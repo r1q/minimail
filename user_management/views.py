@@ -11,6 +11,7 @@ from user_management.forms import UserForm, RegisterForm, LoginForm, \
     UpdatePasswordForm, ForgottenForm, RecoveryForm
 from user_management.models import MyUser
 from django.contrib.auth import authenticate, login
+import uuid as UUID
 
 
 RECOVERY_EMAIL = _("""
@@ -79,10 +80,18 @@ class Forgotten(View):
     def post(self, request):
         form = ForgottenForm(request.POST)
         if form.is_valid():
-            user = MyUser.objects.get(email=form.cleaned_data['email'])
-            _send_recovery_email(user)
-            messages.success(request, _("An email has been sent to {}".format(user.email)))
-            return redirect('user_forgotten')
+            try:
+                user = MyUser.objects.get(email=form.cleaned_data['email'])
+                user.recover_id = UUID.uuid4()
+                _send_recovery_email(user)
+                user.save()
+            except Exception as err:
+                print("send recovery email error", err)
+                messages.error(request, _("Send recovery mail error."))
+                return redirect('user_forgotten')
+            else:
+                messages.success(request, _("An email has been sent to {}".format(user.email)))
+                return redirect('user_forgotten')
         return render(request, "user_management/user_forgotten_password.html", locals())
 
 
@@ -90,6 +99,10 @@ class Recovery(View):
 
     def get(self, request, uuid):
         form = RecoveryForm()
+        try:
+            user = MyUser.objects.get(recover_id=uuid)
+        except Exception:
+            messages.error(request, _("Your recovery link is invalid."))
         return render(request, "user_management/user_recovery.html", locals())
 
     def post(self, request, uuid):
