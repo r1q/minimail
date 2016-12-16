@@ -7,7 +7,7 @@ register = template.Library()
 def decodeURI(value):
     try:
         decoded_uri = base64.standard_b64decode(value)
-        if len(decoded_uri) <= 37:
+        if len(decoded_uri) < 37:
             return decoded_uri
         return decoded_uri[:37]+bytes("...","utf-8")
     except Exception as err:
