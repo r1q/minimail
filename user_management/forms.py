@@ -20,6 +20,16 @@ class RegisterForm(forms.Form):
     password = forms.CharField(widget=forms.PasswordInput, required=True)
     password_confirm = forms.CharField(widget=forms.PasswordInput, required=True)
 
+    def clean_password(self):
+        password = self.cleaned_data.get('password', None)
+        validate_password(password)
+        return password
+
+    def clean_password_confirm(self):
+        password = self.cleaned_data.get('password_confirm', None)
+        validate_password(password)
+        return password
+
     def clean(self):
         cleaned_data = super(RegisterForm, self).clean()
         pwd = cleaned_data.get("password")
