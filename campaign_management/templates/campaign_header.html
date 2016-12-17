@@ -7,7 +7,7 @@
   {% if campaign %}
   {% trans "Editing email" %} "{{campaign.email_subject}}"
   {% else %}
-    {% trans "New email" %}
+    {% trans "Email Header" %}
   {% endif %}
 {% endblock %}
 
@@ -82,7 +82,7 @@
 							{{ error }}
 						{% endfor %}
 					</strong></small>
-					<small class='help-block'>The email address your subscribers can reply to.</small>
+					<small class='help-block'>The email address your subscribers will reply to.</small>
 				</div>
 
 				<div class="form-group">
@@ -92,7 +92,6 @@
 								 maxlength='{{form.email_subject.field.max_length}}'
 								 tabindex='4'
 								 {% if focus == 'subject' %}autofocus{% endif %}
-								 placeholder='E.g: Issue #1: About this newsletter'
 								 value='{{form.email_subject.value|default:""}}'/>
 					<small class='text-danger'><strong>
 						{% for error in form.email_subject.errors %}

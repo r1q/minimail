@@ -1,12 +1,36 @@
 {% load i18n %}
-<br />
+
+<style>
+	.navbar-minimail {
+		background: #FFF;
+		border-bottom: 1px solid #dcdcdc;
+		margin-top: 1rem;
+	}
+	.navbar-minimail a.navbar-brand {
+		color: currentColor;
+		font-weight: 900;
+	}
+	.navbar-minimail a {
+		color: #555;
+	}
+	.navbar-minimail li.active a {
+		color: #333;
+		text-decoration: underline;
+	}
+	.navbar-minimail li a:hover{
+		color: #333;
+		text-decoration: underline;
+		background: #FFF;
+	}
+</style>
+
 <div class="container">
 
-  <nav class="navbar navbar-default">
+  <nav class="navbar navbar-minimail">
 
     <!-- Brand and toggle get grouped for better mobile display -->
     <div class="navbar-header">
-      <a class="navbar-brand" href="/">Minimail</a>
+      <a class="navbar-brand" href="/">Minimail.</a>
     </div>
 
     <!-- Collect the nav links, forms, and other content for toggling -->
