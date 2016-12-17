@@ -3,9 +3,10 @@ from django.utils.translation import ugettext as _
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import View
-from subscriber_management.models import List
+from subscriber_management.models import List, Subscriber
 from campaign_management.models import Campaign
-from analytics_management.models import OpenRate, ClickRate, SesRate, OpenRateHourly
+from analytics_management.models import OpenRate, ClickRate, OpenRateHourly, \
+    SesDeliveryStats, SesComplaintStats, SesBounceStats, SesBounceSoft
 from django.http import HttpResponse, Http404, JsonResponse
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
@@ -45,7 +46,9 @@ class CampaignView(LoginRequiredMixin, View):
         )
         open_rate_object = OpenRate.objects.filter(list=campaign.email_list, campaign=campaign).first()
         click_rate_object = ClickRate.objects.filter(list=campaign.email_list, campaign=campaign).all()
-        ses_rate_object = SesRate.objects.filter(list=campaign.email_list, campaign=campaign).first()
+        ses_delivery_object = SesDeliveryStats.objects.filter(list=campaign.email_list, campaign=campaign).first()
+        ses_bounce_object = SesBounceStats.objects.filter(list=campaign.email_list, campaign=campaign).first()
+        ses_complaint_object = SesComplaintStats.objects.filter(list=campaign.email_list, campaign=campaign).first()
         return render(request, "campaign.html", locals())
 
 
@@ -282,7 +285,7 @@ class ApiClickRateView(View):
             return HttpResponse(status=204)
 
 @method_decorator(csrf_exempt, name='dispatch')
-class ApiSesRateView(View):
+class ApiSesDeliveryStatsView(View):
 
     def post(self, request, list_uuid, campaign_uuid):
         if request.META.get('HTTP_X_ANALYTICS_KEY', '') != settings.ANALYTICS_KEY:
@@ -300,17 +303,144 @@ class ApiSesRateView(View):
             defaults["id"] = _id
             defaults["list"] = campaign_object.email_list
             defaults["campaign"] = campaign_object
-            defaults["delivery_count"] = 0
-            defaults["bounce_count"] = 0
-            defaults["complaint_count"] = 0
-            open_rate_obj, created = SesRate.objects.get_or_create(
+            defaults["total_count"] = int(json_data.get('total', 0))
+            defaults["first"] = dateutil.parser.parse(json_data.get('first'))
+            defaults["last"] = dateutil.parser.parse(json_data.get('last'))
+            open_rate_obj, created = SesDeliveryStats.objects.get_or_create(
                 id=_id,
                 defaults=defaults
             )
-            open_rate_obj.delivery_count = int(json_data.get('delivery', 0))
-            open_rate_obj.bounce_count = int(json_data.get('bounce', 0))
-            open_rate_obj.complaint_count = int(json_data.get('complaint', 0))
+            open_rate_obj.total_count = int(json_data.get('total', 0))
+            open_rate_obj.first = dateutil.parser.parse(json_data.get('first'))
+            open_rate_obj.last = dateutil.parser.parse(json_data.get('last'))
             open_rate_obj.save()
+        except ObjectDoesNotExist:
+            raise Http404
+        except ValueError as er:
+            print(er)
+            return HttpResponse(status=400)
+        else:
+            return HttpResponse(status=204)
+
+@method_decorator(csrf_exempt, name='dispatch')
+class ApiSesComplaintStatsView(View):
+
+    def post(self, request, list_uuid, campaign_uuid):
+        if request.META.get('HTTP_X_ANALYTICS_KEY', '') != settings.ANALYTICS_KEY:
+            return HttpResponse(status=403)
+        campaign_object = None
+
+        try:
+            campaign_object = Campaign.objects.get(
+                uuid=campaign_uuid,
+                email_list__uuid=list_uuid,
+            )
+            json_data = json.loads(request.body.decode('utf-8'))
+            _id = _gen_analytics_uuid(list_uuid, campaign_uuid)
+            defaults = dict()
+            defaults["id"] = _id
+            defaults["list"] = campaign_object.email_list
+            defaults["campaign"] = campaign_object
+            defaults["total_count"] = int(json_data.get('total', 0))
+            open_rate_obj, created = SesComplaintStats.objects.get_or_create(
+                id=_id,
+                defaults=defaults
+            )
+            open_rate_obj.total_count = int(json_data.get('total', 0))
+            open_rate_obj.save()
+        except ObjectDoesNotExist:
+            raise Http404
+        except ValueError as er:
+            print(er)
+            return HttpResponse(status=400)
+        else:
+            return HttpResponse(status=204)
+
+@method_decorator(csrf_exempt, name='dispatch')
+class ApiSesBounceStatsView(View):
+
+    def post(self, request, list_uuid, campaign_uuid):
+        if request.META.get('HTTP_X_ANALYTICS_KEY', '') != settings.ANALYTICS_KEY:
+            return HttpResponse(status=403)
+        campaign_object = None
+
+        try:
+            campaign_object = Campaign.objects.get(
+                uuid=campaign_uuid,
+                email_list__uuid=list_uuid,
+            )
+            json_data = json.loads(request.body.decode('utf-8'))
+            _id = _gen_analytics_uuid(list_uuid, campaign_uuid)
+            defaults = dict()
+            defaults["id"] = _id
+            defaults["list"] = campaign_object.email_list
+            defaults["campaign"] = campaign_object
+            defaults["soft_count"] = int(json_data.get('soft', 0))
+            defaults["hard_count"] = int(json_data.get('hard', 0))
+            open_rate_obj, created = SesBounceStats.objects.get_or_create(
+                id=_id,
+                defaults=defaults
+            )
+            open_rate_obj.soft_count = int(json_data.get('soft', 0))
+            open_rate_obj.hard_count = int(json_data.get('hard', 0))
+            open_rate_obj.save()
+        except ObjectDoesNotExist:
+            raise Http404
+        except ValueError as er:
+            print(er)
+            return HttpResponse(status=400)
+        else:
+            return HttpResponse(status=204)
+
+@method_decorator(csrf_exempt, name='dispatch')
+class ApiSesBounceSoftView(View):
+
+    def post(self, request, list_uuid, campaign_uuid):
+        if request.META.get('HTTP_X_ANALYTICS_KEY', '') != settings.ANALYTICS_KEY:
+            return HttpResponse(status=403)
+        campaign_object = None
+        try:
+            # campaign_object = Campaign.objects.get(
+            #     uuid=campaign_uuid,
+            #     email_list__uuid=list_uuid,
+            # )
+            json_data = json.loads(request.body.decode('utf-8'))
+            subscriber_uuid = json_data.get('subscriber', '')
+            _id = _gen_analytics_uuid(list_uuid, campaign_uuid, subscriber_uuid)
+            defaults = dict()
+            defaults["id"] = _id
+            defaults["list_uuid"] = list_uuid
+            defaults["campaign_uuid"] = campaign_uuid
+            defaults["subscriber_uuid"] = subscriber_uuid
+            defaults["bounce_type"] = json_data.get('subtype', '')
+            obj, created = SesBounceSoft.objects.get_or_create(
+                id=_id,
+                defaults=defaults
+            )
+            obj.bounce_type = json_data.get('subtype', '')
+            obj.save()
+        except ObjectDoesNotExist:
+            raise Http404
+        except ValueError as er:
+            print(er)
+            return HttpResponse(status=400)
+        else:
+            return HttpResponse(status=204)
+
+@method_decorator(csrf_exempt, name='dispatch')
+class ApiSesSuppressSubscribersView(View):
+
+    def post(self, request, list_uuid):
+        if request.META.get('HTTP_X_ANALYTICS_KEY', '') != settings.ANALYTICS_KEY:
+            return HttpResponse(status=403)
+        campaign_object = None
+        try:
+            json_data = json.loads(request.body.decode('utf-8'))
+            subscribers_list = json_data.get('subscribers', [])
+            Subscriber.objects.filter(
+                list__uuid=list_uuid,
+                uuid__in=subscribers_list
+            ).delete()
         except ObjectDoesNotExist:
             raise Http404
         except ValueError as er:

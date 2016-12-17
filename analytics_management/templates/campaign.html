@@ -63,17 +63,19 @@
         <thead>
             <tr>
                 <th></th>
-                <th>{% trans "delivery" %}</th>
-                <th>{% trans "bounce" %}</th>
-                <th>{% trans "complaint" %}</th>
+                <th>{% trans "Delivery" %}</th>
+                <th>{% trans "Hard Bounce" %}</th>
+                <th>{% trans "Soft Bounce" %}</th>
+                <th>{% trans "Complaint" %}</th>
             </tr>
         </thead>
         <tbody>
             <tr>
                 <td>{% trans "SES statistics" %}</td>
-                <td>{{ ses_rate_object.delivery_count }}</td>
-                <td>{{ ses_rate_object.bounce_count }}</td>
-                <td>{{ ses_rate_object.complaint_count }}</td>
+                <td>{{ ses_delivery_object.total_count }}</td>
+                <td>{{ ses_bounce_object.hard_count }}</td>
+                <td>{{ ses_bounce_object.soft_count }}</td>
+                <td>{{ ses_complaint_object.total_count }}</td>
             </tr>
         </tbody>
     </table>
