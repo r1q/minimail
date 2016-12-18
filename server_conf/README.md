@@ -39,5 +39,6 @@ Version: `1.11.6`
     --with-stream \
     --with-stream_ssl_module \
     --add-module=../ngx_devel_kit-0.3.0 \
-    --add-module=../set-misc-nginx-module-0.31
+    --add-module=../set-misc-nginx-module-0.31 \
+    --add-module=../echo-nginx-module-0.60
  ```
