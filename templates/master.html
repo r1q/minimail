@@ -15,16 +15,16 @@
 		<style>
 			.notif {
 				position: fixed;
-				z-index: 100;
+				z-index: 1000;
 				right: 50%;
 				top: 50px;
-				transform: translateX(50%);
+				transform: translate(50%, -100px);
 				box-shadow: 0 1px 1px #b3b3b3;
 			}
 			main {
 				min-height: 65vh;
 			}
-			.btn {
+			.btn, .btn-group-sm > .btn {
 				border-radius: 4px;
 			}
 		</style>
@@ -48,7 +48,7 @@
               {% for message in messages %}
                 <p class="notif alert alert-dismissable {% if message.tags %}alert-{{ message.tags }}"{% endif %}>
                   <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                  {{ message }}
+                  {{ message|safe }}
                 </p>
               {% endfor %}
             </div>

@@ -7,9 +7,12 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 from django.core.mail import send_mail
-from django.http.response import HttpResponse
+from django.http.response import HttpResponse, JsonResponse
 from django.views import View
 from django.utils import timezone
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
+from django.utils.translation import ugettext as _
 
 from campaign_management.models import Campaign
 from subscriber_management.models import List, Subscriber
@@ -22,6 +25,7 @@ from bs4.dammit import EntitySubstitution
 import htmlmin
 import multiprocessing as mp
 import simplejson as json
+import traceback
 
 
 class CampaignList(LoginRequiredMixin, ListView):
@@ -141,38 +145,58 @@ class CampaignDelete(LoginRequiredMixin, DeleteView):
 def send_test_email(request, pk):
     """send_test_email
 
-    :param req:
-    :param campaign_id:
+    :param request:
+    :param pk:
     """
-
     try:
-        email_recipients = request.POST.get('email').split(',')
+        email_recipients = request.POST.get('emails', '').split(',')
         email_recipients = [email.replace(' ', '')
-                            for email in email_recipients]
-        for count, recipient in enumerate(email_recipients):
-            # Forbid sending to more than 3 recipients
-            if count >= 3:
-                break
-            campaign = Campaign.objects.get(pk=pk)
+                            for email in email_recipients
+                            if email and email.replace(' ', '')]
+        # Non-valid emails counter
+        unvalid_email_counter = 0
+        sanitized_email_recipients = []
+        # Ensure we're dealing with valid emails only
+        for recipient_email in email_recipients[:10]:
+            try:
+                validate_email(recipient_email)
+                sanitized_email_recipients.append(recipient_email)
+            except ValidationError:
+                unvalid_email_counter += 1
+        # Ensure we have at least 1 valid email
+        if len(sanitized_email_recipients) == 0:
+            raise Exception('Please provide a valid email address')
+        # Get current campaign
+        campaign = Campaign.objects.get(pk=pk)
+        # Format sender field
+        _from = "{} <{}>".format(campaign.email_from_name,
+                                 campaign.email_list.from_email)
+        # Forbid sending to more than 3 recipients
+        for recipient_email in sanitized_email_recipients[:3]:
             send_mail("[TEST] {}".format(campaign.email_subject),
-                      "",
-                      campaign.email_list.from_email,
-                      [recipient],
+                      "", # Empty text email
+                      _from,
+                      [recipient_email],
                       fail_silently=False,
                       html_message=campaign.html_email_for_sending)
+    except Campaign.DoesNotExist:
+        messages.error(request, "This email doesn’t exist.",
+                       extra_tags='danger')
     except Exception as ex:
+        traceback.print_exc()
         messages.error(request,
                        "Test email not sent: {}".format(ex),
                        extra_tags='danger')
     else:
-        messages.success(request,
-                         "Test email successfully sent to {}"
-                         .format(", ".join(email_recipients)))
+        success_message = "{} {}.".format(_("Test email successfully sent to"),
+                                            ", ".join(sanitized_email_recipients))
+        if unvalid_email_counter == 1:
+            success_message += "<br />1 email was not valid."
+        elif unvalid_email_counter > 1:
+            success_message += "<br />{} emails were not valid.".format(unvalid_email_counter)
+        messages.success(request, success_message)
     finally:
-        if request.POST.get('redirect-to') == 'compose':
-            return redirect('campaign-compose-email', pk=pk)
-        else:
-            return redirect('campaign-review', pk=pk)
+        return redirect('campaign-compose-email', pk=pk)
 
 
 @login_required
@@ -325,4 +349,7 @@ class ComposeEmailView(View):
         campaign.text_email = text_email
         campaign.is_composed = True
         campaign.save()
-        return redirect('campaign-review', pk=pk)
+        if request.is_ajax():
+            return JsonResponse({"msg": "email saved"})
+        else:
+            return redirect('campaign-review', pk=pk)

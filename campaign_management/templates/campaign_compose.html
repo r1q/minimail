@@ -9,24 +9,6 @@
 
 {% block content %}
 
-  <div class='container'>
-    <div class='row'>
-      <div class='col-lg-12'>
-        <ol class='breadcrumb'>
-          <li>
-            <a href='{% url 'campaign-list' %}'>{% trans "Emails" %}</a>
-          </li>
-          <li>
-            <a href='{% url 'campaign-detail' campaign.id %}'>{{campaign.email_subject}}</a>
-          </li>
-          <li class='active'>{% trans 'Compose' %}</li>
-        </ol>
-      </div>
-    </div>
-  </div>
-
-  <a name='content' style='margin-bottom:1rem;display:block'></a>
-
   <div id='wrap' style='position: fixed; width: 100%; z-index: 100; right: 0; background: #FFF; top: 0; bottom: 0;'>
 
     <div class='row'>
@@ -93,7 +75,7 @@
 						</div>
             <button type="button" class="btn btn-default btn-sm"
 							data-toggle='modal' data-target='#send-test-email-modal'>
-							Send a test email
+							Send a test email&hellip;
 						</button>
           </div>
 
@@ -252,12 +234,21 @@
 				// Get current state
 				var new_state = 'off';
 				new_state = $(this).find('img:visible').attr('class') == 'markdown-on' ?  'on' : 'off';
-				console.log('new_state', new_state)
 				// Save state
 				$textarea = $(this).closest('.form-group').find('textarea')
 				$textarea.attr('data-markdown', new_state)
 				// Update preview, by triggering an input event on the textarea
 				$textarea.trigger('input');
+			});
+
+			// Modal for sending a test email
+			$('#btn-send-test-email').on('click', function(ev) {
+				ev.preventDefault()
+				// First submiting email form the save the latest edit
+				var email_form_data =$('form#email-form').serialize()
+				$.post('{% url "campaign-compose-email" campaign.id %}', email_form_data)
+							// Then submit for sending test email
+							.done(function(data) { $('#test-email-form').submit() });
 			});
 
 		});
