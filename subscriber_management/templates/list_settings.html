@@ -72,7 +72,8 @@
 					<h4>List Language</h4>
 					{% csrf_token %}
 					<div class="form-group {% if form_object.language.errors %}has-error{% endif %}">
-						<label for="{{form_object.language.auto_id}}" class="control-label">{% trans 'Select your list language' %}</label>
+						<label for="{{form_object.language.auto_id}}"
+							class="control-label">{% trans 'In what language will you write your emails?' %}</label>
 						<select id="{{form_object.language.auto_id}}" name="{{form_object.language.name}}" class='form-control' tabindex='4'>
 						{% for short_lang, lang in form_object.language.field.choices %}
 							{% if forloop.counter0 == 6 %}
@@ -86,9 +87,6 @@
 							<span class="error-block">{{error}}</span>
 							<br />
 						{% endfor %}
-						<small class='text-muted'>
-							This is the language you use to write your emails.
-						</small>
 					</div>
 					<button type="submit" class="btn btn-success">{% trans 'Update language' %}</button>
         </form>

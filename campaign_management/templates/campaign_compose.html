@@ -46,6 +46,16 @@
 										data-autoresize
 										data-markdown='on'>{{attrs.value|default:""}}</textarea>
 								</div>
+							{% empty %}
+								<br />
+							  <p class='alert alert-warning'>
+								  This template does not have any placeholder. Its content
+									cannot be edited.
+									<br />
+									<br />
+									Use the placeholder tab when creating or editing a template
+									to specify what part of the template can be edited.
+								</p>
 							{% endfor %}
 							<input id="html_email" type='hidden' name='html_email' value='{{campaign.html_email_for_sending}}' />
 							<input id="placeholders_value" type='hidden' name='placeholders_value' value='{{campaign.placeholders_value}}' />
@@ -243,7 +253,8 @@
 
 			// Modal for sending a test email
 			$('#btn-send-test-email').on('click', function(ev) {
-				ev.preventDefault()
+				ev.preventDefault();
+				$(this).attr('disabled', 'disabled');
 				// First submiting email form the save the latest edit
 				var email_form_data =$('form#email-form').serialize()
 				$.post('{% url "campaign-compose-email" campaign.id %}', email_form_data)

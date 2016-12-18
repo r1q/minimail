@@ -71,28 +71,6 @@
   </div>
 
   <div class='row'>
-
-    <div class='col-lg-4 col-lg-offset-4 col-sm-12'>
-
-      <hr />
-
-      <form action='{% url "campaign-send-test-email" campaign.pk %}' method='post'>
-        {% csrf_token %}
-				<div class="input-group input-group-sm">
-					<span class="input-group-addon" id="sizing-addon1">
-						Send a test email to
-					</span>
-					<input type="text" name="email" class="form-control" placeholder="your email..." value="{{user.email}}" maxlength=150 tabindex='7' />
-					<span class="input-group-btn">
-						<button type="submit" class="btn btn-default" tabindex='8'>Send</button>
-					</span>
-				</div>
-      </form>
-
-    </div>
-  </div>
-
-  <div class='row'>
     <div class='col-lg-4 col-lg-offset-4'>
 
 		<hr />
@@ -149,10 +127,10 @@
 			<form method='get' action='{% url "campaign-send-campaign" campaign.pk %}' >
         {% csrf_token %}
         <div class="modal-body text-center">
-          <h4 class="modal-title">{% trans 'Are you sure?' %}</h4>
+          <h3 class="modal-title">{% trans 'Are you sure?' %}</h3>
 					<br />
 					<p>
-						You're about to send your email to {{ campaign.email_list.count_validated_subscribers|intcomma }} {% trans 'subscribers' %}
+						You're about to send your email to {{ campaign.email_list.count_validated_subscribers|intcomma }} {% trans 'subscribers' %}.
 					</p>
 					<br />
         </div>
