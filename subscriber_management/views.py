@@ -466,21 +466,21 @@ class SubscriberUnsubscribeView(View):
     """
 
     def get(self, request, uuid, token):
-        try:
-            # Remove subscriber
-            subscriber = Subscriber.objects.get(uuid=uuid, token_unsubscribe=token)
-            list = subscriber.list
-            subscriber.delete()
-            # Increase related campaign's unsubscribe count, if any
-            campaign_uuid = self.GET.get('c')
-            if campaign_uuid:
-                campaign = Campaign.objects.get(uuid=campaign_uuid)
-                campaign.unsubscribe_count += 1
-                campaign.save()
-        except Exception as e:
-            raise Http404()
-        else:
-            return render(request, "subscriber_unsubscribe_success.html", locals())
+
+        # Remove subscriber
+        subscriber = Subscriber.objects.get(uuid=uuid, token_unsubscribe=token)
+        list = subscriber.list
+        subscriber.delete()
+        # Increase related campaign's unsubscribe count, if any
+        campaign_uuid = self.GET.get('c')
+        if campaign_uuid:
+            campaign = Campaign.objects.get(uuid=campaign_uuid)
+            campaign.unsubscribe_count += 1
+            campaign.save()
+        # except Exception as e:
+        #     raise Http404()
+        # else:
+        return render(request, "subscriber_unsubscribe_success.html", locals())
 
 
 class SubscriberValidatedView(View):
