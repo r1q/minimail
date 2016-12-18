@@ -3,22 +3,26 @@
 <style>
 	.navbar-minimail {
 		background: #FFF;
-		border-bottom: 1px solid #dcdcdc;
-		margin-top: 1rem;
-		border-radius : 0;
+		border-bottom: 2px solid #EAEAEA;
+		border-radius: 0;
 	}
 	.navbar-minimail a.navbar-brand {
 		color: currentColor;
 		font-weight: 900;
+		padding-left: 0;
 	}
 	.navbar-minimail a {
-		color: #555;
+		color: #333;
+		font-weight: 600;
 	}
 	.navbar-minimail li.active a {
 		color: #333;
 		text-decoration: underline;
 	}
-	.navbar-minimail li a:hover{
+	.navbar-minimail li a:focus {
+		background: #FFF;
+	}
+	.navbar-minimail li a:hover {
 		color: #333;
 		text-decoration: underline;
 		background: #FFF;
@@ -61,7 +65,7 @@
                  width='30' height='30'
                  id="gravatar_picture" class="img-circle special-img"
                  style="float:left; margin-right: 5px; margin-top:-5px" />
-            {{ user.username }}
+            {{ user.full_name}}
             <span class="caret"></span>
           </a>
           <ul class="dropdown-menu">
