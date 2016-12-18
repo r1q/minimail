@@ -472,7 +472,7 @@ class SubscriberUnsubscribeView(View):
         list = subscriber.list
         subscriber.delete()
         # Increase related campaign's unsubscribe count, if any
-        campaign_uuid = self.GET.get('c')
+        campaign_uuid = request.GET.get('c')
         if campaign_uuid:
             campaign = Campaign.objects.get(uuid=campaign_uuid)
             campaign.unsubscribe_count += 1
