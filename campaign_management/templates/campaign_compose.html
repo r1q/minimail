@@ -28,76 +28,86 @@
   <a name='content' style='margin-bottom:1rem;display:block'></a>
 
   <div id='wrap' style='position: fixed; width: 100%; z-index: 100; right: 0; background: #FFF; top: 0; bottom: 0;'>
-    <div class='row'>
-			<form method='post' novalidate id='email-form'>
-				{% csrf_token %}
-				<div style='position: fixed; width: 50%; width: calc(50% - 5px); left: 5px; top: 0; bottom: 0;'>
-					{% for target, attrs in template.placeholders.items %}
-						<div class='form-group'>
-							<label for='input-{{forloop.counter0}}'>{{attrs.label|default:"Input"}}:</label>
-							<small>(Markdown syntax is ON)
-<!-- 										<a href='https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet'>?</a> -->
-							</small>
-							<textarea
-								{% if forloop.counter0 == 0 %} autofocus {% endif %}
-								tabindex='{{ forloop.counter }}'
-								class='form-control'
-								rows='{{attrs.rows|default:"2"}}'
-								id='input-{{forloop.counter0}}'
-								data-target='{{target}}'
-								data-markdown='on'>{{attrs.value|default:""}}</textarea>
-						</div>
-					{% endfor %}
-					<input id="html_email" type='hidden' name='html_email' value='{{campaign.html_email_for_sending}}' />
-					<input id="placeholders_value" type='hidden' name='placeholders_value' value='{{campaign.placeholders_value}}' />
 
-					<div class='bottom-bar' style='position: fixed; bottom: 0; left: 0; right: 0; width: 100%; padding: 2rem; border-top: 1px solid #e8e8e8; background: #f9f9f9;    height: 75px; max-height: 75px;'>
-						<button class='btn btn-success pull-right' tabindex='{{template.placeholders|length}}'>Next: <strong>Review email</strong> &raquo;</button>
-<!--             <button class='btn btn-default pull-right' style='margin-right:5px'>Save draft</button> -->
+    <div class='row'>
+
+				<form method='post' novalidate id='email-form'>
+					{% csrf_token %}
+					<div style='position: fixed; max-width: 50%; width: 590px; left: 50%;
+					overflow: scroll; transform: translateX(-102%); top: 0; bottom: 0;background: #fff;'>
+
+						<div style=' padding: 1rem 7rem 0;'>
+							<h3>Compose Email</h3>
+							{% for target, attrs in template.placeholders.items %}
+								<div class='form-group'>
+									<label for='input-{{forloop.counter0}}'>{{attrs.label|default:"Input"}}:</label>
+									<a href='#' class='markdown-switch'>
+										<img src='{% static "/img/markdown-mark-solid.svg" %}'
+												 height='13'
+												 class='markdown-on'
+												 title='Markdown is ON'
+												 style='float: right; line-height: 12; margin-top: 8px; margin-right: 2px; opacity: .5;'/>
+										<img src='{% static "/img/markdown-mark.svg" %}'
+												 height='13'
+												 class='markdown-off'
+												 title='Markdown is OFF'
+												 style='float: right; line-height: 12; margin-top: 8px; margin-right: 2px; opacity: .5;display:none;'/>
+									</a>
+									<textarea
+										{% if forloop.counter0 == 0 %} autofocus {% endif %}
+										tabindex='{{ forloop.counter }}'
+										class='form-control'
+										rows='{{attrs.rows|default:"1"}}'
+										style='resize:vertical;'
+										id='input-{{forloop.counter0}}'
+										data-target='{{target}}'
+										data-autoresize
+										data-markdown='on'>{{attrs.value|default:""}}</textarea>
+								</div>
+							{% endfor %}
+							<input id="html_email" type='hidden' name='html_email' value='{{campaign.html_email_for_sending}}' />
+							<input id="placeholders_value" type='hidden' name='placeholders_value' value='{{campaign.placeholders_value}}' />
+
+							<div class='bottom-bar' style=' padding: 2rem 0;
+								width: 100%; max-width: 580px;
+								padding: 2rem 0; border-top: 1px solid #d2d2d2; background: #fff;
+								max-height: 75px; margin: 4rem 0 2rem'>
+								<button class='btn btn-success pull-right' tabindex='{{template.placeholders|length}}'>Next: <strong>Review email</strong> &raquo;</button>
+								<button class='btn btn-default' style='margin-right:5px'>Save draft and exit</button>
+							</div>
+
+						</div>
+
 					</div>
-				</div>
-			</form>
+				</form>
 
         <!--  HTML Preview and Text email -->
-        <div style='position: fixed; width: 49%; width: calc(50% - 15px);
-          z-index: 100; right: 5px; top: 5px; bottom: 75px; text-align: center'>
+        <div style='position: fixed; width: 59%; width: calc(55% - 15px);
+				border-left: 1px dashed #d2d2d2;
+				background: #f3f3f3; z-index: 100; right: 0; top: 0; bottom: 0; text-align: center'>
 
-            <div class="btn-group btn-group-sm" role="group" aria-label="Preview Size">
-              <button type="button" data-size='1000x768' class="btn btn-default active btn-resize-preview">Desktop</button>
-              <button type="button" data-size='380x500' class="btn btn-default btn-resize-preview">Mobile</button>
-<!--               <div class="btn-group" role="group"> -->
-<!--                 <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> -->
-<!--                   Other <span class="caret"></span> -->
-<!--                 </button> -->
-<!--                 <ul class="dropdown-menu"> -->
-<!--                   <li><a href="#">iPhone 7</a></li> -->
-<!--                   <li><a href="#">iPhone 6S</a></li> -->
-<!--                   <li><a href="#">iPhone 5</a></li> -->
-<!--                 </ul> -->
-<!--               </div> -->
-            </div>
-            <br/>
-<!--           <form action='{% url "campaign-send-test-email" campaign.pk %}' method='post' class='pull-right' style='width:400px'> -->
-<!--             {% csrf_token %} -->
-<!--             <input type="hidden" name="redirect-to" value="compose" /> -->
-<!--             <div> -->
-<!--               <div class="input-group input-group-sm"> -->
-<!--                 <span class="input-group-addon" id="sizing-addon1"> -->
-<!--                   Send a test email to -->
-<!--                 </span> -->
-<!--                 <input type="text" name="email" class="form-control" placeholder="your email..." value="{{user.email}}" maxlength=150/> -->
-<!--                 <span class="input-group-btn"> -->
-<!--                   <button type="submit" class="btn btn-default">Send</button> -->
-<!--                 </span> -->
-<!--               </div> -->
-<!--             </div> -->
-<!--           </form> -->
+					<div class='toolbar' style='position: absolute; top: 16px; left: 50%; transform: translateX(-50%)'>
+						<div class="btn-group btn-group-sm" role="group" aria-label="Preview Size">
+							<button type="button" data-size='1000x768' class="btn btn-default active btn-resize-preview">Desktop</button>
+							<button type="button" data-size='360x570' class="btn btn-default btn-resize-preview">Mobile</button>
+						</div>
+            <button type="button" class="btn btn-default btn-sm"
+							data-toggle='modal' data-target='#send-test-email-modal'>
+							Send a test email
+						</button>
+          </div>
 
           <iframe
+           onload='form2preview()'
 					 id='id_html_email_preview'
 					 tabindex="-1"
-					 style='max-width: 100%; border: 0; width: 100%; box-shadow: 0 1px 1px #969696; transition: width 0.2s ease-in; height: calc(100% - 44px);margin: 7px auto; border-right: 1px solid #eaeaea;border-top: 1px solid #eaeaea; background: #fff;'
-					 {% if campaign.is_composed %}
+					 style='border: 0;box-shadow: 0 1px 3px #9a9a9a; transition: height 0.25s ease-in-out, width 0.25s ease-in-out; background: #fff; position: absolute; left: 50%; right: 16px; top: 64px; bottom: 32px;
+			max-height: calc(100% - 48px - 32px); height: calc(100% - 48px - 32px);
+			max-width: 90%; width: 90%;
+			resize: both;
+			overflow: auto;
+			transform: translateX(-50%)'
+					{% if campaign.is_composed %}
 					 src='{% url "campaign-email-preview" campaign.id %}'>
 					 {% else %}
 					 src='{% url "template-preview" template.id %}'>
@@ -107,6 +117,8 @@
 
     </div>
   </div>
+
+	{% include 'parts/send-test-email-modal.html' %}
 
 {% endblock %}
 
@@ -143,39 +155,50 @@
 											 }};
 
 
+	  // Function to update email preview
 		var form2preview = function(ev) {
 
+			// If no event, do it on all textareas in the form
+			var all_textarea = [];
 			if (!ev || !ev.currentTarget) {
-				return;
+				all_textarea = $('form#email-form').find('textarea');
 			}
 			else {
-				var curr_el = ev.currentTarget;
+				all_textarea = [ev.currentTarget];
 			}
 
-			var input = output = this.value || "";
+			$(all_textarea).each( function(i, curr_el) {
 
-      var previewFrame = document.getElementById('id_html_email_preview');
-      var preview =  previewFrame.contentDocument || previewFrame.contentWindow.document;
+				var input = output = curr_el.value || "";
 
-			var target_el = preview.querySelector(curr_el.getAttribute('data-target'));
-			if (!target_el) {
-				alert("Sorry, unable to update the email preview at the moment.")
-				return;
-			}
+				var previewFrame = document.getElementById('id_html_email_preview');
+				var preview =  previewFrame.contentDocument || previewFrame.contentWindow.document;
 
-			if (curr_el.getAttribute('data-markdown') === 'on') {
-				output = marked(input, marked_opts);
-			}
+				var target_el = preview.querySelector(curr_el.getAttribute('data-target'));
+				if (!target_el) {
+					console.error('can\'t find target_el:', curr_el.getAttribute('data-target'))
+					// Only show error if the user is inputing something
+					if (ev && ev.currentTarget) {
+						alert("Sorry, unable to update the email preview at the moment.")
+					}
+					return; // Continue to the next element in the collection
+				}
 
-			target_el.innerHTML = output;
+				if (curr_el.getAttribute('data-markdown') === 'on') {
+					output = marked(input, marked_opts);
+				}
 
-			// Keep html email result in "#html_email"
-      var email_keeper = document.getElementById('html_email');
-			email_keeper.value = serializer.serializeToString(preview);
+				target_el.innerHTML = output;
 
-			// Save placeholders value
-      var ph_keeper = document.getElementById('placeholders_value');
-			ph_keeper.value = form2json('form#email-form textarea[data-target]');
+				// Keep html email result in "#html_email"
+				var email_keeper = document.getElementById('html_email');
+				email_keeper.value = serializer.serializeToString(preview);
+
+				// Save placeholders value
+				var ph_keeper = document.getElementById('placeholders_value');
+				ph_keeper.value = form2json('form#email-form textarea[data-target]');
+
+			});
 
 		};
 
@@ -198,10 +221,43 @@
 
 			// Resize HTML Preview buttons
 			$('.btn-resize-preview').on('click', function (ev) {
+				if (this.classList.contains('active')) {
+					ev.preventDefault()
+					this.blur()
+					return false;
+				}
 				$('.btn-resize-preview').toggleClass('active');
 				var size = $(this).data('size').split('x');
 				$('#id_html_email_preview').css('width', size[0]+'px')
+				$('#id_html_email_preview').css('height', size[1]+'px')
 				$(this).blur()
+			});
+
+		  // Auto-resize textarea on input
+			$('textarea[data-autoresize]').each(function() {
+				var offset = this.offsetHeight - this.clientHeight;
+
+				var resizeTextarea = function(el) {
+					$(el).css('height', 'auto').css('height', el.scrollHeight + offset);
+				};
+				$(this).on('keyup input', function() {resizeTextarea(this);})
+							 .removeAttr('data-autoresize');
+			});
+
+			// Enable or disable markdown in each textarea
+			$('.markdown-switch').on('click', function (ev) {
+			  // Update UI
+			  $(this).find('.markdown-on').toggle()
+			  $(this).find('.markdown-off').toggle()
+				// Get current state
+				var new_state = 'off';
+				new_state = $(this).find('img:visible').attr('class') == 'markdown-on' ?  'on' : 'off';
+				console.log('new_state', new_state)
+				// Save state
+				$textarea = $(this).closest('.form-group').find('textarea')
+				$textarea.attr('data-markdown', new_state)
+				// Update preview, by triggering an input event on the textarea
+				$textarea.trigger('input');
 			});
 
 		});
