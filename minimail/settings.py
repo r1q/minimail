@@ -125,6 +125,18 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
+# Use Argon2 as password hasher
+# https://password-hashing.net
+
+PASSWORD_HASHERS = [
+    'django.contrib.auth.hashers.Argon2PasswordHasher',
+    'django.contrib.auth.hashers.PBKDF2PasswordHasher',
+    'django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher',
+    'django.contrib.auth.hashers.BCryptSHA256PasswordHasher',
+    'django.contrib.auth.hashers.BCryptPasswordHasher',
+]
+
+
 # Internationalization
 # https://docs.djangoproject.com/en/1.10/topics/i18n/
 
@@ -132,9 +144,9 @@ LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
 
-USE_I18N = True
+USE_I18N = False
 
-USE_L10N = True
+USE_L10N = False
 
 USE_TZ = True
 
@@ -155,7 +167,7 @@ EMAIL_HOST = "localhost" # Overide in local_settings.py
 EMAIL_PORT = 25
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = "" # Goes in local_settings.py
-EMAIL_HOST_PASSPORT = "" # Goes in local_settings.py
+EMAIL_HOST_PASSWORD = "" # Goes in local_settings.py
 
 LOGIN_URL = "/user/account/login"
 
