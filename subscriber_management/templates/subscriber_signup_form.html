@@ -12,56 +12,61 @@
       <li role="presentation" class="active"><a href="{% url 'subscriber-management-list-sign-up-form' list_item.uuid %}">{% trans 'Signup form' %}</a></li>
       <li role="presentation"><a href="{% url 'subscriber-management-list-settings' list_item.uuid %}">{% trans 'Settings' %}</a></li>
     </ul>
+
     <br>
+
     <form>
       <div class="form-group">
-        <textarea rows="10" class="form-control" disabled>
-          <form method="POST" action="{{BASE_URL}}/subscribers/list/{{list_item.uuid}}/join">
-            <label for="email">Email</label>
-            <input name="email" id="email" type="text" tabindex="1" value=""/>
-            <div style="position: absolute; left: -5000px;">
-                  <input type="text" name="{{list_item.signup_token}}" tabindex="-1" value="">
-            </div>
-            <button type="submit" tabindex="2">{% trans 'Register' %}</button>
-          </form>
-        </textarea>
-        <textarea rows="10" class="form-control" id="signup_form_snippet" style="position: absolute; left: -9999px;">
-          <form method="POST" action="{{BASE_URL}}/subscribers/list/{{list_item.uuid}}/join">
-            <label for="email">Email</label>
-            <input name="email" id="email" type="text" tabindex="1" value=""/>
-            <div style="position: absolute; left: -5000px;">
-                  <input type="text" name="{{list_item.signup_token}}" tabindex="-1" value="">
-            </div>
-            <button type="submit" tabindex="2">{% trans 'Register' %}</button>
-          </form>
-        </textarea>
+
+				<label>Sign up form:</label>
+				<button class="btn btn-default btn-xs copy_button" name="copy" data-clipboard-target="#signup_form_snippet">
+					{% trans 'Copy to clipboard' %}
+				</button>
+				<textarea rows="8" class="form-control" disabled style='font: 13px/1.4 Menlo, monospace;resize:none'>
+<form method="post" action="{{BASE_URL}}/subscribers/list/{{list_item.uuid}}/join">
+	<label for="email">Email:</label>
+	<input name="email" id="email" type="email" tabindex="1" required />
+	<div style="position: absolute; left: -5000px;">
+		<input type="text" name="{{list_item.signup_token}}" tabindex="-1" value="">
+	</div>
+	<button type="submit" tabindex="2">Subscribe</button>
+</form>
+				</textarea>
+
+				<textarea rows="10" class="form-control" id="signup_form_snippet" style="position: absolute; left: -9999px;">
+<form method="post" action="{{BASE_URL}}/subscribers/list/{{list_item.uuid}}/join">
+	<label for="email">Email:</label>
+	<input name="email" id="email" type="email" tabindex="1" required />
+	<div style="position: absolute; left: -5000px;">
+		<input type="text" name="{{list_item.signup_token}}" tabindex="-1" value="">
+	</div>
+	<button type="submit" tabindex="2">Subscribe</button>
+</form>
+				</textarea>
+
       </div>
     </form>
-    <button class="btn btn-primary copy_button" name="copy" data-clipboard-target="#signup_form_snippet">{% trans 'Copy' %}</button>
+
     <br>
-    <br>
-    <p>Or with ajax</p>
-    <pre>
-        $.post(
-            '{{BASE_URL}}/subscribers/list/{{list_item.uuid}}/join',
-            {
-                email: '',
-                '{{list_item.signup_token}}': '' //this field SHOULD always be empty!
-            },
-            function (data) {
-                //your handler
-            },
-            'json'
-        )
-    </pre>
+		<label>AJAX API, using jQuery:</label>
+		<pre><code>$.post(
+  '{{BASE_URL}}/subscribers/list/{{list_item.uuid}}/join',
+  { 'email': 'SUBSCRIBER_EMAIL',
+    '{{list_item.signup_token}}': '' // &lt;-- This field MUST always be empty!
+  },
+  function (data) {
+    console.log('Subscription success')
+  },
+  'json');
+</code></pre>
 
     {% include 'import.html' %}
   </div>
 {% endblock %}
 
 {% block script %}
-<script src="{% static 'js/vendor/clipboard.min.js' %}"></script>
-<script>
-  var clipboard = new Clipboard('.copy_button');
-</script>
+	<script src="{% static 'js/vendor/clipboard.min.js' %}"></script>
+	<script>
+		var clipboard = new Clipboard('.copy_button');
+	</script>
 {% endblock %}
