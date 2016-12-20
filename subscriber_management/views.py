@@ -88,8 +88,8 @@ class SubscriberListCreateView(LoginRequiredMixin, CreateView):
     success_message = _(" was successfully created")
 
     def form_valid(self, form):
-        messages.success(self.request, form.instance.name + self.success_message)
         form.instance.user = self.request.user
+        messages.success(self.request, form.instance.name + self.success_message)
         return super(SubscriberListCreateView, self).form_valid(form)
 
     def form_invalid(self, form):
@@ -136,8 +136,8 @@ class SubscriberListNewsletterHomepageView(LoginRequiredMixin, View):
         list_item = List.objects.get(uuid=uuid)
         form_object = ListNewsletterHomepage(request.POST, request.FILES, instance=list_item)
         if form_object.is_valid():
-            messages.success(self.request, form_object.instance.name + self.success_message)
             form_object.save()
+            messages.success(self.request, form_object.instance.name + self.success_message)
             return redirect('subscriber-management-list-newsletter-homepage', uuid)
         return render(request, "list_newsletter_homepage.html", locals())
 
@@ -164,9 +164,9 @@ class SubscriberListDeleteView(LoginRequiredMixin, View):
 
     def post(self, request, uuid):
         list_item = List.objects.get(uuid=uuid)
-        messages.success(request, list_item.name + self.success_message)
         Subscriber.objects.filter(list__id=list_item.id).delete()
         list_item.delete()
+        messages.success(request, list_item.name + self.success_message)
         return redirect('subscriber-management-list')
 
 
@@ -454,8 +454,8 @@ class SubscriberDeleteView(LoginRequiredMixin, View):
 
     def get(self, request, uuid, subscriber_uuid):
         subscriber = Subscriber.objects.get(list__uuid=uuid, uuid=subscriber_uuid)
-        messages.success(request, subscriber.email + self.success_message)
         subscriber.delete()
+        messages.success(request, subscriber.email + self.success_message)
         return redirect('subscriber-management-list-subscribers', uuid)
 
 
