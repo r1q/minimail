@@ -18,7 +18,7 @@
 <!--                  tabindex='1' /> -->
 <!--         </div> -->
         <div class="form-group">
-          <label for="{{form.name.name.auto_id}}">Private list name:</label>
+          <label for="{{form.name.name.auto_id}}">List name:</label>
           <input id="{{form.name.name.auto_id}}"
                  name="{{form.name.name}}"
                  type="text"
@@ -35,29 +35,13 @@
             subscribers. It’s only for your own usage.</small>
         </div>
         <div class="form-group">
-          <label for="{{form.title.name.auto_id}}">Public list name:</label>
-          <input id="{{form.title.name.auto_id}}"
-                 name="{{form.title.name}}"
-                 type="text"
-                 required
-                 class='form-control'
-                 tabindex='2' />
-          <small class='text-danger'><strong>
-            {% for error in form.title.errors %}
-              {{ error }}
-            {% endfor %}
-          </strong></small>
-          <small class='help-block'>This name is visible to your subscribers on
-          your newsletter homepage.</small>
-        </div>
-        <div class="form-group">
           <label for="{{form.from_email.name.auto_id}}">From email:</label>
           <input id="{{form.from_email.name.auto_id}}"
                  name="{{form.from_email.name}}"
                  type="email"
                  required
                  class='form-control'
-                 tabindex='3' />
+                 tabindex='2' />
           <small class='text-danger'><strong>
             {% for error in form.from_email.errors %}
               {{ error }}
@@ -68,7 +52,45 @@
             receive your emails.
           </small>
         </div>
-        <button class="btn btn-primary" tabindex='4'>{% trans 'Create this list' %}</button>
+				<hr />
+				<h4>Newsletter Homepage</h4>
+        <div class="form-group">
+          <label for="{{form.title.name.auto_id}}">Newsletter title:</label>
+          <input id="{{form.title.name.auto_id}}"
+                 name="{{form.title.name}}"
+                 type="text"
+                 required
+                 class='form-control'
+                 tabindex='3' />
+          <small class='text-danger'><strong>
+            {% for error in form.title.errors %}
+              {{ error }}
+            {% endfor %}
+          </strong></small>
+          <small class='help-block'>This title is visible to your potential subscribers on
+          your newsletter homepage.</small>
+        </div>
+        <div class="form-group">
+          <label for="{{form.description.name.auto_id}}">Newsletter description:</label>
+          <textarea id="{{form.description.name.auto_id}}"
+                 name="{{form.description.name}}"
+                 required
+								 rows='4'
+								 placeholder="In 2-3 sentences, what is your newsletter about?"
+                 class='form-control'
+				 tabindex='4'></textarea>
+          <small class='text-danger'><strong>
+            {% for error in form.description.errors %}
+              {{ error }}
+            {% endfor %}
+          </strong></small>
+          <small class='help-block'>
+            This is what your potential subscribers will read to decide to
+						subscribers or not. Make it succinct and attractive!
+          </small>
+        </div>
+				<hr />
+        <button class="btn btn-success" tabindex='4'>{% trans 'Create this list' %}</button>
       </form>
     </div>
   </div>

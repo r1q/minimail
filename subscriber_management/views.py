@@ -152,6 +152,7 @@ class SubscriberListSignUpForm(LoginRequiredMixin, View):
         list_item = List.objects.get(uuid=uuid)
         return render(request, "subscriber_signup_form.html", locals())
 
+
 class SubscriberListDeleteView(LoginRequiredMixin, View):
 
     """

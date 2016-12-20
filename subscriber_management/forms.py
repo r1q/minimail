@@ -13,7 +13,7 @@ class ListForm(ModelForm):
     name = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}), required=True)
     from_email = forms.EmailField(widget=forms.TextInput(attrs={'class':'form-control'}), required=True)
     title = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control'}), required=True)
-    description = forms.CharField(widget=forms.Textarea(attrs={'class':'form-control'}), required=False)
+    description = forms.CharField(widget=forms.Textarea(attrs={'class':'form-control'}), required=True)
     url = forms.URLField(widget=forms.TextInput(attrs={'class':'form-control'}),max_length=4000, required=False)
     success_template = forms.CharField(widget=forms.Textarea(attrs={'class':'form-control'}), required=False)
 
