@@ -92,7 +92,7 @@ class List(models.Model):
     from_email_verified = models.BooleanField(default=False, blank=True)
     description = models.TextField(blank=True)
     url = models.URLField(max_length=4000, blank=True)
-    image = models.ImageField(upload_to='subscribe_list/images/', null=True,
+    image = models.ImageField(upload_to='static/uploads/', null=True,
                               blank=True)
     token = models.CharField(default=UUID.uuid4, max_length=50,
                              blank=True, editable=False)

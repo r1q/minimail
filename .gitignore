@@ -93,3 +93,5 @@ db.sqlite3
 bin
 include
 pip-selfcheck.json
+
+static/uploads

@@ -1,77 +1,96 @@
 {% extends "master.html" %}
 {% load i18n %}
+{% load staticfiles %}
 
 {% block content %}
-  <div class='container'>
-    {% include 'parts/list_header.html' %}
+  <div class='row'>
 
-    <ul class="nav nav-tabs">
-      <li role="presentation">
-				<a href="{% url 'subscriber-management-list-subscribers' list_item.uuid %}">
-					{% trans 'Subscribers' %}
-				</a>
-			</li>
-      <li role="presentation" class="active">
-				<a href="{% url 'subscriber-management-list-newsletter-homepage' list_item.uuid %}">
-					{% trans 'Newsletter homepage' %}
-				</a>
-			</li>
-      <li role="presentation">
-				<a href="{% url 'subscriber-management-list-sign-up-form' list_item.uuid %}">
-					{% trans 'Signup form' %}
-				</a>
-			</li>
-      <li role="presentation">
-				<a href="{% url 'subscriber-management-list-settings' list_item.uuid %}">
-					{% trans 'Settings' %}
-				</a>
-			</li>
-    </ul>
+		<div class='col-lg-8 col-lg-offset-2'>
 
-    <br>
+			{% include 'parts/list_header.html' %}
 
-    <form method="post" enctype="multipart/form-data">
-      {% csrf_token %}
-      <div class="form-group">
-        <label for="{{form_object.image.auto_id}}">Newsletter logo:</label>
-        {{form_object.image}}
-      </div>
-      <div class="form-group">
-        <label for="{{form_object.title.auto_id}}">Newsletter title:</label>
-        <input type="text" class="form-control" name="{{form_object.title.name}}" id="{{form_object.title.auto_id}}" placeholder="" value="{{form_object.title.value}}">
-        {% for error in form_object.title.errors %}
-          <span class="error-block text-danger">{{error}}</span>
-        {% endfor %}
-				<small class='help-block'>
-					This title is visible to your potential subscribers on your newsletter homepage.
-				</small>
-      </div>
-      <div class="form-group">
-        <label for="{{form_object.description.auto_id}}">Newsletter description:</label>
-        <textarea class="form-control" name="{{form_object.description.name}}" id="{{form_object.description.auto_id}}">{{form_object.description.value}}</textarea>
-        {% for error in form_object.description.errors %}
-          <span class="error-block text-danger">{{error}}</span>
-        {% endfor %}
-				<small class='help-block'>
-					This is what your potential subscribers will read to decide to
-					subscribers or not. Make it succinct and attractive!
-				</small>
-      </div>
-      <hr>
-      <div class="form-group">
-        <label for="{{form_object.success_template.auto_id}}">Newsletter subscription confirmed message:</label>
-        <textarea class="form-control" name="{{form_object.success_template.name}}" id="{{form_object.success_template.auto_id}}">{{form_object.success_template.value}}</textarea>
-        {% for error in form_object.success_template.errors %}
-          <span class="error-block text-danger">{{error}}</span>
-        {% endfor %}
-				<small class='help-block'>
-					This is what your new subscribers will see right after they subscribed.
-				</small>
-      </div>
-			<hr />
-      <button type="submit" class="btn btn-success">{% trans 'Save changes' %}</button>
-    </form>
-  </div>
+			<ul class="nav nav-tabs">
+				<li role="presentation">
+					<a href="{% url 'subscriber-management-list-subscribers' list_item.uuid %}">
+						{% trans 'Subscribers' %}
+					</a>
+				</li>
+				<li role="presentation" class="active">
+					<a href="{% url 'subscriber-management-list-newsletter-homepage' list_item.uuid %}">
+						{% trans 'Newsletter homepage' %}
+					</a>
+				</li>
+				<li role="presentation">
+					<a href="{% url 'subscriber-management-list-sign-up-form' list_item.uuid %}">
+						{% trans 'Signup form' %}
+					</a>
+				</li>
+				<li role="presentation">
+					<a href="{% url 'subscriber-management-list-settings' list_item.uuid %}">
+						{% trans 'Settings' %}
+					</a>
+				</li>
+			</ul>
+
+			<br>
+
+			<div class='row'>
+
+				<div class='col-lg-8 col-lg-offset-2'>
+
+					<form method="post" enctype="multipart/form-data">
+						{% csrf_token %}
+						<div class="form-group">
+							<label for="{{form_object.image.auto_id}}">Newsletter logo:</label>
+							<img style='border-radius: 5px; display:block'
+							     src='/{{ list_item.image.url }}'
+							     height=100 width=100 />
+							{{form_object.image}}
+						</div>
+						<div class="form-group">
+							<label for="{{form_object.title.auto_id}}">Newsletter title:</label>
+							<input type="text" class="form-control" name="{{form_object.title.name}}" id="{{form_object.title.auto_id}}" placeholder="" value="{{form_object.title.value}}">
+							{% for error in form_object.title.errors %}
+								<span class="error-block text-danger">{{error}}</span>
+							{% endfor %}
+							<small class='help-block'>
+								This title is visible to your potential subscribers on your newsletter homepage.
+							</small>
+						</div>
+						<div class="form-group">
+							<label for="{{form_object.description.auto_id}}">Newsletter description:</label>
+							<small class='pull-right text-muted' style='margin-top: 5px'>
+								Markdown syntax supported
+							</small>
+							<textarea class="form-control" name="{{form_object.description.name}}" id="{{form_object.description.auto_id}}">{{form_object.description.value}}</textarea>
+							{% for error in form_object.description.errors %}
+								<span class="error-block text-danger">{{error}}</span>
+							{% endfor %}
+							<small class='help-block'>
+								This is what your potential subscribers will read to decide to
+								subscribers or not. Make it succinct and attractive! (max 400 characters)
+							</small>
+						</div>
+						<hr>
+						<div class="form-group">
+							<label for="{{form_object.success_template.auto_id}}">Newsletter subscription confirmed message:</label>
+							<textarea class="form-control" name="{{form_object.success_template.name}}" id="{{form_object.success_template.auto_id}}">{{form_object.success_template.value}}</textarea>
+							{% for error in form_object.success_template.errors %}
+								<span class="error-block text-danger">{{error}}</span>
+							{% endfor %}
+							<small class='help-block'>
+								This is what your new subscribers will see right after they subscribed.
+							</small>
+						</div>
+						<hr />
+						<button type="submit" class="btn btn-success">{% trans 'Save changes' %}</button>
+
+					</form>
+				</div>
+			</div>
+		</div>
+
+	</div>
 
 {% include 'import.html' %}
 {% endblock %}

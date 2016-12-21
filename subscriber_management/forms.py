@@ -24,7 +24,8 @@ class SubscriberForm(ModelForm):
         localized_fields = ('email',)
         fields = ('email',)
 
-    email = forms.EmailField(widget=forms.TextInput(attrs={'class':'form-control'}), required=True)
+    email = forms.EmailField(widget=forms.TextInput(attrs={'class':'form-control'}),
+                             required=True)
 
 
 class ListSettingsForm(ModelForm):
@@ -41,7 +42,8 @@ class ListSettingsForm(ModelForm):
 class ListNewsletterHomepage(ModelForm):
     class Meta:
         model = List
-        localized_fields = ('image', 'title', 'description', 'url', 'success_template',)
+        localized_fields = ('image', 'title', 'description', 'url',
+                            'success_template',)
         fields = ('image', 'title', 'description', 'url', 'success_template',)
 
     title = forms.CharField(required=True)
