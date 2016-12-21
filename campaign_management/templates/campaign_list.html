@@ -97,24 +97,37 @@
 										<br />
 										<strong>Reply-To:</strong> {{ campaign.email_reply_to_email}}
 									</p>
-									<div style='position:relative'>
-										<span class='stat-block'>
-											<span class='stat-count'>{{ campaign.recipient_count|default:"N/A" }}</span>
-											<span class='stat-label'>Sent</span>
-										</span>
-										<span class='stat-block'>
-											<span class='stat-count' >54.7%</span>
-											<span class='stat-label' >Opens</span>
-										</span>
-										<span class='stat-block'>
-											<span class='stat-count'>35.3%</span>
-											<span class='stat-label'>Clicks</span>
-										</span>
-										<span class='stat-block'>
-											<span class='stat-count'>4</span>
-											<span class='stat-label'>Unsubscribes</span>
-										</span>
-									</div>
+									{% if campaign.is_sent %}
+										<div style='position:relative'>
+											<span class='stat-block'>
+												<span class='stat-count'>{{ campaign.recipient_count|default:"N/A" }}</span>
+												<span class='stat-label'>Sent</span>
+											</span>
+											<span class='stat-block'>
+												<span class='stat-count' >54.7%</span>
+												<span class='stat-label' >Opens</span>
+											</span>
+											<span class='stat-block'>
+												<span class='stat-count'>35.3%</span>
+												<span class='stat-label'>Clicks</span>
+											</span>
+											<span class='stat-block'>
+												<span class='stat-count'>4</span>
+												<span class='stat-label'>Unsubscribes</span>
+											</span>
+										</div>
+										<div style='margin-top: 2rem;' >
+											<a class='btn btn-default btn-sm' href='{% url "analytics-management-campaign" campaign.email_list.uuid campaign.uuid %}'>
+												View analytics report &raquo;
+											</a>
+										</div>
+									{% else %}
+										<div style='margin-top: 2rem;' >
+											<a class='btn btn-default btn-sm' href='{% url "campaign-update" campaign.id %}'>
+												Resume email composing &raquo;
+											</a>
+										</div>
+									{% endif %}
 								</div>
 							</a>
 						</div>
