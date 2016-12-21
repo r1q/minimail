@@ -25,6 +25,7 @@ from io import StringIO
 import pandas
 from localize import geo, timezone
 import uuid
+import traceback
 
 from subscriber_management.models import List, Subscriber
 from subscriber_management.forms import ListForm, SubscriberForm, \
@@ -374,19 +375,18 @@ class SubscriberJoin(View):
         if list_item.signup_token() in request.POST:
             if request.POST[list_item.signup_token()] != "":
                 if request.is_ajax():
-                    return JsonResponse({"error": _('invalid form')})
+                    return JsonResponse({"error": 'signup token not empty'})
                 else:
-                    messages.error(request, _("invalid form"))
-                    return redirect('subscriber-management-join-error', uuid)
+                    messages.error(request, _("Error while submitting the form. Please refresh the page and try again."))
+                    return redirect('subscriber-management-join', uuid)
         else:
             if request.is_ajax():
-                return JsonResponse({"error": _("validation field required")})
+                return JsonResponse({"error": "signup token not empty"})
             else:
-                messages.error(request, _("validation field required"))
-                return redirect('subscriber-management-join-error', uuid)
+                messages.error(request, _("Error while submitting the form. Please refresh the page and try again."))
+                return redirect('subscriber-management-join', uuid)
 
-        subscriber_item = Subscriber()
-        form = SubscriberForm(request.POST, instance=subscriber_item)
+        form = SubscriberForm(request.POST)
         try:
             if form.is_valid():
                 form.instance.list = list_item
@@ -398,34 +398,29 @@ class SubscriberJoin(View):
                 try:
                     _send_validation_email(list_item.title, form.instance)
                 except Exception as err:
-                    print(err)
-                    raise Exception(_("Error while sending confirmation email"))
+                    raise Exception(_("Error while sending confirmation email. Please try again later."))
                 else:
                     form.save()
             else:
                 if request.is_ajax():
-                    return JsonResponse({"error": _('invalid form')})
+                    return JsonResponse({"error": str(form.errors)})
                 else:
-                    raise Exception('invalid form')
+                    raise Exception('invalid form ' + str(form.errors))
         except django.db.utils.IntegrityError:
-            duplicate_error = _('You are already registered to this list')
             if request.is_ajax():
-                return JsonResponse({"error": duplicate_error})
+                return JsonResponse({"error": 'user already subscribed'})
             else:
-                messages.error(request, duplicate_error)
-                return redirect('subscriber-management-join-error', uuid)
+                messages.error(request, _("You are already subscribed to this newsletter."))
+                return redirect('subscriber-management-join', uuid)
         except Exception as err:
             if request.is_ajax():
                 return JsonResponse({"error": err})
             else:
                 messages.error(request, err)
-                return redirect('subscriber-management-join-error', uuid)
+                return redirect('subscriber-management-join', uuid)
         else:
             if request.is_ajax():
-                if list_item.success_template == "":
-                    return JsonResponse({"success": _("sucess")})
-                else:
-                    return JsonResponse({"success": list_item.success_template})
+                return JsonResponse({"success": "user successfully subscribed"})
             else:
                 return redirect('subscriber-management-join-success', uuid)
 

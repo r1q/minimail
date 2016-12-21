@@ -112,7 +112,7 @@
 
 	<div class='col-lg-5 col-md-5 hidden-sm hidden-xs'>
 		<div style='position: fixed; left: 0; width: 40%; top: 0; bottom: 0; background: #F3F3F3;'>
-				<div class='preview' style='box-shadow: 0 1px 2px #9a9a9a;position: relative; min-height: 600px; height:auto; background: #fff; overflow: hidden; min-width: 350px; width: 350px; float: right; margin: 100px 3rem 1rem 1rem;'>
+				<div class='preview' style='box-shadow: 0 1px 1px #9a9a9a;position: relative; min-height: 600px; height:auto; background: #fff; overflow: hidden; min-width: 350px; width: 350px; float: right; margin: 100px 3rem 1rem 1rem;border-radius:2px;'>
 					<div style='margin-top: -25px; position: fixed; font-weight: 500; font-size: 15px;'>Last issue:</div>
 					<iframe style='border: 0; position: absolute; top: 0; bottom: 0; left: 0; right: 0; z-index: 10; transform: scale(0.90); transform-origin: 0 0; height: 112%; width: 112%;' src='{% url "campaign-email-preview" last_campaign.id %}'>
 					</iframe>
@@ -131,6 +131,7 @@
 		{% endif %}
 		<h1>{{list_item.title}}</h1>
 		<p style='white-space: pre-wrap;'>{{list_item.description}}</p>
+		<pre>{{form.pk}}</pre>
 	  <fieldset>
 			<legend>
 				{% if list_item.count_validated_subscribers == 0 %}
@@ -140,22 +141,20 @@
 				{% endif %}
 			</legend>
 			<form method="post">
-					<input id="{{form.email.auto_id}}" type="email" placeholder=""
-								 x-autocompletetype="email" name="EMAIL" autofocus
-								 tabindex="1"
-								 spellcheck="false"
-								 required
-								 pattern="[\w+-_]+@[\w\-.]+\.[\w|.]{2,}" />
-					<label for='{{form.email.auto_id}}'>Email:</label>
-					{% for error in input.errors %}
-							<div class="alert alert-danger" role="alert">{{error}}</div>
-					{% endfor %}
-				{% if duplicate_error %}
-					<div class="alert alert-danger" role="alert">{{duplicate_error}}</div>
-				{% endif %}
+				<input id="{{form.email.auto_id}}" type="email" placeholder=""
+							 x-autocompletetype="email" name="email" autofocus
+							 tabindex="1"
+							 spellcheck="false"
+							 required
+							 pattern="[\w+-_]+@[\w\-.]+\.[\w|.]{2,}" />
+				<label for='{{form.email.auto_id}}'>Email:</label>
+				{% for message in messages %}
+					<p style="text-align: left; white-space: normal; z-index: 10000; position: absolute; margin-top: 50px; color: red;">
+						{{ message|safe }}
+					</p>
+				{% endfor %}
 				<div style="position: absolute; left: -5000px;">
-							<input type="text" name="{{list_item.signup_token}}"
-										 tabindex="-1" value="" />
+					<input type="text" name="{{list_item.signup_token}}" tabindex="-1" value="" />
 				</div>
 				<button type='submit' tabindex=2>{% trans 'Subscribe' %}</button>
 			</form>

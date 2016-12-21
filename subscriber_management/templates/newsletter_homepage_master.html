@@ -1,7 +1,6 @@
 {% load staticfiles %}
 {% load i18n %}
 {% get_current_language as LANGUAGE_CODE %}
-
 <!DOCTYPE html>
 <html lang="{{ LANGUAGE_CODE }}">
 
@@ -13,14 +12,6 @@
     <link rel="canonical" href="http://minimail.fullweb.io">
     {% block styles %}{% endblock %}
 		<style>
-			.notif {
-				position: fixed;
-				z-index: 1000;
-				right: 50%;
-				top: 50px;
-				transform: translateX(50%);
-				box-shadow: 0 1px 1px #b3b3b3;
-			}
 			main {
 				min-height: 65vh;
 			}
@@ -30,23 +21,6 @@
   <body>
 
     <main class='container-fluid'>
-
-      {% block notifs %}
-        {% if messages %}
-        <div class='container'>
-          <div class='row'>
-            <div class='col-lg-6 col-lg-offset-3'>
-              {% for message in messages %}
-                <p class="notif alert alert-dismissable {% if message.tags %}alert-{{ message.tags }}"{% endif %}>
-                  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                  {{ message|safe }}
-                </p>
-              {% endfor %}
-            </div>
-          </div>
-        </div>
-        {% endif %}
-      {% endblock %}
 
       {% block content %}
       {% endblock %}
