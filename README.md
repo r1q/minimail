@@ -2,6 +2,8 @@
 
 A simple webapp to manage your email campaigns and subscribers. Using AWS SES for mail delivery.
 
+![Minimail - Email Marketing](https://cldup.com/HVunmsaGOZ.png)
+
 ## Features
 
 **List management:**
