@@ -127,19 +127,20 @@ class List(models.Model):
 class Subscriber(models.Model):
     """Subscriber"""
 
+    # Relationship
     list = models.ForeignKey(List)
-    uuid = models.UUIDField(default=UUID.uuid4, editable=False)
     # Meta info
+    uuid = models.UUIDField(default=UUID.uuid4, editable=False)
     created = models.DateTimeField(auto_now_add=True)
     edited = models.DateTimeField(auto_now=True)
+    validated = models.BooleanField(default=False, blank=True)
+    imported = models.BooleanField(default=False, blank=True)
     token_subscribe = models.CharField(default=UUID.uuid4, max_length=50,
                                        blank=True, editable=False)
     token_unsubscribe = models.CharField(default=UUID.uuid4, max_length=50,
                                          blank=True, editable=False)
-    validated = models.BooleanField(default=False, blank=True)
-
     # Core info
-    email = models.EmailField(max_length=50)
+    email = models.EmailField(max_length=100)
     first_name = models.CharField(max_length=50, blank=True, null=True)
     last_name = models.CharField(max_length=50, blank=True, null=True)
     timezone = models.CharField(max_length=50, blank=True, null=True)

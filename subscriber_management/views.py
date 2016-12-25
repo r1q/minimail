@@ -186,6 +186,7 @@ class SubscriberListImportCSV(LoginRequiredMixin, View):
             if form.is_valid():
                 # Get the list we work with
                 list_item = List.objects.get(uuid=list_uuid)
+                # TODO: If list already has subcribers, don't use COPY
                 # Get the count before inserting new subscribers
                 before_insert_count = list_item.count_all_subscribers()
                 # Read uploaded CSV file
@@ -204,11 +205,13 @@ class SubscriberListImportCSV(LoginRequiredMixin, View):
                 df_created = pandas.DataFrame([now]*line_count)
                 df_edited = pandas.DataFrame([now]*line_count)
                 df_validated = pandas.DataFrame([True]*line_count)
+                df_imported = pandas.DataFrame([True]*line_count)
                 df_uuid = pandas.DataFrame(['']*line_count).applymap(lambda x: str(uuid.uuid4()))
                 df_ts = pandas.DataFrame(['']*line_count).applymap(lambda x: str(uuid.uuid4()))
                 df_tu = pandas.DataFrame(['']*line_count).applymap(lambda x: str(uuid.uuid4()))
                 # Set sanitized CSV column order
-                col_in_order = [df_list, df_uuid, df_created, df_edited, df_ts, df_tu, df_validated]
+                col_in_order = [df_list, df_uuid, df_created, df_edited, df_ts,
+                                df_tu, df_validated, df_imported]
                 # Concat it all column-wise
                 df_final_csv = pandas.concat(col_in_order, axis=1, ignore_index=True)
                 df_final_csv = pandas.concat([df_emails, df_final_csv], axis=1, ignore_index=True, join='inner',
@@ -226,7 +229,7 @@ class SubscriberListImportCSV(LoginRequiredMixin, View):
                                     table='subscriber_management_subscriber',
                                     sep=',',
                                     columns=('email', 'list_id', 'uuid', 'created', 'edited', 'token_subscribe',
-                                             'token_unsubscribe', 'validated')
+                                             'token_unsubscribe', 'validated', 'imported')
                                 )
 
             else:
