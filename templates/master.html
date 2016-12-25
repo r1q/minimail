@@ -13,6 +13,18 @@
     <link rel="canonical" href="http://minimail.fullweb.io">
     {% block styles %}{% endblock %}
 		<style>
+      body {
+				font-smoothing: antialiased;
+				-webkit-font-smoothing: antialiased;
+				-moz-osx-font-smoothing: grayscale;
+			}
+			pre {
+				overflow-x: scroll;
+				border: none;
+			}
+			pre code {
+				white-space: pre;
+			}
 			.notif {
 				position: fixed;
 				z-index: 1000;

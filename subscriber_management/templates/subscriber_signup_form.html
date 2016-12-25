@@ -22,16 +22,16 @@
 				<button class="btn btn-default btn-xs copy_button" name="copy" data-clipboard-target="#signup_form_snippet">
 					{% trans 'Copy to clipboard' %}
 				</button>
-				<textarea rows="8" class="form-control" disabled style='font: 13px/1.4 Menlo, monospace;resize:none'>
-<form method="post" action="{{BASE_URL}}/subscribers/list/{{list_item.uuid}}/join">
-	<label for="email">Email:</label>
-	<input name="email" id="email" type="email" tabindex="1" required />
-	<div style="position: absolute; left: -5000px;">
-		<input type="text" name="{{list_item.signup_token}}" tabindex="-1" value="">
-	</div>
-	<button type="submit" tabindex="2">Subscribe</button>
-</form>
-				</textarea>
+<pre class='hljs'>
+<span class="hljs-tag">&lt;<span class="hljs-name">form</span> <span class="hljs-attr">method</span>=<span class="hljs-string">"post"</span> <span class="hljs-attr">action</span>=<span class="hljs-string">"https://minimail.fullweb.io/subscribers/list/8fbbc126-3e76-4551-8752-df5fe2bcb07f/join"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">for</span>=<span class="hljs-string">"email"</span>&gt;</span>Email:<span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">name</span>=<span class="hljs-string">"email"</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"email"</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"email"</span> <span class="hljs-attr">tabindex</span>=<span class="hljs-string">"1"</span> <span class="hljs-attr">required</span> /&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">style</span>=<span class="hljs-string">"position: absolute; left: -5000px;"</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"text"</span> <span class="hljs-attr">name</span>=<span class="hljs-string">"8fbbc126_3e76_4551_8752_df5fe2bcb07f_cc1fc85d_b340_48e3_ad53_6b8655ec5412"</span> <span class="hljs-attr">tabindex</span>=<span class="hljs-string">"-1"</span> <span class="hljs-attr">value</span>=<span class="hljs-string">""</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"submit"</span> <span class="hljs-attr">tabindex</span>=<span class="hljs-string">"2"</span>&gt;</span>Subscribe<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">form</span>&gt;</span>
+</code></pre>
 
 				<textarea rows="10" class="form-control" id="signup_form_snippet" style="position: absolute; left: -9999px;">
 <form method="post" action="{{BASE_URL}}/subscribers/list/{{list_item.uuid}}/join">
@@ -49,24 +49,135 @@
 
     <br>
 		<label>AJAX API, using jQuery:</label>
-		<pre><code>$.post(
-  '{{BASE_URL}}/subscribers/list/{{list_item.uuid}}/join',
-  { 'email': 'SUBSCRIBER_EMAIL',
-    '{{list_item.signup_token}}': '' // &lt;-- This field MUST always be empty!
+<pre class='hljs'><code class="lang-javascript">$.post(
+  <span class="hljs-string">'https://minimail.fullweb.io/subscribers/list/8fbbc126-3e76-4551-8752-df5fe2bcb07f/join'</span>,
+  {
+    <span class="hljs-comment">// This email field will contain the actual subscriber email</span>
+   <span class="hljs-string">'email'</span>: <span class="hljs-string">'SUBSCRIBER_EMAIL'</span>,
+    <span class="hljs-comment">// This field below MUST always be empty</span>
+   <span class="hljs-string">'8fbbc126_3e76_4551_8752_df5fe2bcb07f_cc1fc85d_b340_48e3_ad53_6b8655ec5412'</span>: <span class="hljs-string">''</span>
   },
-  function (data) {
-    console.log('Subscription success')
+   <span class="hljs-comment">// Optional callback once the subscription is done</span>
+  <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">data</span>) </span>{
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'Subscription success'</span>)
   },
-  'json');
+   <span class="hljs-comment">// Mandatory request Content-Type setting</span>
+  <span class="hljs-string">'json'</span>);
 </code></pre>
 
     {% include 'import.html' %}
   </div>
 {% endblock %}
 
+
 {% block script %}
 	<script src="{% static 'js/vendor/clipboard.min.js' %}"></script>
 	<script>
 		var clipboard = new Clipboard('.copy_button');
 	</script>
+{% endblock %}
+
+
+{% block styles %}
+	<style>
+		/*
+
+		github.com style (c) Vasily Polovnyov <vast@whiteants.net>
+
+		*/
+
+		.hljs {
+			display: block;
+			overflow-x: auto;
+			padding: 0.5em;
+			color: #333;
+			background: #f8f8f8;
+		}
+
+		.hljs-comment,
+		.hljs-quote {
+			color: #998;
+			font-style: italic;
+		}
+
+		.hljs-keyword,
+		.hljs-selector-tag,
+		.hljs-subst {
+			color: #333;
+			font-weight: bold;
+		}
+
+		.hljs-number,
+		.hljs-literal,
+		.hljs-variable,
+		.hljs-template-variable,
+		.hljs-tag .hljs-attr {
+			color: #008080;
+		}
+
+		.hljs-string,
+		.hljs-doctag {
+			color: #d14;
+		}
+
+		.hljs-title,
+		.hljs-section,
+		.hljs-selector-id {
+			color: #900;
+			font-weight: bold;
+		}
+
+		.hljs-subst {
+			font-weight: normal;
+		}
+
+		.hljs-type,
+		.hljs-class .hljs-title {
+			color: #458;
+			font-weight: bold;
+		}
+
+		.hljs-tag,
+		.hljs-name,
+		.hljs-attribute {
+			color: #000080;
+			font-weight: normal;
+		}
+
+		.hljs-regexp,
+		.hljs-link {
+			color: #009926;
+		}
+
+		.hljs-symbol,
+		.hljs-bullet {
+			color: #990073;
+		}
+
+		.hljs-built_in,
+		.hljs-builtin-name {
+			color: #0086b3;
+		}
+
+		.hljs-meta {
+			color: #999;
+			font-weight: bold;
+		}
+
+		.hljs-deletion {
+			background: #fdd;
+		}
+
+		.hljs-addition {
+			background: #dfd;
+		}
+
+		.hljs-emphasis {
+			font-style: italic;
+		}
+
+		.hljs-strong {
+			font-weight: bold;
+		}
+	</style>
 {% endblock %}
