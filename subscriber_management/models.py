@@ -90,7 +90,7 @@ class List(models.Model):
     title = models.CharField(max_length=125, blank=True)
     from_email = models.CharField(max_length=125, blank=True)
     from_email_verified = models.BooleanField(default=False, blank=True)
-    description = models.TextField(blank=True)
+    description = models.TextField(blank=True, max_length=550)
     url = models.URLField(max_length=4000, blank=True)
     image = models.ImageField(upload_to='static/uploads/', null=True,
                               blank=True)
@@ -98,8 +98,8 @@ class List(models.Model):
                              blank=True, editable=False)
 
     # custom templates
-    subscribe_template = models.TextField(blank=True)
-    success_template = models.TextField(blank=True)
+    subscribe_template = models.TextField(blank=True, max_length=550)
+    success_template = models.TextField(blank=True, max_length=550)
 
     def save(self, *args, **kwargs):
         # Set utm_source when we first created the list

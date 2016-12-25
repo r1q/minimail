@@ -42,9 +42,11 @@
 						{% csrf_token %}
 						<div class="form-group">
 							<label for="{{form_object.image.auto_id}}">Newsletter logo:</label>
+							{% if list_item.image %}
 							<img style='border-radius: 5px; display:block'
 							     src='/{{ list_item.image.url }}'
 							     height=100 width=100 />
+							{% endif %}
 							{{form_object.image}}
 						</div>
 						<div class="form-group">
@@ -59,10 +61,15 @@
 						</div>
 						<div class="form-group">
 							<label for="{{form_object.description.auto_id}}">Newsletter description:</label>
-							<small class='pull-right text-muted' style='margin-top: 5px'>
-								Markdown syntax supported
-							</small>
-							<textarea class="form-control" name="{{form_object.description.name}}" id="{{form_object.description.auto_id}}">{{form_object.description.value}}</textarea>
+<!-- 							<small class='pull-right text-muted' style='margin-top: 5px'> -->
+<!-- 								Markdown syntax supported -->
+<!-- 							</small> -->
+							<textarea class="form-control"
+                data-autoresize
+								name="{{form_object.description.name}}"
+							  maxlength="{{form_object.description.field.max_length}}"
+								placeholder="In 2-3 sentences, what is your newsletter about?"
+								id="{{form_object.description.auto_id}}" rows=4>{{form_object.description.value}}</textarea>
 							{% for error in form_object.description.errors %}
 								<span class="error-block text-danger">{{error}}</span>
 							{% endfor %}
@@ -74,7 +81,12 @@
 						<hr>
 						<div class="form-group">
 							<label for="{{form_object.success_template.auto_id}}">Newsletter subscription confirmed message:</label>
-							<textarea class="form-control" name="{{form_object.success_template.name}}" id="{{form_object.success_template.auto_id}}">{{form_object.success_template.value}}</textarea>
+							<textarea class="form-control"
+                data-autoresize
+								name="{{form_object.success_template.name}}"
+								placeholder="Why not say welcome? :)"
+							  maxlength="{{form_object.success.field.max_length}}"
+								id="{{form_object.success_template.auto_id}}" rows=2>{{form_object.success_template.value}}</textarea>
 							{% for error in form_object.success_template.errors %}
 								<span class="error-block text-danger">{{error}}</span>
 							{% endfor %}

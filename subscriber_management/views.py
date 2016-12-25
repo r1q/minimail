@@ -366,7 +366,10 @@ class SubscriberJoin(View):
 
     def get(self, request, uuid):
         list_item = List.objects.get(uuid=uuid)
-        last_campaign = Campaign.objects.filter(email_list=list_item).latest('sent')
+        try:
+            last_campaign = Campaign.objects.filter(email_list=list_item).latest('sent')
+        except Campaign.DoesNotExist:
+            last_campaign = None
         form = SubscriberForm()
         return render(request, "subscriber_join.html", locals())
 

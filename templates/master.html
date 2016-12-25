@@ -70,12 +70,26 @@
     <script src='{% static "js/vendor/jquery-3.1.0.js" %}'></script>
     <script src='{% static "js/vendor/bootstrap.min.js" %}'></script>
 		<script>
+
+      // Disable submit buttons when submitting forms
 			$(function() {
 				$('form').on('submit', function(ev) {
 					$(this).find('button').disabled = true;
 					$(this).find('button').attr('disabled', 'disabled');
 				});
 			});
+
+		  // Auto-resize textarea on input
+			$('textarea[data-autoresize]').each(function() {
+				var offset = this.offsetHeight - this.clientHeight;
+
+				var resizeTextarea = function(el) {
+					$(el).css('height', 'auto').css('height', el.scrollHeight + offset);
+				};
+				$(this).on('keyup input', function() {resizeTextarea(this);})
+							 .removeAttr('data-autoresize');
+			});
+
 		</script>
     {% block script %}{% endblock %}
 

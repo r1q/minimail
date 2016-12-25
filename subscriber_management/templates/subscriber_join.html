@@ -111,14 +111,16 @@
 <div class='row'>
 
 	<div class='col-lg-5 col-md-5 hidden-sm hidden-xs'>
-		<div style='position: fixed; left: 0; width: 40%; top: 0; bottom: 0; background: #F3F3F3;'>
-				<div class='preview' style='box-shadow: 0 1px 1px #9a9a9a;position: relative; min-height: 600px; height:auto; background: #fff; overflow: hidden; min-width: 350px; width: 350px; float: right; margin: 100px 3rem 1rem 1rem;border-radius:2px;'>
-					<div style='margin-top: -25px; position: fixed; font-weight: 500; font-size: 15px;'>Last issue:</div>
-					<iframe style='border: 0; position: absolute; top: 0; bottom: 0; left: 0; right: 0; z-index: 10; transform: scale(0.90); transform-origin: 0 0; height: 112%; width: 112%;' src='{% url "campaign-email-preview" last_campaign.id %}'>
-					</iframe>
-					<div class='cover' style='position: absolute; top: 0; bottom: 0; left: 0; right: 0; z-index: 100;'></div>
-				</div>
-		</div>
+		{% if last_campaign %}
+			<div style='position: fixed; left: 0; width: 40%; top: 0; bottom: 0; background: #F3F3F3;'>
+					<div class='preview' style='box-shadow: 0 1px 1px #9a9a9a;position: relative; min-height: 600px; height:auto; background: #fff; overflow: hidden; min-width: 350px; width: 350px; float: right; margin: 100px 3rem 1rem 1rem;border-radius:2px;'>
+						<div style='margin-top: -25px; position: fixed; font-weight: 500; font-size: 15px;'>Last issue:</div>
+						<iframe style='border: 0; position: absolute; top: 0; bottom: 0; left: 0; right: 0; z-index: 10; transform: scale(0.90); transform-origin: 0 0; height: 112%; width: 112%;' src='{% url "campaign-email-preview" last_campaign.id %}'>
+						</iframe>
+						<div class='cover' style='position: absolute; top: 0; bottom: 0; left: 0; right: 0; z-index: 100;'></div>
+					</div>
+			</div>
+		{% endif %}
 	</div>
 	<div class='visible-sm visible-xs'>
 		<div style='position:fixed;top: 0;border: 2px solid #ffde00; right:0; left: 0'></div>
@@ -133,8 +135,8 @@
 		<p style='white-space: pre-wrap;'>{{list_item.description}}</p>
 	  <fieldset>
 			<legend>
-				{% if list_item.count_validated_subscribers == 0 %}
-					Join other subscribers:
+				{% if list_item.count_validated_subscribers < 10 %}
+					Join the many other subscribers:
 				{% else %}
 					Join {{list_item.count_validated_subscribers}} subscribers:
 				{% endif %}
@@ -158,11 +160,6 @@
 				<button type='submit' tabindex=2>{% trans 'Subscribe' %}</button>
 			</form>
 		</fieldset>
-		<footer style='position: fixed; bottom: .5rem; left: 40%; margin-left: 1rem;'>
-			<small>
-				A newsletter powered by <a href='https://minimail.im' style='color: currentColor;text-decoration:underline'>Minimail.</a>
-			</small>
-    </footer>
 	</div>
 
 </div>
