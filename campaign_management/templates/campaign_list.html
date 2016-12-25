@@ -40,7 +40,7 @@
   <div class='container'>
 
     <div class='row'>
-      <div class='col-lg-9 col-lg-offset-2 col-sm-12'>
+      <div class='col-lg-10 col-lg-offset-1 col-sm-12'>
         <h3>
           {% trans "All Emails" %}
 					&nbsp;&nbsp;<a class='btn btn-default' href='{% url "campaign-new" %}'>
@@ -57,23 +57,19 @@
 
           {% for campaign in object_list %}
 						<div class='row' style='margin-bottom:3rem'>
-								<div class='col-lg-2 text-right'>
+								<div class='col-lg-1 text-right'>
 									{% if campaign.is_sent %}
-										<span class='alert-success'>&thinsp;SENT&thinsp;</span>
-										<br />
-										<small class='text-muted'>sent: {{campaign.sent|date:"H:m D d M Y"}}</small>
+										<span class='alert-success' title='Sent the {{campaign.sent|date:"D d M Y \a\t H:m "}}'>&thinsp;SENT&thinsp;</span>
 									{% else %}
-										<span class='alert-warning'>&thinsp;DRAFT&thinsp;</span>
-										<br />
-										<small class='text-muted'>edited: {{campaign.edited|timesince}} ago</small>
+										<span class='alert-warning' title='Last edited {{campaign.edited|timesince}} ago'>&thinsp;DRAFT&thinsp;</span>
 									{% endif %}
 								</small>
 								</div>
 
 
 								<div class='col-lg-2'>
-									<a href="{% url 'campaign-detail' campaign.id %}" style='color: #333'>
-										<div class='preview' style='position: relative; min-height: 200px; height:auto; background: #fff; overflow: hidden; box-shadow: 0 1px 3px #9a9a9a'>
+									<a href="{% url 'campaign-detail' campaign.id %}" >
+										<div class='preview' style='position: relative; min-height: 200px; height:auto; background: #fff; overflow: hidden; box-shadow: 0 1px 1px #9a9a9a'>
 											<iframe onload='this.style.opacity=1' style='opacity: 0;
 												transition: opacity .185s ease-out;border: 0; position:
 												absolute; top: 0; bottom: 0; left: 0; right: 0; z-index:
@@ -86,7 +82,7 @@
 
 								<div class='col-lg-6'>
 									<h4 style='margin-top: 0;font-weight:700'>
-										<a href="{% url 'campaign-detail' campaign.id %}" style='color: #333'>
+										<a href="{% url 'campaign-detail' campaign.id %}">
 											{{ campaign.email_subject }}
 										</a>
 									</h4>

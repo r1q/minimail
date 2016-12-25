@@ -66,6 +66,7 @@ class SubscriberListView(LoginRequiredMixin, ListView):
 
     model = List
     template_name = 'list_list.html'
+    context_object_name = 'subscriber_lists'
 
     def get_queryset(self):
         return List.objects.filter(user__id=self.request.user.id)\
@@ -73,6 +74,17 @@ class SubscriberListView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super(SubscriberListView, self).get_context_data(**kwargs)
+        for email_list in context['subscriber_lists']:
+            try:
+                c = Campaign.objects.filter(author=self.request.user,
+                                            email_list=email_list)\
+                                    .order_by('-edited')
+                email_list.draft_count = c.filter(is_sent=False, is_draft=True).count()
+                email_list.sent_count = c.filter(is_sent=True, is_draft=False).count()
+                email_list.last_email_sent = c[0].sent
+            except Exception as e:
+                print(e)
+                continue
         return context
 
 
