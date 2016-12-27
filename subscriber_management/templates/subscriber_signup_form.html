@@ -4,110 +4,110 @@
 
 
 {% block title %}
-	{{list_item.title}}
+  {{list_item.title}}
 {% endblock %}
 
 
 {% block content %}
 
-	<br />
+  <br />
 
   <div class='container'>
 
-		<div class='row'>
+    <div class='row'>
       <div class='col-lg-10 col-lg-offset-1 col-sm-12'>
         <h3>
-					<a href='{% url "subscriber-management-list" %}'>
+          <a href='{% url "subscriber-management-list" %}'>
           {% trans "Subscriber Lists" %}</a>
-					&rsaquo;
-					{{list_item.title}}
+          &rsaquo;
+          {{list_item.title}}
         </h3>
       </div>
     </div>
 
     <div class='row'>
       <div class='col-lg-10 col-sm-12 col-lg-offset-1'>
-				{% include 'parts/list_header.html' %}
-				<ul class="nav nav-tabs">
-					<li role="presentation">
-						<a href="{% url 'subscriber-management-list-subscribers' list_item.uuid %}">
-							{% trans 'Subscribers' %}
-						</a>
-					</li>
-					<li role="presentation"> 
-						<a href="{% url 'subscriber-management-list-newsletter-homepage' list_item.uuid %}">
-							{% trans 'Newsletter homepage' %}
-						</a>
-					</li>
-					<li role="presentation" class='active'>
-						<a href="{% url 'subscriber-management-list-sign-up-form' list_item.uuid %}">
-							{% trans 'Signup form' %}
-						</a>
-					</li>
-					<li role="presentation">
-						<a href="{% url 'subscriber-management-list-settings' list_item.uuid %}">
-							{% trans 'Settings' %}
-						</a>
-					</li>
-				</ul>
-			</div>
-		</div>
+        {% include 'parts/list_header.html' %}
+        <ul class="nav nav-tabs">
+          <li role="presentation">
+            <a href="{% url 'subscriber-management-list-subscribers' list_item.uuid %}">
+              {% trans 'Subscribers' %}
+            </a>
+          </li>
+          <li role="presentation"> 
+            <a href="{% url 'subscriber-management-list-newsletter-homepage' list_item.uuid %}">
+              {% trans 'Newsletter homepage' %}
+            </a>
+          </li>
+          <li role="presentation" class='active'>
+            <a href="{% url 'subscriber-management-list-sign-up-form' list_item.uuid %}">
+              {% trans 'Signup form' %}
+            </a>
+          </li>
+          <li role="presentation">
+            <a href="{% url 'subscriber-management-list-settings' list_item.uuid %}">
+              {% trans 'Settings' %}
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
 
     <br>
 
-		<div class='row'>
-			<div class='col-lg-8 col-lg-offset-2'>
+    <div class='row'>
+      <div class='col-lg-8 col-lg-offset-2'>
 
-				<form>
-					<div class="form-group">
+        <form>
+          <div class="form-group">
 
-						<label>Sign up form:</label>
-						<button class="btn btn-default btn-xs copy_button" name="copy" data-clipboard-target="#signup_form_snippet">
-							{% trans 'Copy to clipboard' %}
-						</button>
+            <label>Sign up form:</label>
+            <button class="btn btn-default btn-xs copy_button" name="copy" data-clipboard-target="#signup_form_snippet">
+              {% trans 'Copy to clipboard' %}
+            </button>
 <pre class='hljs'>
 <span class="hljs-tag">&lt;<span class="hljs-name">form</span> <span class="hljs-attr">method</span>=<span class="hljs-string">"post"</span> <span class="hljs-attr">action</span>=<span class="hljs-string">"https://minimail.fullweb.io/subscribers/list/8fbbc126-3e76-4551-8752-df5fe2bcb07f/join"</span>&gt;</span>
-		<span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">for</span>=<span class="hljs-string">"email"</span>&gt;</span>Email:<span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
-		<span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">name</span>=<span class="hljs-string">"email"</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"email"</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"email"</span> <span class="hljs-attr">tabindex</span>=<span class="hljs-string">"1"</span> <span class="hljs-attr">required</span> /&gt;</span>
-		<span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">style</span>=<span class="hljs-string">"position: absolute; left: -5000px;"</span>&gt;</span>
-				<span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"text"</span> <span class="hljs-attr">name</span>=<span class="hljs-string">"8fbbc126_3e76_4551_8752_df5fe2bcb07f_cc1fc85d_b340_48e3_ad53_6b8655ec5412"</span> <span class="hljs-attr">tabindex</span>=<span class="hljs-string">"-1"</span> <span class="hljs-attr">value</span>=<span class="hljs-string">""</span>&gt;</span>
-		<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
-		<span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"submit"</span> <span class="hljs-attr">tabindex</span>=<span class="hljs-string">"2"</span>&gt;</span>Subscribe<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">for</span>=<span class="hljs-string">"email"</span>&gt;</span>Email:<span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">name</span>=<span class="hljs-string">"email"</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"email"</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"email"</span> <span class="hljs-attr">tabindex</span>=<span class="hljs-string">"1"</span> <span class="hljs-attr">required</span> /&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">style</span>=<span class="hljs-string">"position: absolute; left: -5000px;"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"text"</span> <span class="hljs-attr">name</span>=<span class="hljs-string">"8fbbc126_3e76_4551_8752_df5fe2bcb07f_cc1fc85d_b340_48e3_ad53_6b8655ec5412"</span> <span class="hljs-attr">tabindex</span>=<span class="hljs-string">"-1"</span> <span class="hljs-attr">value</span>=<span class="hljs-string">""</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"submit"</span> <span class="hljs-attr">tabindex</span>=<span class="hljs-string">"2"</span>&gt;</span>Subscribe<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
 <span class="hljs-tag">&lt;/<span class="hljs-name">form</span>&gt;</span>
 </code></pre>
 
-						<textarea rows="10" class="form-control" id="signup_form_snippet" style="position: absolute; left: -9999px;">
-		<form method="post" action="{{BASE_URL}}/subscribers/list/{{list_item.uuid}}/join">
-			<label for="email">Email:</label>
-			<input name="email" id="email" type="email" tabindex="1" required />
-			<div style="position: absolute; left: -5000px;">
-				<input type="text" name="{{list_item.signup_token}}" tabindex="-1" value="">
-			</div>
-			<button type="submit" tabindex="2">Subscribe</button>
-		</form>
-						</textarea>
+            <textarea rows="10" class="form-control" id="signup_form_snippet" style="position: absolute; left: -9999px;">
+    <form method="post" action="{{BASE_URL}}/subscribers/list/{{list_item.uuid}}/join">
+      <label for="email">Email:</label>
+      <input name="email" id="email" type="email" tabindex="1" required />
+      <div style="position: absolute; left: -5000px;">
+        <input type="text" name="{{list_item.signup_token}}" tabindex="-1" value="">
+      </div>
+      <button type="submit" tabindex="2">Subscribe</button>
+    </form>
+            </textarea>
 
-					</div>
-				</form>
+          </div>
+        </form>
 
-				<br>
-				<label>AJAX API, using jQuery:</label>
+        <br>
+        <label>AJAX API, using jQuery:</label>
 <pre class='hljs'><code class="lang-javascript">$.post(
-	<span class="hljs-string">'https://minimail.fullweb.io/subscribers/list/8fbbc126-3e76-4551-8752-df5fe2bcb07f/join'</span>,
-	{
-		<span class="hljs-comment">// This email field will contain the actual subscriber email</span>
-	 <span class="hljs-string">'email'</span>: <span class="hljs-string">'SUBSCRIBER_EMAIL'</span>,
-		<span class="hljs-comment">// This field below MUST always be empty</span>
-	 <span class="hljs-string">'8fbbc126_3e76_4551_8752_df5fe2bcb07f_cc1fc85d_b340_48e3_ad53_6b8655ec5412'</span>: <span class="hljs-string">''</span>
-	},
-	 <span class="hljs-comment">// Optional callback once the subscription is done</span>
-	<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">data</span>) </span>{
-		<span class="hljs-built_in">console</span>.log(<span class="hljs-string">'Subscription success'</span>)
-	},
-	 <span class="hljs-comment">// Mandatory request Content-Type setting</span>
-	<span class="hljs-string">'json'</span>);
+  <span class="hljs-string">'https://minimail.fullweb.io/subscribers/list/8fbbc126-3e76-4551-8752-df5fe2bcb07f/join'</span>,
+  {
+    <span class="hljs-comment">// This email field will contain the actual subscriber email</span>
+   <span class="hljs-string">'email'</span>: <span class="hljs-string">'SUBSCRIBER_EMAIL'</span>,
+    <span class="hljs-comment">// This field below MUST always be empty</span>
+   <span class="hljs-string">'8fbbc126_3e76_4551_8752_df5fe2bcb07f_cc1fc85d_b340_48e3_ad53_6b8655ec5412'</span>: <span class="hljs-string">''</span>
+  },
+   <span class="hljs-comment">// Optional callback once the subscription is done</span>
+  <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">data</span>) </span>{
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'Subscription success'</span>)
+  },
+   <span class="hljs-comment">// Mandatory request Content-Type setting</span>
+  <span class="hljs-string">'json'</span>);
 </code></pre>
-		</div>
+    </div>
   </div>
 
     {% include 'import.html' %}
@@ -116,113 +116,113 @@
 
 
 {% block script %}
-	<script src="{% static 'js/vendor/clipboard.min.js' %}"></script>
-	<script>
-		var clipboard = new Clipboard('.copy_button');
-	</script>
+  <script src="{% static 'js/vendor/clipboard.min.js' %}"></script>
+  <script>
+    var clipboard = new Clipboard('.copy_button');
+  </script>
 {% endblock %}
 
 
 {% block styles %}
-	<style>
-		/*
+  <style>
+    /*
 
-		github.com style (c) Vasily Polovnyov <vast@whiteants.net>
+    github.com style (c) Vasily Polovnyov <vast@whiteants.net>
 
-		*/
+    */
 
-		.hljs {
-			display: block;
-			overflow-x: auto;
-			padding: 0.5em;
-			color: #333;
-			background: #f8f8f8;
-		}
+    .hljs {
+      display: block;
+      overflow-x: auto;
+      padding: 0.5em;
+      color: #333;
+      background: #f8f8f8;
+    }
 
-		.hljs-comment,
-		.hljs-quote {
-			color: #998;
-			font-style: italic;
-		}
+    .hljs-comment,
+    .hljs-quote {
+      color: #998;
+      font-style: italic;
+    }
 
-		.hljs-keyword,
-		.hljs-selector-tag,
-		.hljs-subst {
-			color: #333;
-			font-weight: bold;
-		}
+    .hljs-keyword,
+    .hljs-selector-tag,
+    .hljs-subst {
+      color: #333;
+      font-weight: bold;
+    }
 
-		.hljs-number,
-		.hljs-literal,
-		.hljs-variable,
-		.hljs-template-variable,
-		.hljs-tag .hljs-attr {
-			color: #008080;
-		}
+    .hljs-number,
+    .hljs-literal,
+    .hljs-variable,
+    .hljs-template-variable,
+    .hljs-tag .hljs-attr {
+      color: #008080;
+    }
 
-		.hljs-string,
-		.hljs-doctag {
-			color: #d14;
-		}
+    .hljs-string,
+    .hljs-doctag {
+      color: #d14;
+    }
 
-		.hljs-title,
-		.hljs-section,
-		.hljs-selector-id {
-			color: #900;
-			font-weight: bold;
-		}
+    .hljs-title,
+    .hljs-section,
+    .hljs-selector-id {
+      color: #900;
+      font-weight: bold;
+    }
 
-		.hljs-subst {
-			font-weight: normal;
-		}
+    .hljs-subst {
+      font-weight: normal;
+    }
 
-		.hljs-type,
-		.hljs-class .hljs-title {
-			color: #458;
-			font-weight: bold;
-		}
+    .hljs-type,
+    .hljs-class .hljs-title {
+      color: #458;
+      font-weight: bold;
+    }
 
-		.hljs-tag,
-		.hljs-name,
-		.hljs-attribute {
-			color: #000080;
-			font-weight: normal;
-		}
+    .hljs-tag,
+    .hljs-name,
+    .hljs-attribute {
+      color: #000080;
+      font-weight: normal;
+    }
 
-		.hljs-regexp,
-		.hljs-link {
-			color: #009926;
-		}
+    .hljs-regexp,
+    .hljs-link {
+      color: #009926;
+    }
 
-		.hljs-symbol,
-		.hljs-bullet {
-			color: #990073;
-		}
+    .hljs-symbol,
+    .hljs-bullet {
+      color: #990073;
+    }
 
-		.hljs-built_in,
-		.hljs-builtin-name {
-			color: #0086b3;
-		}
+    .hljs-built_in,
+    .hljs-builtin-name {
+      color: #0086b3;
+    }
 
-		.hljs-meta {
-			color: #999;
-			font-weight: bold;
-		}
+    .hljs-meta {
+      color: #999;
+      font-weight: bold;
+    }
 
-		.hljs-deletion {
-			background: #fdd;
-		}
+    .hljs-deletion {
+      background: #fdd;
+    }
 
-		.hljs-addition {
-			background: #dfd;
-		}
+    .hljs-addition {
+      background: #dfd;
+    }
 
-		.hljs-emphasis {
-			font-style: italic;
-		}
+    .hljs-emphasis {
+      font-style: italic;
+    }
 
-		.hljs-strong {
-			font-weight: bold;
-		}
-	</style>
+    .hljs-strong {
+      font-weight: bold;
+    }
+  </style>
 {% endblock %}

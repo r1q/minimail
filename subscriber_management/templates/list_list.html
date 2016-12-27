@@ -30,7 +30,9 @@
 			{% for list in  subscriber_lists %}
 				<div class="row" style='margin-top: 2rem'>
 					<div class='col-lg-4 col-sm-3'>
-            <img height='25' style='    margin-top: 8px; margin-left: -34px;' class='pull-left' src='/{{list.image.url}}'/>
+						{% if list.image %}
+							<img height='25' style='margin-top: 8px; margin-left: -34px;' class='pull-left' src='/{{list.image.url}}'/>
+						{% endif %}
 						<h4>
 							<a href="{% url 'subscriber-management-list-subscribers' list.uuid %}">
 								{{ list.name }}
