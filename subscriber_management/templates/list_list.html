@@ -72,6 +72,11 @@
 							<time datetime='{{list.create.timestamp}}' title='{{list.created|timesince}} ago'>
 								{{ list.created|date:"D d M Y \a\t H:m" }}
 							</time>
+              &nbsp;&middot;&nbsp;
+							<a href='{{BASE_URL}}{% url 'subscriber-management-join' list.uuid %}'
+								 target='_blank'>
+							Newsletter homepage
+							</a>
 						</small>
 					</div>
 				</div>

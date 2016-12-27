@@ -3,26 +3,63 @@
 {% load humanize %}
 
 
+{% block title %}
+	{{list_item.title}}
+{% endblock %}
+
+
 {% block content %}
 
+	<br />
+
   <div class='container'>
+
     <div class='row'>
-      <div class='col-lg-12'>
-        {% include 'parts/list_header.html' %}
-        <ul class="nav nav-tabs">
-          <li role="presentation"><a href="{% url 'subscriber-management-list-subscribers' list_item.uuid %}">{% trans 'Subscribers' %}</a></li>
-          <li role="presentation"><a href="{% url 'subscriber-management-list-newsletter-homepage' list_item.uuid %}">{% trans 'Newsletter homepage' %}</a></li>
-          <li role="presentation"><a href="{% url 'subscriber-management-list-sign-up-form' list_item.uuid %}">{% trans 'Signup form' %}</a></li>
-          <li role="presentation" class="active"><a href="{% url 'subscriber-management-list-settings' list_item.uuid %}">{% trans 'Settings' %}</a></li>
-        </ul>
+      <div class='col-lg-10 col-lg-offset-1 col-sm-12'>
+        <h3>
+					<a href='{% url "subscriber-management-list" %}'>
+          {% trans "Subscriber Lists" %}</a>
+					&rsaquo;
+					{{list_item.title}}
+        </h3>
       </div>
     </div>
+
+    <div class='row'>
+      <div class='col-lg-10 col-sm-12 col-lg-offset-1'>
+				{% include 'parts/list_header.html' %}
+				<ul class="nav nav-tabs">
+					<li role="presentation">
+						<a href="{% url 'subscriber-management-list-subscribers' list_item.uuid %}">
+							{% trans 'Subscribers' %}
+						</a>
+					</li>
+					<li role="presentation">
+						<a href="{% url 'subscriber-management-list-newsletter-homepage' list_item.uuid %}">
+							{% trans 'Newsletter homepage' %}
+						</a>
+					</li>
+					<li role="presentation">
+						<a href="{% url 'subscriber-management-list-sign-up-form' list_item.uuid %}">
+							{% trans 'Signup form' %}
+						</a>
+					</li>
+					<li role="presentation" class='active'>
+						<a href="{% url 'subscriber-management-list-settings' list_item.uuid %}">
+							{% trans 'Settings' %}
+						</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+
+    <br>
+
     <div class='row'>
       <div class='col-lg-6 col-lg-offset-3'>
 
         <form method="post" class="">
 					{% csrf_token %}
-					<br>
 					<h4>UTM Settings <small><a href='https://blog.bufferapp.com/utm-guide' target='_blank'>what is this?</a></small></h4>
 							<div class="form-group">
 								<label for="{{form_object.utm_medium.auto_id}}" class="control-label">UTM medium</label>

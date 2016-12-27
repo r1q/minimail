@@ -2,107 +2,126 @@
 {% load i18n %}
 {% load staticfiles %}
 
+
+{% block title %}
+	{{list_item.title}}
+{% endblock %}
+
+
 {% block content %}
-  <div class='row'>
 
-		<div class='col-lg-8 col-lg-offset-2'>
+	<br />
 
-			{% include 'parts/list_header.html' %}
+  <div class='container'>
 
-			<ul class="nav nav-tabs">
-				<li role="presentation">
-					<a href="{% url 'subscriber-management-list-subscribers' list_item.uuid %}">
-						{% trans 'Subscribers' %}
-					</a>
-				</li>
-				<li role="presentation" class="active">
-					<a href="{% url 'subscriber-management-list-newsletter-homepage' list_item.uuid %}">
-						{% trans 'Newsletter homepage' %}
-					</a>
-				</li>
-				<li role="presentation">
-					<a href="{% url 'subscriber-management-list-sign-up-form' list_item.uuid %}">
-						{% trans 'Signup form' %}
-					</a>
-				</li>
-				<li role="presentation">
-					<a href="{% url 'subscriber-management-list-settings' list_item.uuid %}">
-						{% trans 'Settings' %}
-					</a>
-				</li>
-			</ul>
+		<div class='row'>
+      <div class='col-lg-10 col-lg-offset-1 col-sm-12'>
+        <h3>
+					<a href='{% url "subscriber-management-list" %}'>
+          {% trans "Subscriber Lists" %}</a>
+					&rsaquo;
+					{{list_item.title}}
+        </h3>
+      </div>
+    </div>
 
-			<br>
-
-			<div class='row'>
-
-				<div class='col-lg-8 col-lg-offset-2'>
-
-					<form method="post" enctype="multipart/form-data">
-						{% csrf_token %}
-						<div class="form-group">
-							<label for="{{form_object.image.auto_id}}">Newsletter logo:</label>
-							{% if list_item.image %}
-							<img style='border-radius: 5px; display:block'
-							     src='/{{ list_item.image.url }}'
-							     height=100 width=100 />
-							{% endif %}
-							{{form_object.image}}
-						</div>
-						<div class="form-group">
-							<label for="{{form_object.title.auto_id}}">Newsletter title:</label>
-							<input type="text" class="form-control" name="{{form_object.title.name}}" id="{{form_object.title.auto_id}}" placeholder="" value="{{form_object.title.value}}">
-							{% for error in form_object.title.errors %}
-								<span class="error-block text-danger">{{error}}</span>
-							{% endfor %}
-							<small class='help-block'>
-								This title is visible to your potential subscribers on your newsletter homepage.
-							</small>
-						</div>
-						<div class="form-group">
-							<label for="{{form_object.description.auto_id}}">Newsletter description:</label>
-<!-- 							<small class='pull-right text-muted' style='margin-top: 5px'> -->
-<!-- 								Markdown syntax supported -->
-<!-- 							</small> -->
-							<textarea class="form-control"
-                data-autoresize
-								name="{{form_object.description.name}}"
-							  maxlength="{{form_object.description.field.max_length}}"
-								placeholder="In 2-3 sentences, what is your newsletter about?"
-								id="{{form_object.description.auto_id}}" rows=4>{{form_object.description.value}}</textarea>
-							{% for error in form_object.description.errors %}
-								<span class="error-block text-danger">{{error}}</span>
-							{% endfor %}
-							<small class='help-block'>
-								This is what your potential subscribers will read to decide to
-								subscribers or not. Make it succinct and attractive! (max 400 characters)
-							</small>
-						</div>
-						<hr>
-						<div class="form-group">
-							<label for="{{form_object.success_template.auto_id}}">Newsletter subscription confirmed message:</label>
-							<textarea class="form-control"
-                data-autoresize
-								name="{{form_object.success_template.name}}"
-								placeholder="Why not say welcome? :)"
-							  maxlength="{{form_object.success.field.max_length}}"
-								id="{{form_object.success_template.auto_id}}" rows=2>{{form_object.success_template.value}}</textarea>
-							{% for error in form_object.success_template.errors %}
-								<span class="error-block text-danger">{{error}}</span>
-							{% endfor %}
-							<small class='help-block'>
-								This is what your new subscribers will see right after they subscribed.
-							</small>
-						</div>
-						<hr />
-						<button type="submit" class="btn btn-success">{% trans 'Save changes' %}</button>
-
-					</form>
-				</div>
+    <div class='row'>
+      <div class='col-lg-10 col-sm-12 col-lg-offset-1'>
+				{% include 'parts/list_header.html' %}
+				<ul class="nav nav-tabs">
+					<li role="presentation">
+						<a href="{% url 'subscriber-management-list-subscribers' list_item.uuid %}">
+							{% trans 'Subscribers' %}
+						</a>
+					</li>
+					<li role="presentation" class='active'>
+						<a href="{% url 'subscriber-management-list-newsletter-homepage' list_item.uuid %}">
+							{% trans 'Newsletter homepage' %}
+						</a>
+					</li>
+					<li role="presentation">
+						<a href="{% url 'subscriber-management-list-sign-up-form' list_item.uuid %}">
+							{% trans 'Signup form' %}
+						</a>
+					</li>
+					<li role="presentation">
+						<a href="{% url 'subscriber-management-list-settings' list_item.uuid %}">
+							{% trans 'Settings' %}
+						</a>
+					</li>
+				</ul>
 			</div>
 		</div>
 
+		<br>
+
+		<div class='row'>
+
+			<div class='col-lg-6 col-lg-offset-3'>
+
+				<form method="post" enctype="multipart/form-data">
+					{% csrf_token %}
+					<div class="form-group">
+						<label for="{{form_object.image.auto_id}}">Newsletter logo:</label>
+						{% if list_item.image %}
+						<img style='border-radius: 5px; display:block'
+								 src='/{{ list_item.image.url }}'
+								 height=100 width=100 />
+						{% endif %}
+						{{form_object.image}}
+					</div>
+					<div class="form-group">
+						<label for="{{form_object.title.auto_id}}">Newsletter title:</label>
+						<input type="text" class="form-control" name="{{form_object.title.name}}" id="{{form_object.title.auto_id}}" placeholder="" value="{{form_object.title.value}}">
+						{% for error in form_object.title.errors %}
+							<span class="error-block text-danger">{{error}}</span>
+						{% endfor %}
+						<small class='help-block'>
+							This title is visible to your potential subscribers on your newsletter homepage.
+						</small>
+					</div>
+					<div class="form-group">
+						<label for="{{form_object.description.auto_id}}">Newsletter description:</label>
+<!-- 							<small class='pull-right text-muted' style='margin-top: 5px'> -->
+<!-- 								Markdown syntax supported -->
+<!-- 							</small> -->
+						<textarea class="form-control"
+							data-autoresize
+							name="{{form_object.description.name}}"
+							maxlength="{{form_object.description.field.max_length}}"
+							placeholder="In 2-3 sentences, what is your newsletter about?"
+							id="{{form_object.description.auto_id}}" rows=4>{{form_object.description.value}}</textarea>
+						{% for error in form_object.description.errors %}
+							<span class="error-block text-danger">{{error}}</span>
+						{% endfor %}
+						<small class='help-block'>
+							This is what your potential subscribers will read to decide to
+							subscribers or not. Make it succinct and attractive! (max 400 characters)
+						</small>
+					</div>
+					<hr>
+					<div class="form-group">
+						<label for="{{form_object.success_template.auto_id}}">Newsletter subscription confirmed message:</label>
+						<textarea class="form-control"
+							data-autoresize
+							name="{{form_object.success_template.name}}"
+							placeholder="Why not say welcome or thanks? :)"
+							maxlength="{{form_object.success.field.max_length}}"
+							id="{{form_object.success_template.auto_id}}" rows=2>{{form_object.success_template.value}}</textarea>
+						{% for error in form_object.success_template.errors %}
+							<span class="error-block text-danger">{{error}}</span>
+						{% endfor %}
+						<small class='help-block'>
+							This is what your new subscribers will see right after they subscribed.
+						</small>
+					</div>
+					<hr />
+					<button type="submit" class="btn btn-success">{% trans 'Save changes' %}</button>
+				</form>
+			</div>
+		</div>
 	</div>
 
 {% include 'import.html' %}
+
 {% endblock %}

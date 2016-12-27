@@ -314,29 +314,28 @@ class SubscriberListSubscribersView(LoginRequiredMixin, ListView):
 
     model = Subscriber
     template_name = 'subscriber_list.html'
+    context_object_name = 'subscribers'
 
     def get_queryset(self):
         list_uuid = self.kwargs['uuid']
-        return Subscriber.objects.filter(list__uuid=list_uuid,validated=True).order_by('email')
+        return Subscriber.objects.filter(list__uuid=list_uuid,validated=True).order_by('-created')
 
     def get_context_data(self, **kwargs):
         context = super(SubscriberListSubscribersView, self).get_context_data(**kwargs)
         list_uuid = self.kwargs['uuid']
-        list_item = List.objects.get(uuid=list_uuid)
-        context['list_item'] = list_item
-        context['list'] = list_item
-        context['total_count'] = context['object_list'].count()
-        paginator = Paginator(context['object_list'], 100)
-
+        context['list_item'] = List.objects.get(uuid=list_uuid,
+                                                user=self.request.user)
+        context['total_count'] = context['subscribers'].count()
+        paginator = Paginator(context['subscribers'], 50)
         page = self.request.GET.get('page')
         try:
-            context['object_list'] = paginator.page(page)
+            context['subscribers'] = paginator.page(page)
         except PageNotAnInteger:
             # If page is not an integer, deliver first page.
-            context['object_list'] = paginator.page(1)
+            context['subscribers'] = paginator.page(1)
         except EmptyPage:
             # If page is out of range (e.g. 9999), deliver last page of results.
-            context['object_list'] = paginator.page(paginator.num_pages)
+            context['subscribers'] = paginator.page(paginator.num_pages)
         context['paginator'] = paginator
         context['page_nums'] = range(1, paginator.num_pages+1)
 

@@ -1,21 +1,42 @@
 {% load i18n %}
 {% load humanize %}
 
-<legend>
-  {{ list_item.name }} subscribers
-    <div class="btn-group pull-right">
-        <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Import subscribers <span class="caret"></span>
-        </button>
-        <ul class="dropdown-menu">
-            <li><a href="#" data-toggle="modal" data-target="#subscriber_import_mailchimp">{% trans 'From Mailchimp CSV' %}</a></li>
-            <li><a href="#" data-toggle="modal" data-target="#subscriber_import_text">{% trans 'Copy/paste email addresses' %}</a></li>
-        </ul>
-    </div>
-</legend>
+
+<div class='row' style='margin-top:1rem'>
+	<div class='col-lg-3'>
+		<span class="lead">{{list_item.count_validated_subscribers|intcomma}}</span>
+		{% trans 'subscriber' %}{{list_item.count_validated_subscribers|pluralize}}
+	</div>
+	<div class='col-lg-3'>
+		<span class="lead">45.5%</span>
+		{% trans 'opens' %}
+	</div>
+	<div class='col-lg-3'>
+		<span class="lead">14.8%</span>
+		{% trans 'clicks' %}
+	</div>
+	<div class='col-lg-3'>
+		<span class="lead">0.28%</span>
+		{% trans 'unsubscribes' %}
+	</div>
+</div>
+
+<br>
+
 <p>
-  <span class="lead">{{list_item.count_validated_subscribers|intcomma}}</span> {% trans 'subscriber' %}{{list_item.count_validated_subscribers|pluralize}}
-  <br>
-  <br>
-  Homepage url: <a target="_blank" href="{% url 'subscriber-management-join' list_item.uuid %}">{{BASE_URL}}{% url 'subscriber-management-join' list_item.uuid %}</a>
+	<strong>Newsletter homepage address:</strong>
+	<br />
+	<a target="_blank" href="{% url 'subscriber-management-join' list_item.uuid %}">{{BASE_URL}}{% url 'subscriber-management-join' list_item.uuid %}</a>
+	<br />
+	<small class='text-muted'>
+		Share your newsletter homepage on
+		<a target='_blank'
+			 href='https://twitter.com/intent/tweet?text=Subscribe to {{list_item.title}}&url={{BASE_URL}}{% url 'subscriber-management-join' list_item.uuid %}'>Twitter</a>
+		and
+		<a target='_blank'
+			 href='https://www.facebook.com/sharer/sharer.php?u={{BASE_URL}}{% url 'subscriber-management-join' list_item.uuid %}&t={{list_item.title}}'>Facebook</a>
+		to acquire new subscribers.</small>
 </p>
+
+<br />
+
