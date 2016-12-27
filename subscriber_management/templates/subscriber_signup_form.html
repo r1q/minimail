@@ -4,7 +4,7 @@
 
 
 {% block title %}
-  {{list_item.title}}
+  {{list_item.name}}
 {% endblock %}
 
 
@@ -20,7 +20,7 @@
           <a href='{% url "subscriber-management-list" %}'>
           {% trans "Subscriber Lists" %}</a>
           &rsaquo;
-          {{list_item.title}}
+          {{list_item.name}}
         </h3>
       </div>
     </div>
