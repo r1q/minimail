@@ -49,6 +49,22 @@
 							{% trans 'Settings' %}
 						</a>
 					</li>
+					<li role="presentation" class='pull-right'>
+						<div class="btn-group" style='margin-top:10px'>
+							<button type="button" class="btn btn-default dropdown-toggle btn-xs" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								{% trans 'Import subscribers' %} <span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu">
+								<li>
+									<a href="#" data-target="#subscriber_import_mailchimp" data-toggle="modal">Import from Mailchimp CSV</a>
+								</li>
+								<li>
+									<a href="#" data-target="#subscriber_import_text" data-toggle="modal">Copy/paste email addresses</a>
+								</li>
+							</ul>
+						</div>
+						</a>
+					</li>
 				</ul>
 			</div>
 		</div>
