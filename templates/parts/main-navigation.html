@@ -1,8 +1,14 @@
 {% load i18n %}
 
 <style>
+  header {
+		border-bottom: 2px solid #f5f5f5;
+		border-top: 2px solid #03A9F4;
+		background: #FFF;
+	}
 	.navbar-minimail {
-		margin-top: .5rem;
+		margin-top: 0;
+		margin-bottom: 0;
 		background: #FFF;
 		border-bottom: 0px solid #EAEAEA;
 		border-radius: 0;
@@ -44,9 +50,11 @@
 
     <!-- Collect the nav links, forms, and other content for toggling -->
     {% if user.is_authenticated %}
-      <a href="/campaigns/new" class="btn btn-default btn-sm navbar-btn pull-left" style='margin-right: .5rem;'>
-        {% trans "Compose email" %}
-      </a>
+			{% if user.has_verified_email %}
+				<a href="/campaigns/new" class="btn btn-default btn-sm navbar-btn pull-left" style='margin-right: .5rem;'>
+					{% trans "Compose email" %}
+				</a>
+			{% endif %}
       <ul class="nav navbar-nav">
         <li class='{% if 'campaign' in request.resolver_match.url_name|slice:":10" %}active{% endif %}'>
           <a href="/campaigns">{% trans "Emails" %}</a>
