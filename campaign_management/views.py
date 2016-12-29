@@ -67,9 +67,16 @@ class CampaignReview(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(CampaignReview, self).get_context_data(**kwargs)
+        # Check if sender email is verified
         context['is_from_email_verified'] = List.objects.filter(user=self.request.user,
                                                                 from_email_verified=True)\
                                                         .exists()
+        # Check if subject/sender email pair is the same as any last email
+        context['has_same_subject'] = Campaign.objects.filter(author=self.request.user,
+                                                              email_from_email=self.object.email_from_email,
+                                                              email_subject=self.object.email_subject)\
+                                                      .exclude(id=self.object.id)\
+                                                      .exists()
         return context
 
 

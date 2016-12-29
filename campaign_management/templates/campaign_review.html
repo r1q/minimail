@@ -96,13 +96,22 @@
 
 		{% else %}
 
+			{% if has_same_subject %}
+				<p class='alert alert-warning text-left'>
+					<strong>This email has the same subject as a previous email you sent.</strong>
+					<br />
+					Your email has a high risk of being flagged as spam.
+					<br /> Please consider <a href='{% url "campaign-update" campaign.id %}?focus=subject' tabindex='4'>changing it</a> to something new.
+				</p>
+			{% endif %}
+
 			<div class='row'>
-				<div class='col-lg-6'>
+				<div class='col-lg-4'>
 					{% if campaign.email_list.count_validated_subscribers and is_from_email_verified %}
 						<a href="{% url 'campaign-list' %}" class='btn btn-default' tabindex='7'>Save and send later</a>
 					{% endif %}
 				</div>
-				<div class='col-lg-6 text-right'>
+				<div class='col-lg-8 text-right'>
 					<a href='#' class='btn btn-danger' tabindex='9'
 						 data-toggle='modal'
 						 data-target='#campaign-confirm-send'>
