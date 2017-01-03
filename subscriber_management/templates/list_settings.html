@@ -60,7 +60,7 @@
 
         <form method="post" class="">
 					{% csrf_token %}
-					<h4>UTM Settings <small><a href='https://blog.bufferapp.com/utm-guide' target='_blank'>what is this?</a></small></h4>
+					<h4>UTM Settings <small><a href='https://blog.bufferapp.com/utm-guide#A_Quick-and-Simple_Overview_of_UTM_Codes' target='_blank'>what is this?</a></small></h4>
 							<div class="form-group">
 								<label for="{{form_object.utm_medium.auto_id}}" class="control-label">UTM medium</label>
 								<input id="{{form_object.utm_medium.auto_id}}" name="{{form_object.utm_medium.name}}" class='form-control' tabindex='0' value ="{{form_object.utm_medium.value | default_if_none:""}}"/>
