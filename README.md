@@ -1,6 +1,6 @@
 # Minimail
 
-A simple webapp to manage your email campaigns and subscribers. Using AWS SES for mail delivery.
+A simple webapp to manage your email campaigns and subscribers. SMTP server agnostic.
 
 ![Minimail - Email Marketing](https://cldup.com/HVunmsaGOZ.png)
 
@@ -40,6 +40,33 @@ A simple webapp to manage your email campaigns and subscribers. Using AWS SES fo
 * Twitter Bootstrap 3.3.7 (moving to version 4 once stable)
 
 For Python libraries in use, see `requirements.txt`.
+
+## Plug your SMTP server to Minimail
+
+Minimail can work with AWS SES, Mailgun, Postmark, Sendgrid or any other email sending service. The only requisite is to have them provide you with an SMTP server. Once with your SMTP server credentials in hand, here are the steps to make it work with Minimail:
+
+1. Install [Postfix](http://www.postfix.org/) locally on your server
+2. Configure Postfix as a relay to your SMTP server.
+
+**Example setting up Postfix as an SMTP relay with AWS SES:**
+
+
+```conf
+relayhost = [email-smtp.us-east-1.amazonaws.com]:587
+smtp_sasl_auth_enable = yes
+smtp_sasl_security_options = noanonymous
+smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd
+smtp_use_tls = yes
+smtp_tls_security_level = encrypt
+smtp_tls_note_starttls_offer = yes
+smtp_tls_CAfile = /etc/ssl/certs/ca-certificates.crt
+```
+
+Notes:
+* Here we are using `email-smtp.us-east-1.amazonaws.com` as the SMTP server URL, but yours might be different.
+* Don't use the port 25 to connect to your SMTP from an AWS EC2 instance. There is a throttling in place on EC2 instance on port 25.
+* For a complete guide, see [AWS official documentation on [Integrating Amazon SES with Postfix](http://docs.aws.amazon.com/ses/latest/DeveloperGuide/postfix.html)
+* The advantage of using SMTP over an HTTP based API is delegating the sending queue to mature and stable software (Postfix in this case) to handle bounces due to sending quota and ratio. SMTP has more round trips per email to send than an HTTP API, but the first SMTP server being on localhost this overhead is insignificant. Using SMTP also makes Minimail email backend agnostic as the SMTP protocol play the role of a [facade pattern](https://en.wikipedia.org/wiki/Facade_pattern).
 
 ## Setup dev env
 
