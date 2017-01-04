@@ -50,6 +50,7 @@ Minimail can work with AWS SES, Mailgun, Postmark, Sendgrid or any other email s
 
 **Example setting up Postfix as an SMTP relay with AWS SES:**
 
+The configuration file to change is (likely to be): `/etc/postfix/main.cf`
 
 ```conf
 relayhost = [email-smtp.us-east-1.amazonaws.com]:587
