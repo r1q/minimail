@@ -1,4 +1,4 @@
-amqp==2.1.1
+amqp==2.1.4
 argon2-cffi==16.3.0
 astroid==1.4.9
 beautifulsoup4==4.5.1
