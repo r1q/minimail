@@ -16,7 +16,7 @@ isort==4.2.5
 kombu==4.0.2
 lazy-object-proxy==1.2.2
 lxml==3.6.4
-maxminddb==1.2.1
+maxminddb==1.2.2
 maxminddb-geolite2==2015.708
 mccabe==0.5.2
 numpy==1.11.3
