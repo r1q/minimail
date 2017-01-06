@@ -21,7 +21,7 @@ maxminddb-geolite2==2015.708
 mccabe==0.5.3
 numpy==1.11.3
 oauthlib==2.0.1
-pandas==0.19.0
+pandas==0.19.2
 Pillow==4.0.0
 premailer==3.0.1
 psycopg2==2.6.2
