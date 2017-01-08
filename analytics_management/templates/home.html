@@ -17,8 +17,20 @@
 
     <div class='row'>
       <div class='col-lg-10 col-lg-offset-1 col-sm-12'>
-        <h3>
-          {% trans "All Lists Analytics" %}
+        <h3 >
+          {% trans "All Events Analytics" %}
+          <div class="dropdown pull-right">
+              <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                  {% trans "All" %}
+                  <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                  <li><a href="{% url 'analytics-management-home' %}?filter=">All</a></li>
+                  {% for list_item in list_items_all %}
+                      <li><a href="{% url 'analytics-management-home' %}?filter={{list_item.uuid}}">{{list_item.name}}</a></li>
+                  {% endfor %}
+              </ul>
+          </div>
         </h3>
       </div>
     </div>
@@ -67,7 +79,7 @@
 						<ul class="list-inline">
 							{% if campaign_list.has_previous %}
 							<li>
-								<a class='btn btn-sm btn-default'aria-label="Previous" href="{% url 'analytics-management-home' %}?page={{campaign_list.previous_page_number}}">
+								<a class='btn btn-sm btn-default'aria-label="Previous" href="{% url 'analytics-management-home' %}?filter={{filter_name}}&page={{campaign_list.previous_page_number}}">
 									<span aria-hidden="true">&lsaquo; {% trans 'Prev' %}</span>
 								</a>
 							</li>
@@ -82,7 +94,7 @@
 							</li>
 							{% if campaign_list.has_next %}
 							<li>
-								<a class='btn btn-sm btn-default' aria-label="Next" href="{% url 'analytics-management-home' %}?page={{campaign_list.next_page_number}}">
+								<a class='btn btn-sm btn-default' aria-label="Next" href="{% url 'analytics-management-home' %}?filter={{filter_name}}&page={{campaign_list.next_page_number}}">
 									<span aria-hidden="true" >{% trans 'Next' %} &rsaquo;</span>
 								</a>
 							</li>

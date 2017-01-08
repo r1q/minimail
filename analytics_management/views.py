@@ -27,13 +27,22 @@ ZERO_IF_NONE = lambda x: 0 if x == None else x
 class HomeView(LoginRequiredMixin, View):
 
     def get(sefl, request):
+        filter_name = request.GET.get('filter', '')
+        filter_value = _('All')
+        list_items_all = List.objects.filter(user=request.user).all()
         subscribers_count = 0
-        list_count = List.objects.filter(user=request.user).count()
+        list_items = []
+        if filter_name == '':
+            list_items = List.objects.filter(user=request.user)
+        else:
+            list_items = List.objects.filter(user=request.user, uuid=filter_name)
+            filter_value
+        list_count = list_items.count()
         global_open_unique = 0
         global_open_total = 0
         global_click_unique = 0
         global_click_total = 0
-        for list_item in List.objects.filter(user=request.user).all():
+        for list_item in list_items:
             subscribers_count += Subscriber.objects.filter(list__uuid=list_item.uuid).count()
             tmp_open_rate = OpenRate.objects.filter(list=list_item).aggregate(
                 unique_count=Coalesce(Sum('unique_count'),0),
@@ -51,7 +60,12 @@ class HomeView(LoginRequiredMixin, View):
             global_click_percent = int(global_click_unique/subscribers_count)
 
 
-        campaign_list = Campaign.objects.filter(email_list__user=request.user, is_sent=True).order_by('-sent')
+        campaign_list = []
+        if filter_name == '':
+            campaign_list = Campaign.objects.filter(email_list__user=request.user, is_sent=True).order_by('-sent')
+        else:
+            campaign_list = Campaign.objects.filter(email_list__user=request.user, email_list__uuid=filter_name, is_sent=True).order_by('-sent')
+
         campaign_list_count = campaign_list.count()
 
         paginator = Paginator(campaign_list, 10)

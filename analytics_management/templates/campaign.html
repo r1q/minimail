@@ -19,7 +19,7 @@
               <div class='col-lg-6 col-sm-6'>
                  <br />
                 <h3>
-                  {% trans "Analytics" %} - {{campaign.email_list.name}} - {{campaign.email_subject}}
+                  <a href="{% url 'analytics-management-home' %}">{% trans "All Events Analytics" %}</a> - {{campaign.email_list.name}} - {{campaign.email_subject}}
                 </h3>
               </div>
             </div>
