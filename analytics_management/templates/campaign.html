@@ -30,8 +30,9 @@
             <p>
                 <span class="lead">{{ses_delivery_object.total_count|default:0}}</span>
                 delivered ->
-                {{ses_bounce_object.hard_count|default:0}} hard bounce,
-                {{ses_bounce_object.soft_count|default:0}} soft bounce,
+                {{ses_bounce_object.hard_count|default:0}} hard bounces,
+                {{ses_bounce_object.soft_count|default:0}} soft bounces,
+                {{ses_complaint_object.total_count|default:0}} complaints,
                 {{campaign.unsubscribe_count|default:0}} unsubscribes
             </p>
             <p>

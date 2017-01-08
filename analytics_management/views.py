@@ -102,6 +102,7 @@ class CampaignView(LoginRequiredMixin, View):
         ses_delivery_object = SesDeliveryStats.objects.filter(list=campaign.email_list, campaign=campaign).first()
         ses_bounce_object = SesBounceStats.objects.filter(list=campaign.email_list, campaign=campaign).first()
         ses_complaint_object = SesComplaintStats.objects.filter(list=campaign.email_list, campaign=campaign).first()
+        ses_complaint_object = SesComplaintStats.objects.filter(list=campaign.email_list, campaign=campaign).first()
         time_delta = 0
         if ses_delivery_object:
             time_delta = ses_delivery_object.last.utcnow().timestamp()
