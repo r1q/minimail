@@ -21,104 +21,33 @@
       </div>
     </div>
     <hr />
-    <canvas id="myChart" width="4" height="2"></canvas>
-    <h4>{% trans "Open rate" %}:</h4>
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th></th>
-                <th>{% trans "unique" %}</th>
-                <th>{% trans "total" %}</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>{% trans "Open statistics" %}</td>
-                <td>{{open_rate_object.unique_count}}</td>
-                <td>{{open_rate_object.total_count}}</td>
-            </tr>
-        </tbody>
-    </table>
-    <h4>{% trans "Click rate" %}:</h4>
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>URI</th>
-                <th>{% trans "unique" %}</th>
-                <th>{% trans "total" %}</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in click_rate_object %}
-            <tr>
-                <td>{{item.uri|decodeURI}}</td>
-                <td>{{item.unique_count}}</td>
-                <td>{{item.total_count}}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    <h4>{% trans "SES rate" %}:</h4>
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th></th>
-                <th>{% trans "Delivery" %}</th>
-                <th>{% trans "Hard Bounce" %}</th>
-                <th>{% trans "Soft Bounce" %}</th>
-                <th>{% trans "Complaint" %}</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>{% trans "SES statistics" %}</td>
-                <td>{{ ses_delivery_object.total_count }}</td>
-                <td>{{ ses_bounce_object.hard_count }}</td>
-                <td>{{ ses_bounce_object.soft_count }}</td>
-                <td>{{ ses_complaint_object.total_count }}</td>
-            </tr>
-        </tbody>
-    </table>
+    <p>
+        <span class="lead">{{campaign.recipient_count|default:0}}</span> sent in {{time_delta}} minutes.
+    </p>
+    <p>
+        <span class="lead">{{ses_delivery_object.total_count|default:0}}</span>
+        delivered ->
+        <span class="lead">{{ses_bounce_object.hard_count|default:0}}</span> hard bounce,
+        <span class="lead">{{ses_bounce_object.soft_count|default:0}}</span> soft bounce,
+        <span class="lead">{{campaign.unsubscribe_count|default:0}}</span> unsubscribes
+    </p>
+    <p>
+        <span class="lead">{{open_rate_object.unique_count|default:0}}</span> Unique opens ({{open_rate_object.total_count|default:0}} total opens)
+    </p>
+    <p>
+        <span class="lead">{{click_stats_campain.unique_count|default:0}}</span> Unique clicks ({{click_stats_campain.total_count|default:0}} total clicks)
+    </p>
+    {% if click_stats_campain.unique_count > 0 %}
+    <div class="row">
+        <div class="col-lg-6 col-lg-offset-1">Top 10 most clicked links <span class="pull-right">({{click_stats_top.unique_count|default:0}} unique clicks, {{click_stats_top.total_count|default:0}} total clicks)</span></div>
+        {% for top_link in top_links %}
+            <div class="col-lg-6 col-lg-offset-1">{{top_link|decodeURI}} <span class="pull-right">({{top_link.unique_count|default:0}} unique clicks, {{top_link.total_count|default:0}} total clicks)</span></div>
+        {% endfor %}
+    </div>
+    {% endif %}
   </div>
 {% endblock %}
 
 
 {% block script %}
-<script src='{% static "js/vendor/chart.min.js" %}'></script>
-<script>
-    $.get(
-        "{% url 'analytics-management-api-open-date-by-merger' campaign.email_list.uuid campaign.uuid 'hour' %}",
-        "",
-        function(data) {
-
-            var labels = []
-            var dataUnique = []
-            for (var i = 0; i < data.length; i++) {
-                labels.push(data[i].date)
-                dataUnique.push(data[i].unique_count)
-            }
-            var ctx = document.getElementById("myChart");
-            var myChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Unique open',
-                        data: dataUnique,
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    scales: {
-                        yAxes: [{
-                            ticks: {
-                                beginAtZero:true
-                            }
-                        }]
-                    }
-                }
-            });
-        }
-  )
-</script>
 {% endblock %}

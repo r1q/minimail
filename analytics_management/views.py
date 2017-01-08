@@ -49,6 +49,22 @@ class CampaignView(LoginRequiredMixin, View):
         ses_delivery_object = SesDeliveryStats.objects.filter(list=campaign.email_list, campaign=campaign).first()
         ses_bounce_object = SesBounceStats.objects.filter(list=campaign.email_list, campaign=campaign).first()
         ses_complaint_object = SesComplaintStats.objects.filter(list=campaign.email_list, campaign=campaign).first()
+        time_delta = 0
+        if ses_delivery_object:
+            time_delta = ses_delivery_object.last.utcnow().timestamp()
+            time_delta -= ses_delivery_object.first.utcnow().timestamp()
+            time_delta /= int(timedelta/60)
+        click_stats_campaign = ClickRate.objects.filter(list=campaign.email_list, campaign=campaign).aggregate(
+            total_count=Sum('total_count'),
+            unique_count=Sum('unique_count'),
+        )
+        click_stats_top = dict()
+        click_stats_top['total_count'] = 0
+        click_stats_top['unique_count'] = 0
+        top_links = ClickRate.objects.filter(list=campaign.email_list, campaign=campaign).order_by('-unique_count')[:10]
+        for top_link in top_links:
+            click_stats_top['total_count'] += top_link.total_count
+            click_stats_top['unique_count'] += top_link.unique_count
         return render(request, "campaign.html", locals())
 
 
