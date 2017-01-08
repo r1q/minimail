@@ -16,7 +16,7 @@
     <div class='row'>
         <div class='col-lg-10 col-lg-offset-1 col-sm-12'>
             <div class='row'>
-              <div class='col-lg-6 col-sm-6'>
+              <div class='col-lg-12 col-sm-6'>
                  <br />
                 <h3>
                   <a href="{% url 'analytics-management-home' %}">{% trans "All Events Analytics" %}</a> - {{campaign.email_list.name}} - {{campaign.email_subject}}
@@ -42,9 +42,9 @@
             </p>
             {% if click_stats_campaign.unique_count > 0 %}
             <div class="row">
-                <div class="col-lg-6 col-lg-offset-1">Top 10 most clicked links <span class="pull-right">({{click_stats_top.unique_count|default:0}} unique clicks, {{click_stats_top.total_count|default:0}} total clicks)</span></div>
+                <div class="col-lg-10 col-lg-offset-1">Top 10 most clicked links <span class="pull-right">({{click_stats_top.unique_count|default:0}} unique clicks, {{click_stats_top.total_count|default:0}} total clicks)</span></div>
                 {% for top_link in top_links %}
-                    <div class="col-lg-6 col-lg-offset-1">{{top_link.uri|decodeURI}} <span class="pull-right">({{top_link.unique_count|default:0}} unique clicks, {{top_link.total_count|default:0}} total clicks)</span></div>
+                    <div class="col-lg-10 col-lg-offset-1">{{top_link.uri|decodeURI}} <span class="pull-right">({{top_link.unique_count|default:0}} unique clicks, {{top_link.total_count|default:0}} total clicks)</span></div>
                 {% endfor %}
             </div>
             {% else %}
