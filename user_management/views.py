@@ -30,9 +30,11 @@ def homepage(request):
     if request.user and request.user.is_authenticated():
         create_list_form = ListForm()
         if request.user.has_a_list:
-            email_list = List.objects.filter(user=request.user,
-                                             from_email_verified=False)\
-                                     .latest('created')
+            try:
+                email_list = List.objects.filter(user=request.user)\
+                                         .latest('created')
+            except Exception as ex:
+                print(ex)
         if request.GET.get('skip-step-2'):
             request.user.has_passed_subscribers_import_step = True
             request.user.save()
