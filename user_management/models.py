@@ -50,6 +50,9 @@ class MyUser(AbstractBaseUser):
     is_admin = models.BooleanField(default=False)
 
     has_a_list = models.BooleanField(default=False)
+    has_a_verified_email = models.BooleanField(default=False)
+    has_a_verified_dns_settings = models.BooleanField(default=False)
+    has_passed_subscribers_import_step = models.BooleanField(default=False)
 
     objects = MyUserManager()
 
