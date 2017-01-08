@@ -10,160 +10,165 @@
       <br />
       <br />
 
-			{% if user and not user.has_a_verified_email or not user.has_a_verified_dns_settings %}
+			{% if user and user.is_authenticated %}
 
-				{% if user and not user.has_a_list %}
-					<p class='lead'> 😀 Welcome to Minimail! <span class='text-muted'>&mdash; Step 1/3 </span></p>
-					<h3>Get started by creating your first list</h3>
-					<ul style='margin: 2rem 0; padding-left: 2rem;'>
-						<li>This list is where you’ll keep your subscribers’ information.</li>
-						<li>You’ll always be able to change any of these information later.</li>
-					</ul>
-					<form method="post" action='{% url "subscriber-management-create" %}'>
-						{% csrf_token %}
-						<input type='hidden' name='success_url' value='/' />
-						<div class="form-group">
-							<label for="{{create_list_form.name.name.auto_id}}">List name:</label>
-							<input id="{{create_list_form.name.name.auto_id}}"
-										 name="{{create_list_form.name.name}}"
-										 type="text"
-										 class='form-control'
-										 required
-										 autofocus
-										 tabindex='1' />
-							<small class='text-danger'><strong>
-								{% for error in create_list_form.name.errors %}
-									{{ error }}
-								{% endfor %}
-							</strong></small>
-							<small class='help-block'>This name is not visible to your
-								subscribers. It’s only for your own usage.</small>
-						</div>
-						<div class="form-group">
-							<label for="{{create_list_form.from_email.name.auto_id}}">Sender email address:</label>
-							<input id="{{create_list_form.from_email.name.auto_id}}"
-										 name="{{create_list_form.from_email.name}}"
-										 type="email"
-										 required
-										 class='form-control'
-										 tabindex='2' />
-							<small class='text-danger'><strong>
-								{% for error in create_list_form.from_email.errors %}
-									{{ error }}
-								{% endfor %}
-							</strong></small>
-							<small class='help-block'>
-								This is the email address your subscribers will see when they
-								receive your emails.
-							</small>
-						</div>
-						<hr />
-						<h4>Newsletter Homepage</h4>
-						<div class="form-group">
-							<label for="{{create_list_form.title.name.auto_id}}">Newsletter title:</label>
-							<input id="{{create_list_form.title.name.auto_id}}"
-										 name="{{create_list_form.title.name}}"
-										 type="text"
-										 required
-										 class='form-control'
-										 tabindex='3' />
-							<small class='text-danger'><strong>
-								{% for error in create_list_form.title.errors %}
-									{{ error }}
-								{% endfor %}
-							</strong></small>
-							<small class='help-block'>This title is visible to your potential subscribers on
-							your newsletter homepage.</small>
-						</div>
-						<div class="form-group">
-							<label for="{{create_list_form.description.name.auto_id}}">Newsletter description:</label>
-							<textarea id="{{create_list_form.description.name.auto_id}}"
-										 name="{{create_list_form.description.name}}"
-										 required
-										 rows='2'
-										 placeholder="In 2-3 sentences, what is your newsletter about?"
-										 class='form-control'
-						 tabindex='4'></textarea>
-							<small class='text-danger'><strong>
-								{% for error in create_list_form.description.errors %}
-									{{ error }}
-								{% endfor %}
-							</strong></small>
-							<small class='help-block'>
-								This is what your potential subscribers will read to decide to
-								subscribers or not. Make it succinct and attractive!
-							</small>
-						</div>
-						<hr />
+				{% if not user.has_a_verified_email or not user.has_a_verified_dns_settings %}
+
+					{% if not user.has_a_list %}
+						<p class='lead'> 😀 Welcome to Minimail! <span class='text-muted'>&mdash; Step 1/3 </span></p>
+						<h3>Get started by creating your first list</h3>
+						<ul style='margin: 2rem 0; padding-left: 2rem;'>
+							<li>This list is where you’ll keep your subscribers’ information.</li>
+							<li>You’ll always be able to change any of these information later.</li>
+						</ul>
+						<form method="post" action='{% url "subscriber-management-create" %}'>
+							{% csrf_token %}
+							<input type='hidden' name='success_url' value='/' />
+							<div class="form-group">
+								<label for="{{create_list_form.name.name.auto_id}}">List name:</label>
+								<input id="{{create_list_form.name.name.auto_id}}"
+											 name="{{create_list_form.name.name}}"
+											 type="text"
+											 class='form-control'
+											 required
+											 autofocus
+											 tabindex='1' />
+								<small class='text-danger'><strong>
+									{% for error in create_list_form.name.errors %}
+										{{ error }}
+									{% endfor %}
+								</strong></small>
+								<small class='help-block'>This name is not visible to your
+									subscribers. It’s only for your own usage.</small>
+							</div>
+							<div class="form-group">
+								<label for="{{create_list_form.from_email.name.auto_id}}">Sender email address:</label>
+								<input id="{{create_list_form.from_email.name.auto_id}}"
+											 name="{{create_list_form.from_email.name}}"
+											 type="email"
+											 required
+											 class='form-control'
+											 tabindex='2' />
+								<small class='text-danger'><strong>
+									{% for error in create_list_form.from_email.errors %}
+										{{ error }}
+									{% endfor %}
+								</strong></small>
+								<small class='help-block'>
+									This is the email address your subscribers will see when they
+									receive your emails.
+								</small>
+							</div>
+							<hr />
+							<h4>Newsletter Homepage</h4>
+							<div class="form-group">
+								<label for="{{create_list_form.title.name.auto_id}}">Newsletter title:</label>
+								<input id="{{create_list_form.title.name.auto_id}}"
+											 name="{{create_list_form.title.name}}"
+											 type="text"
+											 required
+											 class='form-control'
+											 tabindex='3' />
+								<small class='text-danger'><strong>
+									{% for error in create_list_form.title.errors %}
+										{{ error }}
+									{% endfor %}
+								</strong></small>
+								<small class='help-block'>This title is visible to your potential subscribers on
+								your newsletter homepage.</small>
+							</div>
+							<div class="form-group">
+								<label for="{{create_list_form.description.name.auto_id}}">Newsletter description:</label>
+								<textarea id="{{create_list_form.description.name.auto_id}}"
+											 name="{{create_list_form.description.name}}"
+											 required
+											data-autoresize
+											 rows='2'
+											 placeholder="In 2-3 sentences, what is your newsletter about?"
+											 class='form-control'
+							 tabindex='4'></textarea>
+								<small class='text-danger'><strong>
+									{% for error in create_list_form.description.errors %}
+										{{ error }}
+									{% endfor %}
+								</strong></small>
+								<small class='help-block'>
+									This is what your potential subscribers will read to decide to
+									subscribers or not. Make it succinct and attractive!
+								</small>
+							</div>
+							<hr />
+							<div class='text-center'>
+								<button class="btn btn-success" tabindex='4'>{% trans 'Create my first list' %} &raquo;</button>
+							</div>
+						</form>
+
+					{% elif user.has_a_list and not user.has_passed_subscribers_import_step %}
+						<p class='lead'>
+							✅  Good job, list created! <span class='text-muted'>&mdash; Step 2/3 </span>
+						</p>
+						<p class='alert alert-info'>
+						Your sender email address <strong>{{email_list.from_email}}</strong> is on the process of being verified.
+							<br />
+							We’ll send you an activation link to this email address.
+						</p>
+						<h3>Import your existing MailChimp subscribers</h3>
+						<form method='post' action="{% url 'subscriber-management-list-import-mailchimp' email_list.uuid %}" enctype="multipart/form-data">
+							{% csrf_token %}
+							<input type='hidden' name='success_url' value='/' />
+							<div class="form-group">
+								<label for="file_import" class="control-label">{% trans 'Select your MailChimp CSV file' %}:</label>
+								<input id="file_import" name="csv_file" type="file" tabindex='1' style='cursor: pointer; width: 100%; padding: 2rem 2rem; border-radius: 3px; font-weight: 500;'/>
+								<small class='help-block'>See <a href='https://www.quora.com/Can-you-export-your-subscribers-from-MailChimp/answer/Lorenzo-Orlando-Caum' tabindex='-1' target='_blank'>here</a> to see how to export your subscriber list from Mailchimp.</small>
+							</div>
+							<br />
+							<hr />
+							<div class='text-right'>
+								<a class="btn btn-default" tabindex='3' href='/?skip-step-2=1'>{% trans 'Skip this step' %}</a>
+								&nbsp;
+								<button type="submit" class="btn btn-success" tabindex=2><strong>{% trans 'Import Subscribers' %} &raquo;</strong></button>
+							</div>
+						</form>
+
+					{% elif user.has_a_list and user.has_passed_subscribers_import_step %}
+						<p class='lead'>
+							🎉 Congrats! You’re all set <span class='text-muted'>&mdash; Step 3/3 </span>
+						</p>
+						<h3>Share your newsletter homepage</h3>
+						<strong>Newletter homepage URL:</strong>
+						<a href='{{BASE_URL}}{% url 'subscriber-management-join' email_list.uuid %}' target='_blank'>
+							{{BASE_URL}}{% url 'subscriber-management-join' email_list.uuid %}
+						</a>
+						<br />
+						<br />
 						<div class='text-center'>
-							<button class="btn btn-success" tabindex='4'>{% trans 'Create my first list' %} &raquo;</button>
+							<a target='_blank' class='btn' style='background: #1DA1F2; color: #FFF'
+								 href='https://twitter.com/intent/tweet?text=Subscribe to {{email_list.title}}&url={{BASE_URL}}{% url 'subscriber-management-join' email_list.uuid %}'>
+								Share on Twitter</a>
+							&nbsp; &nbsp; &nbsp;
+							<a target='_blank' class='btn' style='background:#4267b2; color: #FFF'
+								 href='https://www.facebook.com/sharer/sharer.php?u={{BASE_URL}}{% url 'subscriber-management-join' email_list.uuid %}&t={{email_list.title}}'>
+								Share on Facebook</a>
 						</div>
-					</form>
+						<br/>
+						<br/>
 
-				{% elif user and user.has_a_list and not user.has_passed_subscribers_import_step %}
-					<p class='lead'>
-						✅  Good job, list created! <span class='text-muted'>&mdash; Step 2/3 </span>
-					</p>
-					<p class='alert alert-info'>
-					Your sender email address <strong>{{email_list.from_email}}</strong> is on the process of being verified.
-						<br />
-						We’ll send you an activation link to this email address.
-					</p>
-					<h3>Import your existing MailChimp subscribers</h3>
-					<form method='post' action="{% url 'subscriber-management-list-import-mailchimp' email_list.uuid %}" enctype="multipart/form-data">
-						{% csrf_token %}
-						<input type='hidden' name='success_url' value='/' />
-						<div class="form-group">
-							<label for="file_import" class="control-label">{% trans 'Select your MailChimp CSV file' %}:</label>
-							<input id="file_import" name="csv_file" type="file" tabindex='1' style='background: #52bad5; cursor: pointer; width: 100%; padding: 2rem 2rem; border-radius: 3px; color: #fff; font-weight: 500;'/>
-							<small class='help-block'>See <a href='https://www.quora.com/Can-you-export-your-subscribers-from-MailChimp/answer/Lorenzo-Orlando-Caum' tabindex='-1' target='_blank'>here</a> to see how to export your subscriber list from Mailchimp.</small>
+						<div class='alert alert-warning'>
+							<strong>What’s next?</strong>
+							<br />
+							Minimail will help you setup your sender email address and domain:
+							<ol class='list-unstyled'>
+								<li>1. We’ll send an activation link to <code style='padding: 0; color: currentColor; background-color: inherit;'>{{email_list.from_email}}</code></li>
+								<li>2. We’ll send you the DNS settings for your domain at <code style='padding: 0; color: currentColor; background-color: inherit;'>{{user.email}}</code></li>
+							</ol>
 						</div>
-						<br />
-						<hr />
-						<div class='text-right'>
-							<a class="btn btn-default" tabindex='3' href='/?skip-step-2=1'>{% trans 'Skip this step' %}</a>
-							&nbsp;
-							<button type="submit" class="btn btn-success" tabindex=2><strong>{% trans 'Import Subscribers' %} &raquo;</strong></button>
-						</div>
-					</form>
 
-				{% elif user and user.has_a_list and user.has_passed_subscribers_import_step %}
-					<p class='lead'>
-						🎉 Congrats! You’re all set <span class='text-muted'>&mdash; Step 3/3 </span>
-					</p>
-					<h3>Share your newsletter homepage</h3>
-					<strong>Newletter homepage URL:</strong>
-					<a href='{{BASE_URL}}{% url 'subscriber-management-join' email_list.uuid %}' target='_blank'>
-						{{BASE_URL}}{% url 'subscriber-management-join' email_list.uuid %}
-					</a>
-					<br />
-					<br />
-					<div class='text-center'>
-						<a target='_blank' class='btn' style='background: #1DA1F2; color: #FFF'
-							 href='https://twitter.com/intent/tweet?text=Subscribe to {{email_list.title}}&url={{BASE_URL}}{% url 'subscriber-management-join' email_list.uuid %}'>
-							Share on Twitter</a>
-						&nbsp; &nbsp; &nbsp;
-						<a target='_blank' class='btn' style='background:#4267b2; color: #FFF'
-							 href='https://www.facebook.com/sharer/sharer.php?u={{BASE_URL}}{% url 'subscriber-management-join' email_list.uuid %}&t={{email_list.title}}'>
-							Share on Facebook</a>
-					</div>
-					<br/>
-					<br/>
+					{% endif %}
 
-					<div class='alert alert-warning'>
-						<strong>What’s next?</strong>
-						<br />
-						Minimail will help you setup your sender email address and domain:
-						<ol class='list-unstyled'>
-							<li>1. We’ll send an activation link to <code style='padding: 0; color: currentColor; background-color: inherit;'>{{email_list.from_email}}</code></li>
-							<li>2. We’ll send you the DNS settings for your domain at <code style='padding: 0; color: currentColor; background-color: inherit;'>{{user.email}}</code></li>
-						</ol>
-					</div>
-
+				{% else %}
+					<p>Display useful stats here.</p>
 				{% endif %}
 
-			{% else %}
-				<p>Display useful stats here.</p>
 			{% endif %}
 
     </div>
