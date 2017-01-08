@@ -18,6 +18,8 @@ import sys, os
 from datetime import timedelta
 import dateutil
 from django.db.models import F, FloatField, Sum
+from django.db.models.functions import Coalesce
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 ALLOWED_MERGE = ["hour", "day"]
 ZERO_IF_NONE = lambda x: 0 if x == None else x
@@ -25,7 +27,44 @@ ZERO_IF_NONE = lambda x: 0 if x == None else x
 class HomeView(LoginRequiredMixin, View):
 
     def get(sefl, request):
-        object_list = List.objects.filter(user=request.user)
+        subscribers_count = 0
+        list_count = List.objects.filter(user=request.user).count()
+        global_open_unique = 0
+        global_open_total = 0
+        global_click_unique = 0
+        global_click_total = 0
+        for list_item in List.objects.filter(user=request.user).all():
+            subscribers_count += Subscriber.objects.filter(list__uuid=list_item.uuid).count()
+            tmp_open_rate = OpenRate.objects.filter(list=list_item).aggregate(
+                unique_count=Coalesce(Sum('unique_count'),0),
+            )
+            global_open_unique += tmp_open_rate['unique_count']
+            tmp_click_rate = ClickRate.objects.filter(list=list_item).aggregate(
+                unique_count=Coalesce(Sum('unique_count'),0),
+            )
+            global_click_unique += tmp_click_rate['unique_count']
+        global_open_percent = 0
+        if subscribers_count != 0:
+            global_open_percent = int(global_open_unique/subscribers_count)
+        global_click_percent = 0
+        if subscribers_count != 0:
+            global_click_percent = int(global_click_unique/subscribers_count)
+
+
+        campaign_list = Campaign.objects.filter(email_list__user=request.user, is_sent=True).order_by('-sent')
+        campaign_list_count = campaign_list.count()
+
+        paginator = Paginator(campaign_list, 10)
+        page = request.GET.get('page')
+        try:
+            campaign_list = paginator.page(page)
+        except PageNotAnInteger:
+            # If page is not an integer, deliver first page.
+            campaign_list = paginator.page(1)
+        except EmptyPage:
+            # If page is out of range (e.g. 9999), deliver last page of results.
+            campaign_list = paginator.page(paginator.num_pages)
+        page_nums = range(1, paginator.num_pages+1)
         return render(request, "home.html", locals())
 
 

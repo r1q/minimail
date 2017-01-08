@@ -26,15 +26,70 @@
     <br />
 
     <div class='row'>
+        <div class='col-lg-offset-1 col-lg-3 col-sm-12'>
+            <p>
+                <span class="lead">{{global_open_percent}}%</span>
+                <br />
+                average unique opens
+            </p>
+        </div>
+        <div class='col-lg-3 col-sm-12'>
+            <p>
+                <span class="lead">{{global_click_percent}}%</span>
+                <br />
+                average unique clicks
+            </p>
+        </div>
+        <div class='col-lg-offset-1 col-lg-11 col-sm-12'>
+            <p>
+                <span class="lead">{{subscribers_count}}</span>
+                <br />
+                subscribers over {{list_count}} lists
+            </p>
+        </div>
+    </div>
+
+
+    <br />
+
+    <div class='row'>
       <div class='col-lg-10 col-lg-offset-1 col-sm-12'>
-			{% for item in  object_list %}
+			{% for item in  campaign_list %}
 				<div class="list-group">
-					<a href="{% url 'analytics-management-list' item.uuid %}" class="list-group-item">
+					<a href="{% url 'analytics-management-campaign' item.email_list.uuid item.uuid %}" class="list-group-item">
 						<h4 class='list-group-item-heading'>
-							{{ item.name }}
+							{{ item.email_list.name }} - {{ item.email_subject }}
 						</h4>
 					</a>
 				</div>
+                {% if campaign_list.has_other_pages %}
+					<nav aria-label="Page navigation" class='text-center'>
+						<ul class="list-inline">
+							{% if campaign_list.has_previous %}
+							<li>
+								<a class='btn btn-sm btn-default'aria-label="Previous" href="{% url 'analytics-management-home' %}?page={{campaign_list.previous_page_number}}">
+									<span aria-hidden="true">&lsaquo; {% trans 'Prev' %}</span>
+								</a>
+							</li>
+							{% endif %}
+							<li>
+								<span>
+									<span>
+										{{campaign_list.start_index}}&thinsp;&ndash;&thinsp;{{campaign_list.end_index}}
+										<span class='text-muted'>of</span> {{ campaign_list.paginator.count|intcomma }}
+									</span>
+								</span>
+							</li>
+							{% if campaign_list.has_next %}
+							<li>
+								<a class='btn btn-sm btn-default' aria-label="Next" href="{% url 'analytics-management-home' %}?page={{campaign_list.next_page_number}}">
+									<span aria-hidden="true" >{% trans 'Next' %} &rsaquo;</span>
+								</a>
+							</li>
+							{% endif %}
+						</ul>
+					</nav>
+				{% endif %}
 			{% empty %}
 				<div class='alert alert-warning'>
 					No data yet.
