@@ -134,28 +134,28 @@
 						<p class='lead'>
 							🎉 Congrats! You’re all set <span class='text-muted'>&mdash; Step 3/3 </span>
 						</p>
-						<h3>Share your newsletter homepage</h3>
-						<strong>Newletter homepage URL:</strong>
+						<h3>Start getting new subscribers</h3>
+						<strong>Share your newletter homepage:</strong>
 						<a href='{{BASE_URL}}{% url 'subscriber-management-join' email_list.uuid %}' target='_blank'>
 							{{BASE_URL}}{% url 'subscriber-management-join' email_list.uuid %}
 						</a>
 						<br />
 						<br />
-						<div class='text-center'>
+						<div class=''>
 							<a target='_blank' class='btn' style='background: #1DA1F2; color: #FFF'
 								 href='https://twitter.com/intent/tweet?text=Subscribe to {{email_list.title}}&url={{BASE_URL}}{% url 'subscriber-management-join' email_list.uuid %}'>
 								Share on Twitter</a>
-							&nbsp; &nbsp; &nbsp;
+							&nbsp; 
 							<a target='_blank' class='btn' style='background:#4267b2; color: #FFF'
 								 href='https://www.facebook.com/sharer/sharer.php?u={{BASE_URL}}{% url 'subscriber-management-join' email_list.uuid %}&t={{email_list.title}}'>
 								Share on Facebook</a>
 						</div>
+
 						<br/>
-						<br/>
+						<hr/>
 
 						<div class='alert alert-warning'>
-							<strong>What’s next?</strong>
-							<br />
+							<h4>What’s next?</h4>
 							Minimail will help you setup your sender email address and domain:
 							<ol class='list-unstyled'>
 								<li>1. We’ll send an activation link to <code style='padding: 0; color: currentColor; background-color: inherit;'>{{email_list.from_email}}</code></li>
