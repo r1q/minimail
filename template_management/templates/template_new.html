@@ -94,7 +94,7 @@
 												name="{{form.html_template.name}}"
                         rows='20'
                         style='font-family: Menlo, monospace; font-size:13px; background: #f5f5f5;'
-                        class='form-control' >{{form.html_template.value}}</textarea>
+                        class='form-control'>{{form.html_template.value|default_if_none:""}}</textarea>
 							<small class='text-danger'><strong>
 								{% for error in form.html_template.errors %}
 									{{ error }}
@@ -155,8 +155,11 @@
   <style>
     .CodeMirror {
       border: 1px solid #EEE;
-      height: 100%;
+      min-height: 100%;
     }
+		.CodeMirror-gutters {
+			min-height: 100%;
+		}
     .CodeMirror-linenumbers {
       background: #DEDEDE;
     }
@@ -188,8 +191,5 @@
 			lineWrapping: true,
 			tabindex: '-1'
     });
-    {% if not form.instance.pk %}
-      html_editor.setValue('\n\n\n\n\n\n\n\n')
-    {% endif %}
   </script>
 {% endblock %}
