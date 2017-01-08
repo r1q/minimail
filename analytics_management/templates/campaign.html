@@ -38,9 +38,9 @@
                 <span class="lead">{{open_rate_object.unique_count|default:0}}</span> Unique opens ({{open_rate_object.total_count|default:0}} total opens)
             </p>
             <p>
-                <span class="lead">{{click_stats_campain.unique_count|default:0}}</span> Unique clicks ({{click_stats_campain.total_count|default:0}} total clicks)
+                <span class="lead">{{click_stats_campaign.unique_count|default:0}}</span> Unique clicks ({{click_stats_campaign.total_count|default:0}} total clicks)
             </p>
-            {% if click_stats_campain.unique_count > 0 %}
+            {% if click_stats_campaign.unique_count > 0 %}
             <div class="row">
                 <div class="col-lg-6 col-lg-offset-1">Top 10 most clicked links <span class="pull-right">({{click_stats_top.unique_count|default:0}} unique clicks, {{click_stats_top.total_count|default:0}} total clicks)</span></div>
                 {% for top_link in top_links %}
