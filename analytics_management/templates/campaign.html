@@ -25,7 +25,7 @@
             </div>
             <hr />
             <p>
-                <span class="lead">{{campaign.recipient_count|default:0}}</span> sent {%if ses_bounce_object %}in {{ses_bounce_object.first|timeuntil:ses_bounce_object.last}}{% endif %}
+                <span class="lead">{{campaign.recipient_count|default:0}}</span> sent {%if ses_bounce_object %}in {{time_delta}} minutes{% endif %}
             </p>
             <p>
                 <span class="lead">{{ses_delivery_object.total_count|default:0}}</span>
