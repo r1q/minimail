@@ -1,42 +1,46 @@
-{% extends "master.html" %}
+{% extends 'master.html' %}
+{% load staticfiles %}
 {% load i18n %}
 {% load humanize %}
 
 
 {% block title %}
-  Analytics
+  {% trans 'Analytics' %}
 {% endblock %}
 
 
 {% block content %}
 
+	<br />
+
   <div class='container'>
+
     <div class='row'>
-      <div class='col-lg-6 col-sm-6'>
+      <div class='col-lg-10 col-lg-offset-1 col-sm-12'>
         <h3>
-          {% trans "Analytics" %}
+          {% trans "All Lists Analytics" %}
         </h3>
       </div>
     </div>
 
-    <hr />
+    <br />
 
-    {% for item in  object_list %}
-      <div class="list-group">
-        <a href="{% url 'analytics-management-list' item.uuid %}" class="list-group-item">
-          <h4 class='list-group-item-heading'>
-            {{ item.name }}
-          </h4>
-        </a>
-      </div>
-    {% empty %}
-      <div class='alert alert-warning'>
-        No data yet.
-      </div>
-    {% endfor %}
-  </div>
-{% endblock %}
+    <div class='row'>
+      <div class='col-lg-10 col-lg-offset-1 col-sm-12'>
+			{% for item in  object_list %}
+				<div class="list-group">
+					<a href="{% url 'analytics-management-list' item.uuid %}" class="list-group-item">
+						<h4 class='list-group-item-heading'>
+							{{ item.name }}
+						</h4>
+					</a>
+				</div>
+			{% empty %}
+				<div class='alert alert-warning'>
+					No data yet.
+				</div>
+			{% endfor %}
+			</div>
+		</div>
 
-
-{% block script %}
 {% endblock %}
