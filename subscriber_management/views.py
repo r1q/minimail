@@ -97,7 +97,6 @@ class SubscriberListCreateView(LoginRequiredMixin, CreateView):
     model = List
     template_name = 'list_create.html'
     form_class = ListForm
-    success_url = "/subscribers/"
     success_message = _(" was successfully created")
 
     def form_valid(self, form):
@@ -111,6 +110,9 @@ class SubscriberListCreateView(LoginRequiredMixin, CreateView):
 
     def form_invalid(self, form):
         return super(SubscriberListCreateView, self).form_invalid(form)
+
+    def get_success_url(self):
+        return self.request.POST.get('success_url', '/subscribers')
 
 
 class SubscriberListSettingsView(LoginRequiredMixin, View):
@@ -261,8 +263,15 @@ class SubscriberListImportCSV(LoginRequiredMixin, View):
             # Get the count after inserting new subscribers
             saved_count = list_item.count_all_subscribers() - before_insert_count
             messages.success(request, str(saved_count) + self.SUCCESS_MESSAGE)
+            # Record this user has passed the subscribers import step (asked on
+            # very first onboarding)
+            request.user.has_passed_subscribers_import_step = True
+            request.user.save()
         finally:
-            return redirect('subscriber-management-list-subscribers', list_uuid)
+            if request.POST.get('success_url'):
+                return redirect(request.POST.get('success_url'))
+            else:
+                return redirect('subscriber-management-list-subscribers', list_uuid)
 
 
 class SubscriberListImportText(LoginRequiredMixin, View):

@@ -19,11 +19,11 @@ from django.contrib import admin
 
 
 urlpatterns = [
-    url(r'^$', TemplateView.as_view(template_name='index.html')),
     url(r'^admin/', admin.site.urls),
     url(r'^templates/', include('template_management.urls')),
     url(r'^subscribers/', include('subscriber_management.urls')),
     url(r'^campaigns/', include('campaign_management.urls')),
     url(r'^user/', include('user_management.urls')),
     url(r'^analytics/', include('analytics_management.urls')),
+    url(r'^', include('user_management.urls')),
 ]

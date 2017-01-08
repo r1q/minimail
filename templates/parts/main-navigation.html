@@ -55,7 +55,7 @@
 
     <!-- Collect the nav links, forms, and other content for toggling -->
     {% if user.is_authenticated %}
-			{% if user.has_a_list %}
+			{% if user.has_a_list and user.has_a_verified_email and user.has_a_verified_dns_settings %}
 				<a href="/campaigns/new" class="btn btn-default btn-sm navbar-btn pull-left" style='margin-right: .5rem;'>
 					{% trans "Compose email" %}
 				</a>

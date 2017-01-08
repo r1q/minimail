@@ -6,11 +6,14 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.views import View
-#from django.contrib.auth.models import User
-from user_management.forms import UserForm, RegisterForm, LoginForm, \
-    UpdatePasswordForm, ForgottenForm, RecoveryForm
-from user_management.models import MyUser
 from django.contrib.auth import authenticate, login
+
+from user_management.forms import UserForm, RegisterForm, LoginForm, \
+        UpdatePasswordForm, ForgottenForm, RecoveryForm
+from user_management.models import MyUser
+from subscriber_management.forms import ListForm
+from subscriber_management.models import List
+
 import uuid as UUID
 
 
@@ -22,6 +25,21 @@ Click this link to recover your account:
 — Sent with Minimail
 """)
 
+
+def homepage(request):
+    if request.user and request.user.is_authenticated():
+        create_list_form = ListForm()
+        if request.user.has_a_list:
+            email_list = List.objects.filter(user=request.user,
+                                             from_email_verified=False)\
+                                     .latest('created')
+        if request.GET.get('skip-step-2'):
+            request.user.has_passed_subscribers_import_step = True
+            request.user.save()
+            return redirect('/')
+    return render(request, "index.html", locals())
+
+
 def _send_recovery_email(user):
     send_mail(
         _("Minimail account recovery"), # Subject
@@ -31,9 +49,11 @@ def _send_recovery_email(user):
         fail_silently=False,
     )
 
+
 def logout_view(request):
     logout(request)
     return redirect('/')
+
 
 class UserUpdateView(View):
     """
@@ -57,6 +77,7 @@ class UserUpdateView(View):
             messages.success(request, _("User successfully updated"))
             redirect("user_account")
         return render(request, "user_management/user_update.html", locals())
+
 
 class UpdatePasswordView(View):
 
@@ -138,6 +159,7 @@ class Register(View):
             messages.success(request, _("User successfully registered"))
             return redirect('user_login')
         return render(request, "user_management/user_register.html", locals())
+
 
 class Login(View):
 

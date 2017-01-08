@@ -43,9 +43,10 @@
       <div class='col-lg-10 col-lg-offset-1 col-sm-12'>
         <h3>
           {% trans "All Emails" %}
-					&nbsp;&nbsp;<a class='btn btn-default' href='{% url "campaign-new" %}'>
-						{% trans 'Compose email' %}
-					</a>
+					&nbsp;&nbsp;
+					{% if user.has_a_verified_email and user.has_a_verified_dns_settings %}
+						<a class='btn btn-default' href='{% url "campaign-new" %}'> {% trans 'Compose email' %}</a>
+					{% endif %}
         </h3>
       </div>
     </div>

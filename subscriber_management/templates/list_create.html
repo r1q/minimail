@@ -7,7 +7,7 @@
   <div class="row">
     <div class="col-lg-6 col-lg-offset-3">
       <h3>Create a new list</h3>
-      <form method="post">
+			<form method="post" action='{% url "subscriber-management-create" %}'>
         {% csrf_token %}
 <!--         <div class="form-group"> -->
 <!--           <label for="{{form.image.name.auto_id}}">Image:</label> -->
