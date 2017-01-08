@@ -106,7 +106,7 @@ class CampaignView(LoginRequiredMixin, View):
         if ses_delivery_object:
             time_delta = ses_delivery_object.last.utcnow().timestamp()
             time_delta -= ses_delivery_object.first.utcnow().timestamp()
-            time_delta /= int(timedelta/60)
+            time_delta = int(time_delta/60)
         click_stats_campaign = ClickRate.objects.filter(list=campaign.email_list, campaign=campaign).aggregate(
             total_count=Sum('total_count'),
             unique_count=Sum('unique_count'),
