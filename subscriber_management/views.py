@@ -102,6 +102,10 @@ class SubscriberListCreateView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.user = self.request.user
+        # Record the user has at least 1 list
+        if not self.request.user.has_a_list:
+            self.request.user.has_a_list = True
+            self.request.user.save()
         messages.success(self.request, form.instance.name + self.success_message)
         return super(SubscriberListCreateView, self).form_valid(form)
 
@@ -179,6 +183,11 @@ class SubscriberListDeleteView(LoginRequiredMixin, View):
         list_item = List.objects.get(uuid=uuid)
         Subscriber.objects.filter(list__id=list_item.id).delete()
         list_item.delete()
+        # Record the user has no list anymore, if that's the case
+        if self.request.user.has_a_list:
+            if not List.objects.filter(user=self.request.user).exists():
+                self.request.user.has_a_list = False
+                self.request.user.save()
         messages.success(request, list_item.name + self.success_message)
         return redirect('subscriber-management-list')
 
