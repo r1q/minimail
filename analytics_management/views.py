@@ -24,6 +24,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 ALLOWED_MERGE = ["hour", "day"]
 ZERO_IF_NONE = lambda x: 0 if x == None else x
 
+
 class HomeView(LoginRequiredMixin, View):
 
     def get(sefl, request):

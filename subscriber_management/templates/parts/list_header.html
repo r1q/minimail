@@ -8,15 +8,15 @@
 		{% trans 'subscriber' %}{{list_item.count_validated_subscribers|pluralize}}
 	</div>
 	<div class='col-lg-3'>
-		<span class="lead">45.5%</span>
+    <span class="lead">{{ list.open_rate|default:"0" }}</span>
 		{% trans 'opens' %}
 	</div>
 	<div class='col-lg-3'>
-		<span class="lead">14.8%</span>
+    <span class="lead">{{ list.open_rate|default:"0" }}</span>
 		{% trans 'clicks' %}
 	</div>
 	<div class='col-lg-3'>
-		<span class="lead">0.28%</span>
+    <span class="lead">{{ list.total_unsubscribe|default:"0" }}</span>
 		{% trans 'unsubscribes' %}
 	</div>
 </div>

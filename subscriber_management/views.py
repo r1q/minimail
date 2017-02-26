@@ -16,6 +16,7 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.decorators.csrf import csrf_exempt
 from django.db import connection
+from django.db.models import Sum
 
 import csv
 from datetime import datetime
@@ -31,6 +32,7 @@ from subscriber_management.models import List, Subscriber
 from subscriber_management.forms import ListForm, SubscriberForm, \
     ListSettingsForm, ListNewsletterHomepage, ListNewsletterImportCSV
 from campaign_management.models import Campaign
+from analytics_management.models import OpenRate, ClickRate
 
 
 DATE_FORMAT = '%Y-%m-%d %H:%M:%S'
@@ -74,7 +76,7 @@ class SubscriberListView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super(SubscriberListView, self).get_context_data(**kwargs)
-        for email_list in context['subscriber_lists']:
+        for email_list in self.object_list:
             try:
                 c = Campaign.objects.filter(author=self.request.user,
                                             email_list=email_list)\
@@ -82,6 +84,10 @@ class SubscriberListView(LoginRequiredMixin, ListView):
                 email_list.draft_count = c.filter(is_sent=False, is_draft=True).count()
                 email_list.sent_count = c.filter(is_sent=True, is_draft=False).count()
                 email_list.last_email_sent = c[0].sent
+                email_list.open_rate = OpenRate.objects.filter(list=c.email_list)\
+                                                       .aggregate(Sum('unique_count'))
+                email_list.click_rate = ClickRate.objects.filter(list=c.email_list)\
+                                                         .aggregate(Sum('unique_count'))
             except Exception as e:
                 print(e)
                 continue
@@ -344,6 +350,10 @@ class SubscriberListSubscribersView(LoginRequiredMixin, ListView):
         context['list_item'] = List.objects.get(uuid=list_uuid,
                                                 user=self.request.user)
         context['total_count'] = context['subscribers'].count()
+        context['open_rate'] = OpenRate.objects.filter(list=context['list_item'])\
+                                               .aggregate(Sum('unique_count'))
+        context['click_rate'] = ClickRate.objects.filter(list=context['list_item'])\
+                                                 .aggregate(Sum('unique_count'))
         paginator = Paginator(context['subscribers'], 50)
         page = self.request.GET.get('page')
         try:

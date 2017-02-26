@@ -13,11 +13,13 @@ from django.utils import timezone
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext as _
+from django.db.models import Sum
 
 from campaign_management.models import Campaign
 from subscriber_management.models import List, Subscriber
 from template_management.models import Template
 from campaign_management.tasks import _send_one_newsletter_to_one_list
+from analytics_management.models import OpenRate, ClickRate
 
 from premailer import Premailer
 from bs4 import BeautifulSoup as HTMLParser
@@ -32,6 +34,7 @@ class CampaignList(LoginRequiredMixin, ListView):
     """CampaignList"""
     model = Campaign
     template_name = 'campaign_list.html'
+    context_object_name = 'all_campaigns'
 
     def get_queryset(self):
         return Campaign.objects.select_related('email_list')\
@@ -40,6 +43,18 @@ class CampaignList(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super(CampaignList, self).get_context_data(**kwargs)
+        for campaign in self.object_list:
+            try:
+                campaign.open_rate = OpenRate.objects.get(list=campaign.email_list,
+                                                          campaign=campaign).unique_count
+            except:
+                campaign.open_rate = None
+            try:
+                campaign.click_rate = ClickRate.objects.filter(list=campaign.email_list,
+                                                               campaign=campaign)\
+                                               .aggregate(Sum('unique_count'))
+            except:
+                campaign.click_rate = None
         return context
 
 
