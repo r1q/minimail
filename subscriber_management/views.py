@@ -85,9 +85,9 @@ class SubscriberListView(LoginRequiredMixin, ListView):
                 email_list.sent_count = c.filter(is_sent=True, is_draft=False).count()
                 email_list.last_email_sent = c[0].sent
                 email_list.open_rate = OpenRate.objects.filter(list=c.email_list)\
-                                                       .aggregate(Sum('unique_count'))
+                                                       .aggregate(Sum('unique_count')).unique_count__sum
                 email_list.click_rate = ClickRate.objects.filter(list=c.email_list)\
-                                                         .aggregate(Sum('unique_count'))
+                                                         .aggregate(Sum('unique_count')).unique_count__sum
             except Exception as e:
                 print(e)
                 continue
@@ -351,9 +351,9 @@ class SubscriberListSubscribersView(LoginRequiredMixin, ListView):
                                                 user=self.request.user)
         context['total_count'] = context['subscribers'].count()
         context['open_rate'] = OpenRate.objects.filter(list=context['list_item'])\
-                                               .aggregate(Sum('unique_count'))
+                                               .aggregate(Sum('unique_count')).unique_count__sum
         context['click_rate'] = ClickRate.objects.filter(list=context['list_item'])\
-                                                 .aggregate(Sum('unique_count'))
+                                                 .aggregate(Sum('unique_count')).unique_count__sum
         paginator = Paginator(context['subscribers'], 50)
         page = self.request.GET.get('page')
         try:

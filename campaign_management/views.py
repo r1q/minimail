@@ -52,7 +52,7 @@ class CampaignList(LoginRequiredMixin, ListView):
             try:
                 campaign.click_rate = ClickRate.objects.filter(list=campaign.email_list,
                                                                campaign=campaign)\
-                                               .aggregate(Sum('unique_count'))
+                                               .aggregate(Sum('unique_count')).unique_count__sum
             except:
                 campaign.click_rate = None
         return context

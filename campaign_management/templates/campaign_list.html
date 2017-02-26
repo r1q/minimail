@@ -100,11 +100,11 @@
 												<span class='stat-label'>Sent</span>
 											</span>
 											<span class='stat-block'>
-												<span class='stat-count' >{{ campaign.open_rate|default_if_none:"N/A" }}</span>
-												<span class='stat-label' >Opens</span>
+												<span class='stat-count'>{{ campaign.open_rate|default:"N/A" }}</span>
+												<span class='stat-label'>Opens</span>
 											</span>
 											<span class='stat-block'>
-												<span class='stat-count' >{{ campaign.click_rate|default_if_none:"N/A" }}</span>
+												<span class='stat-count'>{{ campaign.click_rate|default:"N/A" }}</span>
 												<span class='stat-label'>Clicks</span>
 											</span>
 											<span class='stat-block'>
