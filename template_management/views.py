@@ -13,6 +13,7 @@ class TemplateList(LoginRequiredMixin, ListView):
     """TemplateList"""
     model = Template
     template_name = 'template_list.html'
+    context_object_name = 'templates'
 
     def get_queryset(self):
         return Template.objects.order_by('-created')\
@@ -20,6 +21,7 @@ class TemplateList(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super(TemplateList, self).get_context_data(**kwargs)
+        context['public_templates'] = Template.objects.filter(is_public=True)
         return context
 
 

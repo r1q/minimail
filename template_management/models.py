@@ -3,8 +3,6 @@ from user_management.models import MyUser
 from django.urls import reverse
 from django.contrib.postgres.fields import JSONField
 
-import simplejson as json
-
 
 class Template(models.Model):
     """Template"""
@@ -19,6 +17,7 @@ class Template(models.Model):
     # Metadata
     created = models.DateTimeField(auto_now_add=True)
     edited = models.DateTimeField(auto_now=True)
+    is_public = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name

@@ -28,7 +28,7 @@
       <div class='col-lg-10 col-lg-offset-1 col-sm-12'>
 				<div class='row'>
 
-				{% for template in object_list %}
+				{% for template in templates %}
 
 					<div class='col-lg-3 col-sm-6'>
 							<div class='preview' style='position: relative; min-height: 300px; background: #fff; overflow: hidden; box-shadow: 0 1px 3px #9a9a9a'>
@@ -42,25 +42,23 @@
 						</div>
 					</div>
 
-				{% empty %}
+				{% endfor %}
 
-				  <br />
-					<div class='col-lg-12'>
-						<div class='alert alert-warning'>
-							{% trans 'You don’t have any template.' %}
-							<a href="{% url 'template-new' %}">Add one now &raquo;</a>
+				{% for template in public_templates %}
+
+					<div class='col-lg-3 col-sm-6'>
+							<div class='preview' style='position: relative; min-height: 300px; background: #fff; overflow: hidden; box-shadow: 0 1px 3px #9a9a9a'>
+								<iframe onload='this.style.opacity=1' style='opacity: 0; transition: opacity .185s ease-out;border: 0; position: absolute; top: 0; bottom: 0; left: 0; right: 0; z-index: 10; transform: scale(0.40); transform-origin: 0 0; height: 250%; width: 250%;' src='{% url 'template-preview' template.id %}'></iframe>
+								<a href='{% url 'template-detail' template.id %}' class='cover' style='position: absolute; top: 0; bottom: 0; left: 0; right: 0; z-index: 100;'></a>
+							</div>
+							<div class='container-fluid' style='margin-bottom: 2rem'>
+								<h4 class='text-center'>
+									<a href='{% url 'template-detail' template.id %}'>{{ template.name }}</a>
+								</h4>
 						</div>
 					</div>
 
 				{% endfor %}
-
-				{% if object_list %}
-					<aside class='col-lg-12 text-center text-muted' style='margin-top:4rem'>
-						&mdash;
-						<br />
-						{{ object_list|length }} templates
-					</aside>
-				{% endif %}
 
 				</div>
 			</div>
